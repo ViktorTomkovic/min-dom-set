@@ -9,4 +9,6 @@ bin/
 *.pyc
 *.xml
 !format.xml
-
+*.jar
+*.war
+*.ear
