@@ -2,12 +2,14 @@ package model;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import algorithm.AbstractAlgorithm;
 
 public class UndirectedGraph implements Graph {
 	public ArrayList<Edge> edges;
+	public ArrayList<Long> vertices;
 	public long verticesCount;
 
 	public UndirectedGraph() {
@@ -17,14 +19,13 @@ public class UndirectedGraph implements Graph {
 
 	public UndirectedGraph(ArrayList<Edge> edges) {
 		this.edges = edges;
-		long vc = 0;
-		for (Edge e : edges) {
-			if (e.from > vc)
-				vc = e.from;
-			if (e.to > vc)
-				vc = e.to;
+		HashSet<Long> vertices = new HashSet<>();
+		for (Edge e : getEdges()) {
+			vertices.add(e.from);
+			vertices.add(e.to);
 		}
-		this.verticesCount = vc;
+		this.vertices = new ArrayList<>(vertices);
+		this.verticesCount = vertices.size();
 	}
 
 	@Override
@@ -34,7 +35,7 @@ public class UndirectedGraph implements Graph {
 
 	@Override
 	public ArrayList<Edge> getEdges() {
-		return null;
+		return edges;
 	}
 
 	@Override
@@ -60,9 +61,30 @@ public class UndirectedGraph implements Graph {
 	}
 
 	@Override
-	public Set<Long> getNeighboursOf2(Long vertex) {
+	public Set<Long> getNeighboursOfVertexIncluded(Long vertex) {
 		Set<Long> result = getNeighboursOf(vertex);
 		result.add(vertex);
+		return result;
+	}
+
+	@Override
+	public ArrayList<Long> getVertices() {
+		HashSet<Long> vertices = new HashSet<>();
+		for (Edge e : getEdges()) {
+			vertices.add(e.from);
+			vertices.add(e.to);
+		}
+		return new ArrayList<Long>(vertices);
+	}
+
+	@Override
+	public Set<Long> getNeighboursOfDistance2(Long vertex) {
+		LinkedHashSet<Long> neig = new LinkedHashSet<>();
+		LinkedHashSet<Long> result = new LinkedHashSet<>();
+		neig.addAll(getNeighboursOfVertexIncluded(vertex));
+		for (Long v : neig) { 
+			result.addAll(getNeighboursOf(v));
+		}
 		return result;
 	}
 

@@ -17,7 +17,7 @@ public class NaiveAlgorithm implements AbstractAlgorithm {
 			// we have made our choice - let's compute it
 			Set<Long> neighbours = new HashSet<>();
 			for (Long vertex : chosenVertices) {
-				neighbours.addAll(g.getNeighboursOf2(vertex));
+				neighbours.addAll(g.getNeighboursOfVertexIncluded(vertex));
 			}
 			for (Long l : chosenVertices) {
 				System.out.print(l);
