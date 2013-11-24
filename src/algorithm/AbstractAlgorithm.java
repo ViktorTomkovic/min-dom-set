@@ -1,9 +1,9 @@
 package algorithm;
 
-import java.util.Set;
+import java.util.LinkedHashSet;
 
 import model.Graph;
 
 public interface AbstractAlgorithm {
-	public Set<Long> mdsAlg(Graph g);
+	public LinkedHashSet<Long> mdsAlg(Graph g);
 }

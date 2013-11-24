@@ -1,41 +1,76 @@
 package algorithm.chapter7;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.Set;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
 
 import model.Graph;
 import algorithm.AbstractAlgorithm;
 
 public class Algorithm34 implements AbstractAlgorithm {
-	public volatile static Set<Long> S = new HashSet<>();
-	public volatile static Set<Long> G = new HashSet<>();
-	public volatile static LinkedHashMap<Long, Algorithm34Vertex> instances = new LinkedHashMap<>();
-	public volatile static Object lock = new Object();
-	
+	private LinkedHashMap<Long, Algorithm34State> allVertices;
+	private LinkedList<Algorithm34State> unfinishedVertices;
+	private LinkedHashSet<Long> S;
+	public Object joinLock = new Object();
+
+	public Algorithm34() {
+		unfinishedVertices = new LinkedList<>();
+		allVertices = new LinkedHashMap<>();
+		S = new LinkedHashSet<>();
+	}
+
 	@Override
-	public Set<Long> mdsAlg(Graph g) {		
-		
+	public LinkedHashSet<Long> mdsAlg(Graph g) {
+		Long nv = g.getNumberOfVertices();
 		for (Long v : g.getVertices()) {
-			Algorithm34Vertex instance = new Algorithm34Vertex(g, v, S, G, instances, lock);
-			instances.put(v, instance);
+			Algorithm34State state = new Algorithm34State(v, g);
+			unfinishedVertices.addLast(state);
+			allVertices.put(v, state);
 		}
-		
-		for (Algorithm34Vertex a : instances.values()) {
-			a.start();
+		Long nt = Math.min(nv, 50);
+		ArrayList<Thread> pool = new ArrayList<>(50);
+		for (int i = 0; i < nt; i++) {
+			Thread t = new Thread(new Algorithm34Task(this));
+			pool.add(i, t);
 		}
-		
-		for (Algorithm34Vertex a : instances.values()) {
+		for (int i = 0; i < nt; i++) {
+			pool.get(i).start();
+		}
+		for (int i = 0; i < nt; i++) {
 			try {
-				a.join();
+				pool.get(i).join();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
-		
-		System.out.println();
-		System.out.println("Koniec.");
 		return S;
+	}
+
+	public LinkedHashMap<Long, Algorithm34State> getAllVertices() {
+		return this.allVertices;
+	}
+
+	public Algorithm34State chooseNextVertex() {
+		Algorithm34State state;
+		synchronized (unfinishedVertices) {
+			state = unfinishedVertices.pollFirst();
+		}
+		return state;
+	}
+
+	public void saveState(Algorithm34State state) {
+		synchronized (unfinishedVertices) {
+			unfinishedVertices.addLast(state);
+		}
+		return;
+	}
+
+	public void joinS(Long v) {
+		synchronized (S) {
+			S.add(v);
+		}
+		return;
 	}
 
 }

@@ -108,12 +108,12 @@ public class Algorithm34Vertex3 extends Thread {
 
 	public void thankYou() {
 		// System.out.print(v + " resumed. ");
-		this.canJoin = true;
+		this.setCanJoin(true);
 	}
 
 	public void takeABreakPlease() {
 		// System.out.print(v + " is taking a break. ");
-		this.canJoin = false;
+		this.setCanJoin(false);
 	}
 
 	public Set<Long> getW() {
@@ -133,7 +133,7 @@ public class Algorithm34Vertex3 extends Thread {
 				for (Long v2 : dist2notSorG) {
 					instances.get(v2).recieveSpan(v, w);
 				}
-				
+
 				synchronized (waitingForSpans) {
 					while (!spans.keySet().containsAll(dist2notSorG)) {
 						synchronized (lock) {
@@ -148,29 +148,37 @@ public class Algorithm34Vertex3 extends Thread {
 					}
 				}
 
-//				if (spans.keySet().containsAll(dist2notSorG)) {
+				// if (spans.keySet().containsAll(dist2notSorG)) {
 				LinkedHashMap<Long, Long> oldspans = new LinkedHashMap<>();
 				oldspans.putAll(spans);
 				w = computeSpan(v);
-					boolean isBiggest = true;
-					for (Long v2 : dist2notSorG) {
-						if ((spans.get(v2) > w)
-								|| ((spans.get(v2) == w) && (v2 < v))) {
-							isBiggest = false;
-						}
+				boolean isBiggest = true;
+				for (Long v2 : dist2notSorG) {
+					if ((spans.get(v2) > w)
+							|| ((spans.get(v2) == w) && (v2 < v))) {
+						isBiggest = false;
 					}
-					if (isBiggest && hasWhiteNeighbours(v)){// && canJoin) {
-						joinS(v, g);
-						System.out.println("koniec+ " + v);
-						return;
-					}
-					spans.clear();
-	//			}
+				}
+				if (isBiggest && hasWhiteNeighbours(v)) {// && canJoin) {
+					joinS(v, g);
+					System.out.println("koniec+ " + v);
+					return;
+				}
+				spans.clear();
+				// }
 			} else {
 				joinG(v);
 				System.out.println("koniec- " + v);
 				return;
 			}
 		}
+	}
+
+	public boolean isCanJoin() {
+		return canJoin;
+	}
+
+	public void setCanJoin(boolean canJoin) {
+		this.canJoin = canJoin;
 	}
 }

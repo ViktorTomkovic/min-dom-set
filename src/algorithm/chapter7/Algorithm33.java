@@ -1,7 +1,7 @@
 package algorithm.chapter7;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import model.Graph;
@@ -16,11 +16,11 @@ public class Algorithm33 implements AbstractAlgorithm {
 		result = (long) A.size();
 		return result;
 	}
-	
+
 	@Override
-	public Set<Long> mdsAlg(Graph g) {
+	public LinkedHashSet<Long> mdsAlg(Graph g) {
 		ArrayList<Long> W = new ArrayList<>(g.getVertices());
-		HashSet<Long> S = new HashSet<>();
+		LinkedHashSet<Long> S = new LinkedHashSet<>();
 		while (!W.isEmpty()) {
 			Long v = W.get(0);
 			Long mv = w(v, g, W);

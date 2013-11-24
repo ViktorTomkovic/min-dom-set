@@ -1,6 +1,7 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import algorithm.AbstractAlgorithm;
@@ -10,8 +11,8 @@ public interface Graph {
 	public ArrayList<Edge> getEdges();
 	public ArrayList<Long> getVertices();
 	public Long getNumberOfVertices();
-	public Set<Long> getNeighboursOf(Long vertex);
-	public Set<Long> getNeighboursOfVertexIncluded(Long vertex);
-	public Set<Long> getNeighboursOfDistance2(Long vertex);
-	public Set<Long> getMDS(AbstractAlgorithm algorithm);
+	public LinkedHashSet<Long> getNeighboursOf(Long vertex);
+	public LinkedHashSet<Long> getNeighboursOfVertexIncluded(Long vertex);
+	public LinkedHashSet<Long> getNeighboursOfDistance2(Long vertex);
+	public LinkedHashSet<Long> getMDS(AbstractAlgorithm algorithm);
 }

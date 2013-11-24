@@ -39,7 +39,7 @@ public class UndirectedGraph implements Graph {
 	}
 
 	@Override
-	public Set<Long> getMDS(AbstractAlgorithm algorithm) {
+	public LinkedHashSet<Long> getMDS(AbstractAlgorithm algorithm) {
 		return algorithm.mdsAlg(this);
 	}
 
@@ -49,8 +49,8 @@ public class UndirectedGraph implements Graph {
 	}
 
 	@Override
-	public Set<Long> getNeighboursOf(Long vertex) {
-		Set<Long> result = new HashSet<>();
+	public LinkedHashSet<Long> getNeighboursOf(Long vertex) {
+		LinkedHashSet<Long> result = new LinkedHashSet<>();
 		for (Edge e : edges) {
 			if (e.to == vertex)
 				result.add(e.from);
@@ -61,8 +61,8 @@ public class UndirectedGraph implements Graph {
 	}
 
 	@Override
-	public Set<Long> getNeighboursOfVertexIncluded(Long vertex) {
-		Set<Long> result = getNeighboursOf(vertex);
+	public LinkedHashSet<Long> getNeighboursOfVertexIncluded(Long vertex) {
+		LinkedHashSet<Long> result = getNeighboursOf(vertex);
 		result.add(vertex);
 		return result;
 	}
@@ -78,7 +78,7 @@ public class UndirectedGraph implements Graph {
 	}
 
 	@Override
-	public Set<Long> getNeighboursOfDistance2(Long vertex) {
+	public LinkedHashSet<Long> getNeighboursOfDistance2(Long vertex) {
 		LinkedHashSet<Long> neig = new LinkedHashSet<>();
 		LinkedHashSet<Long> result = new LinkedHashSet<>();
 		neig.addAll(getNeighboursOfVertexIncluded(vertex));
