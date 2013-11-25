@@ -24,7 +24,7 @@ public class MyRandom {
 	public static int Int(int min, int max) {
 		return G.nextInt(max - min + 1) + min;
 	}
-	
+
 	public static double Double() {
 		return G.nextDouble();
 	}

@@ -182,15 +182,15 @@ public class Algorithm34Vertex extends Thread {
 				LinkedHashMap<Long, Long> oldspans = new LinkedHashMap<>();
 				oldspans.putAll(spans);
 				w = computeSpan(v);
-				
+
 				boolean isBiggest = true;
 				synchronized (dist2notSorG) {
-						for (Long v2 : dist2notSorG) {
-							if ((spans.get(v2) > w)
-									|| ((spans.get(v2) == w) && (v2 < v))) {
-								isBiggest = false;
-							}
+					for (Long v2 : dist2notSorG) {
+						if ((spans.get(v2) > w)
+								|| ((spans.get(v2) == w) && (v2 < v))) {
+							isBiggest = false;
 						}
+					}
 				}
 				if (finalTest(isBiggest)) {
 					joinS(v, g);

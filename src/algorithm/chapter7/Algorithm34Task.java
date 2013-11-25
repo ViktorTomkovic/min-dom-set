@@ -111,6 +111,10 @@ public class Algorithm34Task implements Runnable {
 
 	@Override
 	public void run() {
+		/*
+		 * try { synchronized (alg.waitForStart) { alg.waitForStart.wait(); } }
+		 * catch (InterruptedException e1) { e1.printStackTrace(); }
+		 */
 		setNextState();
 		while (!finished) {
 			if (hasWhiteNeighbours(state.v)) {
@@ -121,10 +125,6 @@ public class Algorithm34Task implements Runnable {
 					}
 				}
 				if (recievedFromAll()) {
-					LinkedHashMap<Long, Long> oldspans = new LinkedHashMap<>();
-					synchronized (state.spans) {
-						oldspans.putAll(state.spans);
-					}
 					state.w = computeSpan(state.v);
 
 					boolean isBiggest = true;
@@ -146,7 +146,7 @@ public class Algorithm34Task implements Runnable {
 					state.spans.clear();
 				}
 				try {
-					Thread.sleep(0, 1);
+					Thread.sleep(0, 10);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}

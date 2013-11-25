@@ -64,7 +64,7 @@ public class Algorithm34Vertex2 implements Runnable {
 
 				boolean isBiggest = true;
 				synchronized (lock) {
-				Set<Long> dist2 = g.getNeighboursOfDistance2(v);
+					Set<Long> dist2 = g.getNeighboursOfDistance2(v);
 					dist2.retainAll(W);
 					for (Long v2 : dist2) {
 						if ((spans.get(v2) > w)

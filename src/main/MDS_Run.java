@@ -4,7 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-
+import java.util.LinkedHashSet;
 
 import model.Edge;
 import model.Graph;
@@ -12,6 +12,7 @@ import model.UndirectedGraph;
 import algorithm.NaiveAlgorithm;
 import algorithm.chapter7.Algorithm33;
 import algorithm.chapter7.Algorithm34;
+import algorithm.chapter7.Algorithm35;
 
 public class MDS_Run {
 
@@ -63,18 +64,26 @@ public class MDS_Run {
 		} else {
 			algorithm = args[1];
 		}
+		LinkedHashSet<Long> mds = new LinkedHashSet<>();
 		long start = System.currentTimeMillis();
 		if (algorithm.compareTo("") == 0) {
-			System.out.println("You should specify algorithm you want to use. Naive algorithm is used.");
-			System.out.print(g.getMDS(new NaiveAlgorithm()));
+			System.out
+					.println("You should specify algorithm you want to use. Naive algorithm is used.");
+			mds = g.getMDS(new NaiveAlgorithm());
 		} else if (algorithm.compareTo("naive") == 0) {
-			System.out.print(g.getMDS(new NaiveAlgorithm()));
+			mds = g.getMDS(new NaiveAlgorithm());
 		} else if (algorithm.compareTo("ch7alg33") == 0) {
-			System.out.print(g.getMDS(new Algorithm33()));
+			mds = g.getMDS(new Algorithm33());
 		} else if (algorithm.compareTo("ch7alg34") == 0) {
-			System.out.print(g.getMDS(new Algorithm34()));
+			mds = g.getMDS(new Algorithm34());
+		} else if (algorithm.compareTo("ch7alg35") == 0) {
+			mds = g.getMDS(new Algorithm35());
 		}
-		System.out.println(" Time elapsed: " + (System.currentTimeMillis() - start) + "ms");
+		System.out.println(mds);
+		System.out.println("The set is " + (g.isMDS(mds) ? "" : "not ")
+				+ "a minimal dominating set.");
+		System.out.println("Time elapsed: "
+				+ (System.currentTimeMillis() - start) + "ms");
 	}
 
 }

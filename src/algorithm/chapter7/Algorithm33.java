@@ -5,9 +5,9 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import model.Graph;
-import algorithm.AbstractAlgorithm;
+import algorithm.AbstractMDSAlgorithm;
 
-public class Algorithm33 implements AbstractAlgorithm {
+public class Algorithm33 implements AbstractMDSAlgorithm {
 
 	Long w(Long v, Graph g, ArrayList<Long> W) {
 		Long result = 0L;

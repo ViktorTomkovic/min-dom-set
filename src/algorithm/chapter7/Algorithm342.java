@@ -4,9 +4,9 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 
 import model.Graph;
-import algorithm.AbstractAlgorithm;
+import algorithm.AbstractMDSAlgorithm;
 
-public class Algorithm342 implements AbstractAlgorithm {
+public class Algorithm342 implements AbstractMDSAlgorithm {
 	public volatile static LinkedHashSet<Long> S = new LinkedHashSet<>();
 	public volatile static LinkedHashSet<Long> G = new LinkedHashSet<>();
 	public volatile static LinkedHashMap<Long, Algorithm34Vertex> instances = new LinkedHashMap<>();

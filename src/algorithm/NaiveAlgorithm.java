@@ -4,7 +4,7 @@ import java.util.LinkedHashSet;
 
 import model.Graph;
 
-public class NaiveAlgorithm implements AbstractAlgorithm {
+public class NaiveAlgorithm implements AbstractMDSAlgorithm {
 
 	@Override
 	public LinkedHashSet<Long> mdsAlg(Graph g) {
