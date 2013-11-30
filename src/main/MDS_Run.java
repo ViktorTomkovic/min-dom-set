@@ -13,6 +13,7 @@ import algorithm.NaiveAlgorithm;
 import algorithm.chapter7.Algorithm33;
 import algorithm.chapter7.Algorithm34;
 import algorithm.chapter7.Algorithm35;
+import algorithm.fomin.AlgorithmFNaive;
 
 public class MDS_Run {
 
@@ -78,10 +79,12 @@ public class MDS_Run {
 			mds = g.getMDS(new Algorithm34());
 		} else if (algorithm.compareTo("ch7alg35") == 0) {
 			mds = g.getMDS(new Algorithm35());
+		} else if (algorithm.compareTo("fnaive") == 0) {
+			mds = g.getMDS(new AlgorithmFNaive());
 		}
-		System.out.println(mds);
+		System.out.println(mds.size() + " " + mds);
 		System.out.println("The set is " + (g.isMDS(mds) ? "" : "not ")
-				+ "a minimal dominating set.");
+				+ "a dominating set.");
 		System.out.println("Time elapsed: "
 				+ (System.currentTimeMillis() - start) + "ms");
 	}

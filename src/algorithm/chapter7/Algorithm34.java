@@ -15,9 +15,6 @@ public class Algorithm34 implements AbstractMDSAlgorithm {
 	public Object joinLock = new Object();
 	public Object waitForStart = new Object();
 
-	public Algorithm34() {
-	}
-
 	@Override
 	public LinkedHashSet<Long> mdsAlg(Graph g) {
 		Long start = System.currentTimeMillis();
