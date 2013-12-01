@@ -12,7 +12,9 @@ import model.UndirectedGraph;
 import algorithm.NaiveAlgorithm;
 import algorithm.chapter7.Algorithm33;
 import algorithm.chapter7.Algorithm34;
+import algorithm.chapter7.Algorithm34OneThread;
 import algorithm.chapter7.Algorithm35;
+import algorithm.chapter7.Algorithm35OneThread;
 import algorithm.fomin.AlgorithmFNaive;
 
 public class MDS_Run {
@@ -77,8 +79,12 @@ public class MDS_Run {
 			mds = g.getMDS(new Algorithm33());
 		} else if (algorithm.compareTo("ch7alg34") == 0) {
 			mds = g.getMDS(new Algorithm34());
+		} else if (algorithm.compareTo("ch7alg34OT") == 0) {
+			mds = g.getMDS(new Algorithm34OneThread());
 		} else if (algorithm.compareTo("ch7alg35") == 0) {
 			mds = g.getMDS(new Algorithm35());
+		} else if (algorithm.compareTo("ch7alg35OT") == 0) {
+			mds = g.getMDS(new Algorithm35OneThread());
 		} else if (algorithm.compareTo("fnaive") == 0) {
 			mds = g.getMDS(new AlgorithmFNaive());
 		}
