@@ -16,6 +16,7 @@ import algorithm.chapter7.Algorithm34OneThread;
 import algorithm.chapter7.Algorithm35;
 import algorithm.chapter7.Algorithm35OneThread;
 import algorithm.fomin.AlgorithmFNaive;
+import algorithm.fomin.AlgorithmFProper;
 
 public class MDS_Run {
 
@@ -87,6 +88,8 @@ public class MDS_Run {
 			mds = g.getMDS(new Algorithm35OneThread());
 		} else if (algorithm.compareTo("fnaive") == 0) {
 			mds = g.getMDS(new AlgorithmFNaive());
+		} else if (algorithm.compareTo("fproper") == 0) {
+			mds = g.getMDS(new AlgorithmFProper());
 		}
 		System.out.println(mds.size() + " " + mds);
 		System.out.println("The set is " + (g.isMDS(mds) ? "" : "not ")
