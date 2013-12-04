@@ -8,6 +8,7 @@ import model.Graph;
 import algorithm.AbstractMDSAlgorithm;
 
 public class Algorithm33 implements AbstractMDSAlgorithm {
+	private long runTime = -1L;
 
 	Long w(Long v, Graph g, ArrayList<Long> W) {
 		Long result = 0L;
@@ -19,6 +20,7 @@ public class Algorithm33 implements AbstractMDSAlgorithm {
 
 	@Override
 	public LinkedHashSet<Long> mdsAlg(Graph g) {
+		long start = System.currentTimeMillis();
 		ArrayList<Long> W = new ArrayList<>(g.getVertices());
 		LinkedHashSet<Long> S = new LinkedHashSet<>();
 		while (!W.isEmpty()) {
@@ -34,7 +36,18 @@ public class Algorithm33 implements AbstractMDSAlgorithm {
 			S.add(v);
 			W.removeAll(g.getNeighboursOfVertexIncluded(v));
 		}
+		runTime = System.currentTimeMillis() - start;
 		return S;
+	}
+
+	@Override
+	public long getLastPrepTime() {
+		return 0;
+	}
+
+	@Override
+	public long getLastRunTime() {
+		return runTime;
 	}
 
 }

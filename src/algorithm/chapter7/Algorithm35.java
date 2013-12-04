@@ -9,6 +9,8 @@ import model.Graph;
 import algorithm.AbstractMDSAlgorithm;
 
 public class Algorithm35 implements AbstractMDSAlgorithm {
+	private long prepTime = -1L;
+	private long runTime = -1L;
 	private LinkedHashMap<Long, Algorithm35State> allVertices = new LinkedHashMap<>();
 	private LinkedList<Algorithm35State> unfinishedVertices = new LinkedList<>();
 	private LinkedHashSet<Long> S = new LinkedHashSet<>();
@@ -19,7 +21,7 @@ public class Algorithm35 implements AbstractMDSAlgorithm {
 
 	@Override
 	public LinkedHashSet<Long> mdsAlg(Graph g) {
-		Long start = System.currentTimeMillis();
+		long start = System.currentTimeMillis();
 		LinkedList<Long> times = new LinkedList<>();
 		int bla = (int) Math.ceil(g.getNumberOfVertices() * 1.5);
 		allVertices = new LinkedHashMap<>(bla);
@@ -40,6 +42,7 @@ public class Algorithm35 implements AbstractMDSAlgorithm {
 			pool.add(t);
 		}
 		times.addLast(System.currentTimeMillis() - start);
+		prepTime = System.currentTimeMillis() - start;
 		for (Thread t : pool) {
 			t.start();
 		}
@@ -64,7 +67,8 @@ public class Algorithm35 implements AbstractMDSAlgorithm {
 		 * (InterruptedException e) { e.printStackTrace(); } }
 		 * times.addLast(System.currentTimeMillis() - start);
 		 */
-		System.out.println("Time elapsed: " + times);
+		// System.out.println("Time elapsed: " + times);
+		runTime = System.currentTimeMillis() - start;
 		return S;
 	}
 
@@ -92,6 +96,16 @@ public class Algorithm35 implements AbstractMDSAlgorithm {
 			S.add(v);
 		}
 		return;
+	}
+
+	@Override
+	public long getLastPrepTime() {
+		return prepTime;
+	}
+
+	@Override
+	public long getLastRunTime() {
+		return runTime;
 	}
 
 }

@@ -8,6 +8,8 @@ import model.Graph;
 import algorithm.AbstractMDSAlgorithm;
 
 public class Algorithm35OneThread implements AbstractMDSAlgorithm {
+	private long prepTime = -1L;
+	private long runTime = -1L;
 	private LinkedHashMap<Long, Algorithm35State> allVertices = new LinkedHashMap<>();
 	private LinkedHashSet<Algorithm35State> unfinishedVertices = new LinkedHashSet<>();
 	private LinkedHashSet<Long> S = new LinkedHashSet<>();
@@ -37,7 +39,8 @@ public class Algorithm35OneThread implements AbstractMDSAlgorithm {
 		return state.spans.keySet().containsAll(state.dist2NotSorG);
 	}
 
-	private void joinS(Algorithm35State state, ArrayList<Algorithm35State> deleteThisRound) {
+	private void joinS(Algorithm35State state,
+			ArrayList<Algorithm35State> deleteThisRound) {
 		for (Long v : state.dist2NotSorG) {
 			Algorithm35State s = allVertices.get(v);
 			allVertices.get(v).recieveRemoveFromW(state.v);
@@ -50,7 +53,8 @@ public class Algorithm35OneThread implements AbstractMDSAlgorithm {
 		return;
 	}
 
-	private void joinG(Algorithm35State state, ArrayList<Algorithm35State> deleteThisRound) {
+	private void joinG(Algorithm35State state,
+			ArrayList<Algorithm35State> deleteThisRound) {
 		for (Long v : state.dist2NotSorG) {
 			allVertices.get(v).recieveRemoveFromW(state.v);
 			if (v != state.v)
@@ -94,14 +98,13 @@ public class Algorithm35OneThread implements AbstractMDSAlgorithm {
 
 	@Override
 	public LinkedHashSet<Long> mdsAlg(Graph g) {
-		Long nv = g.getNumberOfVertices();
-		System.out.println(nv);
+		long start = System.currentTimeMillis();
 		for (Long v : g.getVertices()) {
 			Algorithm35State state = new Algorithm35State(v, g);
 			unfinishedVertices.add(state);
 			allVertices.put(v, state);
 		}
-
+		prepTime = System.currentTimeMillis() - start;
 		while (!unfinishedVertices.isEmpty()) {
 			/*
 			 * LinkedHashSet<Algorithm35State> helper = new LinkedHashSet<>
@@ -126,20 +129,30 @@ public class Algorithm35OneThread implements AbstractMDSAlgorithm {
 						state.c = computeC(state);
 						if (joinTest(state)) {
 							joinS(state, deleteThisRound);
-							//System.out.println("koniec+ " + state.v);
+							// System.out.println("koniec+ " + state.v);
 						}
 						state.spans.clear();
 					}
 				} else {
 					joinG(state, deleteThisRound);
-					//System.out.println("koniec- " + state.v);
+					// System.out.println("koniec- " + state.v);
 				}
 			}
 
 			unfinishedVertices.removeAll(deleteThisRound);
 		}
-
+		runTime = System.currentTimeMillis() - start;
 		return S;
+	}
+
+	@Override
+	public long getLastPrepTime() {
+		return prepTime;
+	}
+
+	@Override
+	public long getLastRunTime() {
+		return runTime;
 	}
 
 }

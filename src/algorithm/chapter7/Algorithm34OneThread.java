@@ -8,6 +8,8 @@ import model.Graph;
 import algorithm.AbstractMDSAlgorithm;
 
 public class Algorithm34OneThread implements AbstractMDSAlgorithm {
+	private long prepTime = -1L;
+	private long runTime = -1L;
 	private LinkedHashMap<Long, Algorithm34State> allVertices = new LinkedHashMap<>();
 	private LinkedHashSet<Algorithm34State> unfinishedVertices = new LinkedHashSet<>();
 	private LinkedHashSet<Long> S = new LinkedHashSet<>();
@@ -60,6 +62,7 @@ public class Algorithm34OneThread implements AbstractMDSAlgorithm {
 
 	@Override
 	public LinkedHashSet<Long> mdsAlg(Graph g) {
+		long start = System.currentTimeMillis();
 		Long nv = g.getNumberOfVertices();
 		System.out.println(nv);
 		for (Long v : g.getVertices()) {
@@ -67,7 +70,7 @@ public class Algorithm34OneThread implements AbstractMDSAlgorithm {
 			unfinishedVertices.add(state);
 			allVertices.put(v, state);
 		}
-
+		prepTime = System.currentTimeMillis() - start;
 		while (!unfinishedVertices.isEmpty()) {
 			/*
 			 * LinkedHashSet<Algorithm34State> helper = new LinkedHashSet<>
@@ -103,8 +106,18 @@ public class Algorithm34OneThread implements AbstractMDSAlgorithm {
 
 			unfinishedVertices.removeAll(deleteThisRound);
 		}
-
+		runTime = System.currentTimeMillis() - start;
 		return S;
+	}
+
+	@Override
+	public long getLastPrepTime() {
+		return prepTime;
+	}
+
+	@Override
+	public long getLastRunTime() {
+		return runTime;
 	}
 
 }

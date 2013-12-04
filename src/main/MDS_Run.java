@@ -9,6 +9,7 @@ import java.util.LinkedHashSet;
 import model.Edge;
 import model.Graph;
 import model.UndirectedGraph;
+import algorithm.AbstractMDSAlgorithm;
 import algorithm.NaiveAlgorithm;
 import algorithm.chapter7.Algorithm33;
 import algorithm.chapter7.Algorithm34;
@@ -54,6 +55,9 @@ public class MDS_Run {
 			}
 			br.close();
 			g = new UndirectedGraph(edgeList);
+			System.out.println("Graph loaded - vertices: "
+					+ g.getNumberOfVertices() + ", edges: "
+					+ g.getEdges().size() + ".");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -69,33 +73,37 @@ public class MDS_Run {
 			algorithm = args[1];
 		}
 		LinkedHashSet<Long> mds = new LinkedHashSet<>();
+		AbstractMDSAlgorithm alg = new NaiveAlgorithm();
 		long start = System.currentTimeMillis();
 		if (algorithm.compareTo("") == 0) {
 			System.out
 					.println("You should specify algorithm you want to use. Naive algorithm is used.");
-			mds = g.getMDS(new NaiveAlgorithm());
+			alg = new NaiveAlgorithm();
 		} else if (algorithm.compareTo("naive") == 0) {
-			mds = g.getMDS(new NaiveAlgorithm());
+			alg = new NaiveAlgorithm();
 		} else if (algorithm.compareTo("ch7alg33") == 0) {
-			mds = g.getMDS(new Algorithm33());
+			alg = new Algorithm33();
 		} else if (algorithm.compareTo("ch7alg34") == 0) {
-			mds = g.getMDS(new Algorithm34());
+			alg = new Algorithm34();
 		} else if (algorithm.compareTo("ch7alg34OT") == 0) {
-			mds = g.getMDS(new Algorithm34OneThread());
+			alg = new Algorithm34OneThread();
 		} else if (algorithm.compareTo("ch7alg35") == 0) {
-			mds = g.getMDS(new Algorithm35());
+			alg = new Algorithm35();
 		} else if (algorithm.compareTo("ch7alg35OT") == 0) {
-			mds = g.getMDS(new Algorithm35OneThread());
+			alg = new Algorithm35OneThread();
 		} else if (algorithm.compareTo("fnaive") == 0) {
-			mds = g.getMDS(new AlgorithmFNaive());
+			alg = new AlgorithmFNaive();
 		} else if (algorithm.compareTo("fproper") == 0) {
-			mds = g.getMDS(new AlgorithmFProper());
+			alg = new AlgorithmFProper();
 		}
+		mds = g.getMDS(alg);
 		System.out.println(mds.size() + " " + mds);
 		System.out.println("The set is " + (g.isMDS(mds) ? "" : "not ")
 				+ "a dominating set.");
 		System.out.println("Time elapsed: "
-				+ (System.currentTimeMillis() - start) + "ms");
+				+ (System.currentTimeMillis() - start) + "ms. \t\t\t\t\t("
+				+ alg.getLastPrepTime() + "ms + "
+				+ (alg.getLastRunTime() - alg.getLastPrepTime()) + "ms)");
 	}
 
 }
