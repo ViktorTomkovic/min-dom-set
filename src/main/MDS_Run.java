@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.StringTokenizer;
 
 import model.Edge;
 import model.Graph;
@@ -42,14 +43,26 @@ public class MDS_Run {
 			BufferedReader br = new BufferedReader(new FileReader(filename));
 			String line = new String();
 			while ((line = br.readLine()) != null) {
-				String[] nos = line.split(" ");
-				/*
-				 * for (String ns : nos) System.out.print(ns + " ");
-				 * System.out.println("");
-				 */
-				if (nos.length == 2) {
-					Edge e = new Edge(Long.parseLong(nos[0]),
-							Long.parseLong(nos[1]));
+				StringTokenizer st = new StringTokenizer(line);
+				Long a = -1L;
+				Long b = -1L;
+				int count = 0;
+				if (st.hasMoreTokens()) {
+					try {
+						a = Long.parseLong(st.nextToken());
+						count++;
+					} catch (NumberFormatException e) {
+					}
+				}
+				if (st.hasMoreTokens()) {
+					try {
+						b = Long.parseLong(st.nextToken());
+						count++;
+					} catch (NumberFormatException e) {
+					}
+				}
+				if (count == 2) {
+					Edge e = new Edge(a, b);
 					edgeList.add(e);
 				}
 			}
