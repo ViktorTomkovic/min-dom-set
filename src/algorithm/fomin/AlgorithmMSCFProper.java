@@ -7,13 +7,13 @@ import java.util.LinkedHashSet;
 import main.Utils;
 import model.DirectedGraph;
 import model.Edge;
-
+import model.Graph;
 import algorithm.AbstractMSCAlgorithm;
 import algorithm.RepresentedSet;
 
 public class AlgorithmMSCFProper implements AbstractMSCAlgorithm {
 
-	private ArrayList<Long> polyMSC(ArrayList<RepresentedSet> sets) {
+	private LinkedHashSet<Long> polyMSC(ArrayList<RepresentedSet> sets) {
 		DirectedGraph graph = Utils.getDirectedGraphFromRepresentedSets(sets);
 		LinkedHashSet<Edge> pickedEdges = Utils.fordFulkerson(graph);
 		HashSet<Long> pickedVertices = new HashSet<>();
@@ -23,16 +23,18 @@ public class AlgorithmMSCFProper implements AbstractMSCAlgorithm {
 		}
 		HashSet<Long> twoSetVertices = new HashSet<>();
 		for (RepresentedSet rs : sets) {
-			Long[] set = (Long[]) rs.getSet().toArray();
+			Object[] set = rs.getSet().toArray();
+			Long a = (Long) set[0];
+			Long b = (Long) set[1];
 			if (set.length == 2) {
-				twoSetVertices.add(set[0]);
-				twoSetVertices.add(set[1]);
+				twoSetVertices.add(a);
+				twoSetVertices.add(b);
 			}
 			if (set.length == 0) {
 				System.out.println("ERROR " + set);
 			}
 		}
-		ArrayList<Long> result = new ArrayList<>();
+		LinkedHashSet<Long> result = new LinkedHashSet<>();
 		for (RepresentedSet rs : sets) {
 			LinkedHashSet<Long> set = rs.getSet();
 			if (set.size() == 1) {
@@ -75,11 +77,12 @@ public class AlgorithmMSCFProper implements AbstractMSCAlgorithm {
 		return result;
 	}
 
-	private ArrayList<Long> msc(ArrayList<RepresentedSet> sets) {
+	private LinkedHashSet<Long> msc(ArrayList<RepresentedSet> sets,
+			LinkedHashSet<Long> chosen, Graph g) {
 		if (sets.size() == 0) {
-			return new ArrayList<>();
+			return g.isMDS(chosen) ? chosen : null;
 		}
-		
+
 		// one include another
 		RepresentedSet included = null;
 		// RepresentedSet including = null;
@@ -97,9 +100,10 @@ public class AlgorithmMSCFProper implements AbstractMSCAlgorithm {
 		}
 		if (included != null) {
 			sets.remove(included);
-			return msc(sets);
+			LinkedHashSet<Long> result = msc(sets, chosen, g);
+			return result;
 		}
-		
+
 		// is unique
 		ArrayList<Long> universum = getUniversum(sets);
 		for (Long l : universum) {
@@ -113,38 +117,48 @@ public class AlgorithmMSCFProper implements AbstractMSCAlgorithm {
 			}
 			if (counter == 1L) {
 				ArrayList<RepresentedSet> newSets = getDel(theRightSet, sets);
-				ArrayList<Long> resultPlus = msc(newSets);
-				resultPlus.add(theRightSet.getRepresentant());
-				return resultPlus;
+				LinkedHashSet<Long> chosen2 = new LinkedHashSet<>(chosen);
+				chosen2.add(theRightSet.getRepresentant());
+				LinkedHashSet<Long> result = msc(newSets, chosen2, g);
+				return result;
 			}
 		}
-		
-		//max cardinality
+
+		// max cardinality
 		int maxCardinality = 0;
-		RepresentedSet r = null;
+		RepresentedSet theRightSet = null;
 		for (RepresentedSet s : sets) {
 			if (s.getSet().size() > maxCardinality) {
 				maxCardinality = s.getSet().size();
-				r = s;
+				theRightSet = s;
 			}
 		}
-		
-		if (maxCardinality == 2L) {
-			return polyMSC(sets);
-		}
-		
-		sets.remove(r);
-		ArrayList<Long> result1 = msc(sets);
 
-		ArrayList<Long> result2 = msc(getDel(r, sets));
-		
+		if (maxCardinality == 2L) {
+			LinkedHashSet<Long> finalChoice = polyMSC(sets);
+			chosen.addAll(finalChoice);
+			return g.isMDS(chosen) ? chosen : null;
+		}
+				
+		sets.remove(theRightSet);
+		LinkedHashSet<Long> result1 = msc(sets, chosen, g);
+
+		LinkedHashSet<Long> chosen2 = new LinkedHashSet<>(chosen);
+		chosen2.add(theRightSet.getRepresentant());
+		LinkedHashSet<Long> result2 = msc(getDel(theRightSet, sets), chosen2, g);
+		if (result1 == null) {
+			return result2;
+		} else if (result2 == null) {
+			return result1;
+		}
 		return result1.size() < result2.size() ? result1 : result2;
 	}
 
+
 	@Override
-	public ArrayList<Long> getMSCforMDS(LinkedHashSet<Long> universum,
-			ArrayList<RepresentedSet> sets) {
-		return msc(sets);
+	public LinkedHashSet<Long> getMSCforMDS(LinkedHashSet<Long> universum,
+			ArrayList<RepresentedSet> sets, Graph g) {
+		return msc(sets, new LinkedHashSet<Long>(), g);
 	}
 
 }

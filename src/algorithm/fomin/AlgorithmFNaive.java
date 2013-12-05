@@ -20,8 +20,7 @@ public class AlgorithmFNaive implements AbstractMDSAlgorithm {
 			sets.add(new RepresentedSet(v, g.getNeighboursOfVertexIncluded(v)));
 		}
 		prepTime = System.currentTimeMillis() - start;
-		LinkedHashSet<Long> result = new LinkedHashSet<>(fn.getMSCforMDS(null,
-				sets));
+		LinkedHashSet<Long> result = fn.getMSCforMDS(null, sets, g);
 		runTime = System.currentTimeMillis() - start;
 		return result;
 	}

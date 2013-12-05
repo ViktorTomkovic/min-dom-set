@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 
+import model.Graph;
+
 import algorithm.AbstractMSCAlgorithm;
 import algorithm.RepresentedSet;
 
@@ -31,11 +33,12 @@ public class AlgorithmMSCFNaive implements AbstractMSCAlgorithm {
 		return result;
 	}
 
-	private ArrayList<Long> msc(ArrayList<RepresentedSet> sets) {
+	private LinkedHashSet<Long> msc(ArrayList<RepresentedSet> sets,
+			LinkedHashSet<Long> chosen, Graph g) {
 		if (sets.size() == 0) {
-			return new ArrayList<>();
+			return g.isMDS(chosen) ? chosen : null;
 		}
-		
+
 		// one include another
 		RepresentedSet included = null;
 		// RepresentedSet including = null;
@@ -53,9 +56,10 @@ public class AlgorithmMSCFNaive implements AbstractMSCAlgorithm {
 		}
 		if (included != null) {
 			sets.remove(included);
-			return msc(sets);
+			LinkedHashSet<Long> result = msc(sets, chosen, g);
+			return result;
 		}
-		
+
 		// is unique
 		ArrayList<Long> universum = getUniversum(sets);
 		for (Long l : universum) {
@@ -69,34 +73,40 @@ public class AlgorithmMSCFNaive implements AbstractMSCAlgorithm {
 			}
 			if (counter == 1L) {
 				ArrayList<RepresentedSet> newSets = getDel(theRightSet, sets);
-				ArrayList<Long> resultPlus = msc(newSets);
-				resultPlus.add(theRightSet.getRepresentant());
-				return resultPlus;
+				LinkedHashSet<Long> chosen2 = new LinkedHashSet<>(chosen);
+				chosen2.add(theRightSet.getRepresentant());
+				LinkedHashSet<Long> result = msc(newSets, chosen2, g);
+				return result;
 			}
 		}
-		
-		//max cardinality
+
+		// max cardinality
 		int maxCardinality = 0;
-		RepresentedSet r = null;
+		RepresentedSet theRightSet = null;
 		for (RepresentedSet s : sets) {
 			if (s.getSet().size() > maxCardinality) {
 				maxCardinality = s.getSet().size();
-				r = s;
+				theRightSet = s;
 			}
 		}
-		
-		sets.remove(r);
-		ArrayList<Long> result1 = msc(sets);
+		sets.remove(theRightSet);
+		LinkedHashSet<Long> result1 = msc(sets, chosen, g);
 
-		ArrayList<Long> result2 = msc(getDel(r, sets));
-		
+		LinkedHashSet<Long> chosen2 = new LinkedHashSet<>(chosen);
+		chosen2.add(theRightSet.getRepresentant());
+		LinkedHashSet<Long> result2 = msc(getDel(theRightSet, sets), chosen2, g);
+		if (result1 == null) {
+			return result2;
+		} else if (result2 == null) {
+			return result1;
+		}
 		return result1.size() < result2.size() ? result1 : result2;
 	}
 
 	@Override
-	public ArrayList<Long> getMSCforMDS(LinkedHashSet<Long> universum,
-			ArrayList<RepresentedSet> sets) {
-		return msc(sets);
+	public LinkedHashSet<Long> getMSCforMDS(LinkedHashSet<Long> universum,
+			ArrayList<RepresentedSet> sets, Graph g) {
+		return msc(sets, new LinkedHashSet<Long>(), g);
 	}
 
 }

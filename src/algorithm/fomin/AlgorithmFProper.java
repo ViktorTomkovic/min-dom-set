@@ -21,7 +21,7 @@ public class AlgorithmFProper implements AbstractMDSAlgorithm {
 		}
 		prepTime = System.currentTimeMillis() - start;
 		LinkedHashSet<Long> result = new LinkedHashSet<>(fn.getMSCforMDS(null,
-				sets));
+				sets, g));
 		runTime = System.currentTimeMillis() - start;
 		return result;
 	}

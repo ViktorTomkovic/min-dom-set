@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
+import java.util.TreeSet;
 
 import model.DirectedGraph;
 import model.Edge;
@@ -40,10 +41,15 @@ public class Utils {
 			HashSet<Long> visitedBlack, HashMap<Long, Long> match,
 			LinkedHashSet<Long> blackSet) {
 		for (Long black : blackSet) {
-			Edge e = new Edge(white, black);
-			if (edges.contains(e) && !visitedBlack.contains(black)) {
+			boolean contains = false;
+			for (Edge e : edges) {
+				if ((e.from == white) && (e.to == black)) {
+					contains = true;
+				}
+			}
+			if (contains && !visitedBlack.contains(black)) {
 				visitedBlack.add(black);
-				if (match.get(black) == null || aug(edges, match.get(black), visitedBlack, match, blackSet)) {
+				if (match.get(black) == -1L || aug(edges, match.get(black), visitedBlack, match, blackSet)) {
 					match.put(black, white);
 					return true;
 				}
@@ -63,16 +69,18 @@ public class Utils {
 		}
 		LinkedHashSet<Long> coloredBlack = new LinkedHashSet<>();
 		LinkedHashSet<Long> coloredWhite = new LinkedHashSet<>();
-		LinkedList<Long> unfinishedWhite = new LinkedList<>();
-		LinkedList<Long> unfinishedBlack = new LinkedList<>();
+		TreeSet<Long> unfinishedWhite = new TreeSet<>();
+		TreeSet<Long> unfinishedBlack = new TreeSet<>();
 		while (!twoSets.isEmpty()) {
 			RepresentedSet s = twoSets.pollFirst();
-			Long[] ab = (Long[]) s.getSet().toArray();
-			coloredWhite.add(ab[0]);
-			coloredBlack.add(ab[1]);
-			unfinishedWhite.add(ab[0]);
-			unfinishedBlack.add(ab[1]);
-			edges.add(new Edge(ab[0], ab[1]));
+			Object[] ab = s.getSet().toArray();
+			Long a = (Long) ab[0];
+			Long b = (Long) ab[1];
+			coloredWhite.add(a);
+			coloredBlack.add(b);
+			unfinishedWhite.add(a);
+			unfinishedBlack.add(b);
+			edges.add(new Edge(a, b));
 
 			while (!unfinishedBlack.isEmpty() || !unfinishedWhite.isEmpty()) {
 				while (!unfinishedWhite.isEmpty()) {
@@ -80,17 +88,19 @@ public class Utils {
 					ArrayList<RepresentedSet> toDelete = new ArrayList<>();
 					for (RepresentedSet rs : twoSets) {
 						if (rs.getSet().contains(l)) {
-							Long[] ab2 = (Long[]) rs.getSet().toArray();
-							if (ab2[0] == l) {
-								unfinishedBlack.add(ab2[1]);
-								edges.add(new Edge(ab2[0], ab2[1]));
-								coloredWhite.add(ab2[0]);
-								coloredBlack.add(ab2[1]);
+							Object[] ab2 = rs.getSet().toArray();
+							Long a2 = (Long) ab2[0];
+							Long b2 = (Long) ab2[1];
+							if (a2 == l) {
+								unfinishedBlack.add(b2);
+								edges.add(new Edge(a2, b2));
+								coloredWhite.add(a2);
+								coloredBlack.add(b2);
 							} else {
-								unfinishedBlack.add(ab2[0]);
-								edges.add(new Edge(ab2[1], ab2[0]));
-								coloredWhite.add(ab2[1]);
-								coloredBlack.add(ab2[0]);
+								unfinishedBlack.add(a2);
+								edges.add(new Edge(b2, a2));
+								coloredWhite.add(b2);
+								coloredBlack.add(a2);
 							}
 							toDelete.add(rs);
 						}
@@ -103,17 +113,19 @@ public class Utils {
 					ArrayList<RepresentedSet> toDelete = new ArrayList<>();
 					for (RepresentedSet rs : twoSets) {
 						if (rs.getSet().contains(l)) {
-							Long[] ab2 = (Long[]) rs.getSet().toArray();
-							if (ab2[0] == l) {
-								unfinishedWhite.add(ab2[1]);
-								edges.add(new Edge(ab2[1], ab2[0]));
-								coloredWhite.add(ab2[1]);
-								coloredBlack.add(ab2[0]);
+							Object[] ab2 = rs.getSet().toArray();
+							Long a2 = (Long) ab2[0];
+							Long b2 = (Long) ab2[1];
+							if (a2 == l) {
+								unfinishedWhite.add(b2);
+								edges.add(new Edge(b2, a2));
+								coloredWhite.add(b2);
+								coloredBlack.add(a2);
 							} else {
-								unfinishedWhite.add(ab2[0]);
-								edges.add(new Edge(ab2[0], ab2[1]));
-								coloredWhite.add(ab2[0]);
-								coloredBlack.add(ab2[1]);
+								unfinishedWhite.add(a2);
+								edges.add(new Edge(a2, b2));
+								coloredWhite.add(a2);
+								coloredBlack.add(b2);
 							}
 							toDelete.add(rs);
 						}

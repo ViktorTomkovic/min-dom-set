@@ -14,7 +14,7 @@ public class DirectedGraph implements Graph {
 	private long verticesCount;
 
 	public DirectedGraph(ArrayList<Edge> edges) {
-		this.edges = new ArrayList<>();
+		this.edges = edges;
 		this.neighboursOf = new HashMap<Long, LinkedHashSet<Long>>();
 		HashSet<Long> vertices = new HashSet<>();
 		for (Edge e : getEdges()) {
