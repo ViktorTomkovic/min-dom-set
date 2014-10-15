@@ -36,27 +36,33 @@ public class AlgorithmMSCFNaive implements AbstractMSCAlgorithm {
 	private LinkedHashSet<Long> msc(ArrayList<RepresentedSet> sets,
 			LinkedHashSet<Long> chosen, Graph g) {
 		if (sets.size() == 0) {
-			return g.isMDS(chosen) ? chosen : null;
+			return g.isMDS(chosen) ? new LinkedHashSet<>(chosen) : null;
 		}
 
 		// one include another
 		RepresentedSet included = null;
+		boolean found = false;
 		// RepresentedSet including = null;
 		for (RepresentedSet r : sets) {
+			if (found)
+				break;
 			for (RepresentedSet s : sets) {
 				if (r.getSet().containsAll(s.getSet()) && r != s) {
 					included = s;
-					// including = r;
+					found = true;
+					break;
 				}
 				if (s.getSet().containsAll(r.getSet()) && s != r) {
 					included = r;
-					// including = s;
+					found = true;
+					break;
 				}
 			}
 		}
 		if (included != null) {
 			sets.remove(included);
 			LinkedHashSet<Long> result = msc(sets, chosen, g);
+			sets.add(included);
 			return result;
 		}
 
@@ -73,9 +79,9 @@ public class AlgorithmMSCFNaive implements AbstractMSCAlgorithm {
 			}
 			if (counter == 1L) {
 				ArrayList<RepresentedSet> newSets = getDel(theRightSet, sets);
-				LinkedHashSet<Long> chosen2 = new LinkedHashSet<>(chosen);
-				chosen2.add(theRightSet.getRepresentant());
-				LinkedHashSet<Long> result = msc(newSets, chosen2, g);
+				chosen.add(theRightSet.getRepresentant());
+				LinkedHashSet<Long> result = msc(newSets, chosen, g);
+				chosen.remove(theRightSet.getRepresentant());
 				return result;
 			}
 		}
@@ -89,12 +95,15 @@ public class AlgorithmMSCFNaive implements AbstractMSCAlgorithm {
 				theRightSet = s;
 			}
 		}
+		
 		sets.remove(theRightSet);
 		LinkedHashSet<Long> result1 = msc(sets, chosen, g);
 
-		LinkedHashSet<Long> chosen2 = new LinkedHashSet<>(chosen);
-		chosen2.add(theRightSet.getRepresentant());
-		LinkedHashSet<Long> result2 = msc(getDel(theRightSet, sets), chosen2, g);
+		chosen.add(theRightSet.getRepresentant());
+		LinkedHashSet<Long> result2 = msc(getDel(theRightSet, sets), chosen, g);
+		chosen.remove(theRightSet.getRepresentant());
+
+		sets.add(theRightSet);
 		if (result1 == null) {
 			return result2;
 		} else if (result2 == null) {

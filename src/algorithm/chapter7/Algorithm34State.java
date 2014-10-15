@@ -15,10 +15,8 @@ public class Algorithm34State {
 
 	public Algorithm34State(Long forV, Graph g) {
 		this.v = forV;
-		this.W = g.getNeighboursOfVertexIncluded(forV);
-		this.dist2NotSorG = (LinkedHashSet<Long>) g
-				.getNeighboursOfDistance2(forV);
-		this.dist2NotSorG.add(forV);
+		this.W = new LinkedHashSet<>(g.getN1(forV));
+		this.dist2NotSorG = new LinkedHashSet<>(g.getN2(forV));
 		this.spans = new LinkedHashMap<>();
 	}
 
@@ -32,6 +30,13 @@ public class Algorithm34State {
 	public void recieveRemoveFromW(Long v) {
 		synchronized (W) {
 			W.remove(v);
+		}
+		return;
+	}
+
+	public void recieveRemoveFromSpans(Long v) {
+		synchronized (spans) {
+			spans.remove(v);
 		}
 		return;
 	}

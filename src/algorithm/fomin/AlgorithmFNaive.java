@@ -17,7 +17,7 @@ public class AlgorithmFNaive implements AbstractMDSAlgorithm {
 		AlgorithmMSCFNaive fn = new AlgorithmMSCFNaive();
 		ArrayList<RepresentedSet> sets = new ArrayList<>();
 		for (Long v : g.getVertices()) {
-			sets.add(new RepresentedSet(v, g.getNeighboursOfVertexIncluded(v)));
+			sets.add(new RepresentedSet(v, g.getN1(v)));
 		}
 		prepTime = System.currentTimeMillis() - start;
 		LinkedHashSet<Long> result = fn.getMSCforMDS(null, sets, g);

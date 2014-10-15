@@ -9,7 +9,7 @@ import algorithm.AbstractMDSAlgorithm;
 
 public class DirectedGraph implements Graph {
 	private ArrayList<Edge> edges;
-	private ArrayList<Long> vertices;
+	private LinkedHashSet<Long> vertices;
 	private HashMap<Long, LinkedHashSet<Long>> neighboursOf;
 	private long verticesCount;
 
@@ -27,7 +27,7 @@ public class DirectedGraph implements Graph {
 			a.add(e.to);
 			neighboursOf.put(e.from, a);
 		}
-		this.vertices = new ArrayList<>(vertices);
+		this.vertices = new LinkedHashSet<>(vertices);
 		this.verticesCount = vertices.size();
 	}
 	
@@ -42,7 +42,7 @@ public class DirectedGraph implements Graph {
 	}
 
 	@Override
-	public ArrayList<Long> getVertices() {
+	public LinkedHashSet<Long> getVertices() {
 		return vertices;
 	}
 
@@ -51,24 +51,23 @@ public class DirectedGraph implements Graph {
 		return verticesCount;
 	}
 
-	@Override
 	public LinkedHashSet<Long> getNeighboursOf(Long vertex) {
 		return neighboursOf.get(vertex);
 	}
 
 	@Override
-	public LinkedHashSet<Long> getNeighboursOfVertexIncluded(Long vertex) {
+	public LinkedHashSet<Long> getN1(Long vertex) {
 		LinkedHashSet<Long> result = getNeighboursOf(vertex);
 		result.add(vertex);
 		return result;
 	}
 
 	@Override
-	public LinkedHashSet<Long> getNeighboursOfDistance2(Long vertex) {
+	public LinkedHashSet<Long> getN2(Long vertex) {
 		LinkedHashSet<Long> neig = new LinkedHashSet<>();
 		LinkedHashSet<Long> result = new LinkedHashSet<>();
-		neig.addAll(getNeighboursOfVertexIncluded(vertex));
-		result.addAll(getNeighboursOfVertexIncluded(vertex));
+		neig.addAll(getN1(vertex));
+		result.addAll(getN1(vertex));
 		for (Long v : neig) {
 			result.addAll(getNeighboursOf(v));
 		}
@@ -79,7 +78,7 @@ public class DirectedGraph implements Graph {
 	public boolean isMDS(LinkedHashSet<Long> mds) {
 		HashSet<Long> set = new HashSet<>(mds);
 		for (Long v : mds) {
-			set.addAll(getNeighboursOf(v));
+			set.addAll(getN1(v));
 		}
 		return set.containsAll(getVertices());
 	}

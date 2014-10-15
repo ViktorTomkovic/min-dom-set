@@ -27,9 +27,9 @@ public class Algorithm34Vertex3 extends Thread {
 		this.S = S;
 		this.G = G;
 		this.instances = instances;
-		this.W = new LinkedHashSet<>(g.getNeighboursOfVertexIncluded(v));
+		this.W = new LinkedHashSet<>(g.getN1(v));
 		this.spans = new LinkedHashMap<>();
-		this.dist2notSorG = new LinkedHashSet<>(g.getNeighboursOfDistance2(v));
+		this.dist2notSorG = new LinkedHashSet<>(g.getN2(v));
 		this.lock = lock;
 	}
 

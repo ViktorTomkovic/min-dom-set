@@ -21,7 +21,14 @@ public class RepresentedSet {
 
 	public RepresentedSet(Long representant, LinkedHashSet<Long> set) {
 		this.representant = representant;
-		this.set = set;
+		this.set = new LinkedHashSet<>(set);
+	}
+	
+	@Override
+	public String toString() {
+		String result = "";
+		result = "[" + representant + " " + set + "]";
+		return result;
 	}
 
 }

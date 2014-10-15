@@ -10,15 +10,15 @@ public interface Graph {
 
 	public ArrayList<Edge> getEdges();
 
-	public ArrayList<Long> getVertices();
+	public LinkedHashSet<Long> getVertices();
 
 	public Long getNumberOfVertices();
 
-	public LinkedHashSet<Long> getNeighboursOf(Long vertex);
+//	public LinkedHashSet<Long> getNeighboursOf(Long vertex);
 
-	public LinkedHashSet<Long> getNeighboursOfVertexIncluded(Long vertex);
+	public LinkedHashSet<Long> getN1(Long vertex);
 
-	public LinkedHashSet<Long> getNeighboursOfDistance2(Long vertex);
+	public LinkedHashSet<Long> getN2(Long vertex);
 
 	public LinkedHashSet<Long> getMDS(AbstractMDSAlgorithm algorithm);
 

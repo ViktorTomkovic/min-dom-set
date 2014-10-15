@@ -1,12 +1,11 @@
-package algorithm.chapter7;
+package algorithm;
 
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 
 import model.Graph;
-import algorithm.AbstractMDSAlgorithm;
 
-public class Algorithm33 implements AbstractMDSAlgorithm {
+public class GreedyAlgorithm implements AbstractMDSAlgorithm {
 	private long prepTime = -1L;
 	private long runTime = -1L;
 
@@ -21,33 +20,33 @@ public class Algorithm33 implements AbstractMDSAlgorithm {
 				mc = cc;
 			}
 		}
-		return (long) m;
+		return (long)m;
 	}
 
 	@Override
 	public LinkedHashSet<Long> mdsAlg(Graph g) {
 		long start = System.currentTimeMillis();
 		LinkedHashSet<Long> W = new LinkedHashSet<>(g.getVertices());
-		HashMap<Long, LinkedHashSet<Long>> neig = new HashMap<>();
+		LinkedHashSet<Long> G = new LinkedHashSet<>(g.getVertices());
+		HashMap<Long, LinkedHashSet<Long>> neigW = new HashMap<>();
+//		HashMap<Long, LinkedHashSet<Long>> neig2 = new HashMap<>();
 		for (Long v : W) {
-			neig.put(v, new LinkedHashSet<>(g.getN1(v)));
+			neigW.put(v, new LinkedHashSet<>(g.getN1(v)));
+	//		neig2.put(v, g.getNeighboursOfDistance2(v));
 		}
 
 		prepTime = System.currentTimeMillis() - start;
-		// Collections.sort(W);
 		LinkedHashSet<Long> S = new LinkedHashSet<>();
-		while (!W.isEmpty()) {
-			Long pick = maxByN1(W, neig);
+		while (!G.isEmpty()) {
+			Long pick = maxByN1(W, neigW);
 			// W.removeAll(g.getNeighboursOfVertexIncluded(pick));
-			W.removeAll(neig.get(pick));
-			for (Long v : neig.get(pick)) {
-				neig.get(v).remove(pick);
+			W.remove(pick);
+			LinkedHashSet<Long> greying = new LinkedHashSet<>(neigW.get(pick));
+			G.removeAll(greying);
+			for (Long v : g.getN2(pick)/*neig2.get(pick)*/) {
+				neigW.get(v).removeAll(greying);
+				// neig2.get(v).remove(pick);
 			}
-
-			/*
-			 * Long mv = w(v, g, W); for (Long v2 : W) { Long mv2 = w(v2, g, W);
-			 * if (mv2 > mv) { v = v2; mv = mv2; } }
-			 */
 			S.add(pick);
 		}
 		runTime = System.currentTimeMillis() - start;

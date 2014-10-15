@@ -143,7 +143,7 @@ public class Algorithm34Task implements Runnable {
 						if (finished)
 							return;
 					}
-					state.spans.clear();
+					//state.spans.clear();
 				}
 				try {
 					Thread.sleep(0, 10);

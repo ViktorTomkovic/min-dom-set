@@ -37,11 +37,10 @@ public class Algorithm34OneThread implements AbstractMDSAlgorithm {
 	private void joinS(Algorithm34State state,
 			ArrayList<Algorithm34State> deleteThisRound) {
 		for (Long v : state.dist2NotSorG) {
-			Algorithm34State s = allVertices.get(v);
-			allVertices.get(v).recieveRemoveFromW(state.v);
+			allVertices.get(v).W.remove(state.v);
 			if (v != state.v)
-				allVertices.get(v).recieveRemoveFromDist2(state.v);
-			s.spans.remove(state.v);
+				allVertices.get(v).dist2NotSorG.remove(state.v);
+			allVertices.get(v).spans.remove(state.v);
 		}
 		S.add(state.v);
 		deleteThisRound.add(state);
@@ -51,9 +50,9 @@ public class Algorithm34OneThread implements AbstractMDSAlgorithm {
 	private void joinG(Algorithm34State state,
 			ArrayList<Algorithm34State> deleteThisRound) {
 		for (Long v : state.dist2NotSorG) {
-			allVertices.get(v).recieveRemoveFromW(state.v);
+			allVertices.get(v).W.remove(state.v);
 			if (v != state.v)
-				allVertices.get(v).recieveRemoveFromDist2(state.v);
+				allVertices.get(v).dist2NotSorG.remove(state.v);
 			allVertices.get(v).spans.remove(state.v);
 		}
 		deleteThisRound.add(state);
@@ -63,21 +62,15 @@ public class Algorithm34OneThread implements AbstractMDSAlgorithm {
 	@Override
 	public LinkedHashSet<Long> mdsAlg(Graph g) {
 		long start = System.currentTimeMillis();
-		Long nv = g.getNumberOfVertices();
-		System.out.println(nv);
 		for (Long v : g.getVertices()) {
 			Algorithm34State state = new Algorithm34State(v, g);
 			unfinishedVertices.add(state);
 			allVertices.put(v, state);
 		}
+		ArrayList<Algorithm34State> deleteThisRound = new ArrayList<>();
 		prepTime = System.currentTimeMillis() - start;
 		while (!unfinishedVertices.isEmpty()) {
-			/*
-			 * LinkedHashSet<Algorithm34State> helper = new LinkedHashSet<>
-			 * unfinishedVertices);
-			 */
-			ArrayList<Algorithm34State> deleteThisRound = new ArrayList<>();
-
+			deleteThisRound.clear();
 			for (Algorithm34State state : unfinishedVertices) {
 				// algorithm!
 				if (hasWhiteNeighbours(state.v, state)) {
@@ -88,7 +81,8 @@ public class Algorithm34OneThread implements AbstractMDSAlgorithm {
 					if (recievedFromAll(state)) {
 						boolean isBiggest = true;
 						for (Long v : state.dist2NotSorG) {
-							if (state.spans.get(v) > state.w || ((state.spans.get(v) == state.w) && (state.v > v))) {
+							if (state.spans.get(v) > state.w
+									|| ((state.spans.get(v) == state.w) && (state.v > v))) {
 								isBiggest = false;
 							}
 						}
@@ -96,7 +90,7 @@ public class Algorithm34OneThread implements AbstractMDSAlgorithm {
 							joinS(state, deleteThisRound);
 							// System.out.println("koniec+ " + state.v);
 						}
-						state.spans.clear();
+						// state.spans.clear();
 					}
 				} else {
 					joinG(state, deleteThisRound);

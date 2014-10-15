@@ -11,6 +11,8 @@ import model.Edge;
 import model.Graph;
 import model.UndirectedGraph;
 import algorithm.AbstractMDSAlgorithm;
+import algorithm.GreedyAlgorithm;
+import algorithm.GreedyQuickAlgorithm;
 import algorithm.NaiveAlgorithm;
 import algorithm.chapter7.Algorithm33;
 import algorithm.chapter7.Algorithm34;
@@ -19,8 +21,12 @@ import algorithm.chapter7.Algorithm35;
 import algorithm.chapter7.Algorithm35OneThread;
 import algorithm.fomin.AlgorithmFNaive;
 import algorithm.fomin.AlgorithmFProper;
+import algorithm.my.MyNaive2Algorithm;
+import algorithm.my.MyNaive3Algorithm;
+import algorithm.my.MyNaiveAlgorithm;
 
 public class MDS_Run {
+	public static final String MY_ARGS = "data/rnd20k.txt ch7alg33";
 
 	/**
 	 * @param args
@@ -29,6 +35,9 @@ public class MDS_Run {
 	 *            TODO make optional arguments
 	 */
 	public static void main(String[] args) {
+		if (MY_ARGS != null && !MY_ARGS.equals("")) {
+			args = MY_ARGS.split(" ");
+		}
 		for (String s : args)
 			System.out.println(s);
 		Graph g = new UndirectedGraph();
@@ -67,7 +76,7 @@ public class MDS_Run {
 				}
 			}
 			br.close();
-			g = new UndirectedGraph(edgeList);
+			g = new UndirectedGraph(new LinkedHashSet<Long>(),edgeList);
 			System.out.println("Graph loaded - vertices: "
 					+ g.getNumberOfVertices() + ", edges: "
 					+ g.getEdges().size() + ".");
@@ -94,6 +103,16 @@ public class MDS_Run {
 			alg = new NaiveAlgorithm();
 		} else if (algorithm.compareTo("naive") == 0) {
 			alg = new NaiveAlgorithm();
+		} else if (algorithm.compareTo("mynaive") == 0) {
+			alg = new MyNaiveAlgorithm();
+		} else if (algorithm.compareTo("mynaive2") == 0) {
+			alg = new MyNaive2Algorithm();
+		} else if (algorithm.compareTo("mynaive3") == 0) {
+			alg = new MyNaive3Algorithm();
+		} else if (algorithm.compareTo("greedy") == 0) {
+			alg = new GreedyAlgorithm();
+		} else if (algorithm.compareTo("greedyq") == 0) {
+			alg = new GreedyQuickAlgorithm();
 		} else if (algorithm.compareTo("ch7alg33") == 0) {
 			alg = new Algorithm33();
 		} else if (algorithm.compareTo("ch7alg34") == 0) {
@@ -110,7 +129,10 @@ public class MDS_Run {
 			alg = new AlgorithmFProper();
 		}
 		mds = g.getMDS(alg);
-		System.out.println(mds.size() + " " + mds);
+		System.out.println("Graph ...... - vertices: "
+				+ g.getNumberOfVertices() + ", edges: "
+				+ g.getEdges().size() + ".");
+		System.out.println(mds.size() + " " + Utils.LargeCollectionToString(mds));
 		System.out.println("The set is " + (g.isMDS(mds) ? "" : "not ")
 				+ "a dominating set.");
 		System.out.println("Time elapsed: "

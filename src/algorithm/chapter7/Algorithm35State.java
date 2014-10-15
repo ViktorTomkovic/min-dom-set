@@ -18,11 +18,9 @@ public class Algorithm35State {
 
 	public Algorithm35State(Long forV, Graph g) {
 		this.v = forV;
-		this.W = g.getNeighboursOfVertexIncluded(forV);
-		this.N = g.getNeighboursOfVertexIncluded(forV);
-		this.dist2NotSorG = (LinkedHashSet<Long>) g
-				.getNeighboursOfDistance2(forV);
-		this.dist2NotSorG.add(forV);
+		this.W = new LinkedHashSet<>(g.getN1(forV));
+		this.N = new LinkedHashSet<>(g.getN1(forV));
+		this.dist2NotSorG = new LinkedHashSet<>(g.getN2(forV));
 		this.spans = new LinkedHashMap<>();
 	}
 

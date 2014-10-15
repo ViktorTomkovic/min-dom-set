@@ -42,11 +42,10 @@ public class Algorithm35OneThread implements AbstractMDSAlgorithm {
 	private void joinS(Algorithm35State state,
 			ArrayList<Algorithm35State> deleteThisRound) {
 		for (Long v : state.dist2NotSorG) {
-			Algorithm35State s = allVertices.get(v);
-			allVertices.get(v).recieveRemoveFromW(state.v);
+			allVertices.get(v).W.remove(state.v);
 			if (v != state.v)
-				allVertices.get(v).recieveRemoveFromDist2(state.v);
-			s.spans.remove(state.v);
+				allVertices.get(v).dist2NotSorG.remove(state.v);
+			allVertices.get(v).spans.remove(state.v);
 		}
 		S.add(state.v);
 		deleteThisRound.add(state);
@@ -56,9 +55,9 @@ public class Algorithm35OneThread implements AbstractMDSAlgorithm {
 	private void joinG(Algorithm35State state,
 			ArrayList<Algorithm35State> deleteThisRound) {
 		for (Long v : state.dist2NotSorG) {
-			allVertices.get(v).recieveRemoveFromW(state.v);
+			allVertices.get(v).W.remove(state.v);
 			if (v != state.v)
-				allVertices.get(v).recieveRemoveFromDist2(state.v);
+				allVertices.get(v).dist2NotSorG.remove(state.v);
 			allVertices.get(v).spans.remove(state.v);
 		}
 		deleteThisRound.add(state);
@@ -81,6 +80,7 @@ public class Algorithm35OneThread implements AbstractMDSAlgorithm {
 		for (Long v : state.W) {
 			sum = sum + allVertices.get(v).c;
 		}
+		sum -= state.c;
 		boolean c;
 		c = (sum <= 3 * state.w);
 		return b && c;
@@ -104,14 +104,10 @@ public class Algorithm35OneThread implements AbstractMDSAlgorithm {
 			unfinishedVertices.add(state);
 			allVertices.put(v, state);
 		}
+		ArrayList<Algorithm35State> deleteThisRound = new ArrayList<>();
 		prepTime = System.currentTimeMillis() - start;
 		while (!unfinishedVertices.isEmpty()) {
-			/*
-			 * LinkedHashSet<Algorithm35State> helper = new LinkedHashSet<>
-			 * unfinishedVertices);
-			 */
-			ArrayList<Algorithm35State> deleteThisRound = new ArrayList<>();
-
+			deleteThisRound.clear();
 			for (Algorithm35State state : unfinishedVertices) {
 				// algorithm!
 				if (hasWhiteNeighbours(state.v, state)) {

@@ -11,7 +11,7 @@ public class NaiveAlgorithm implements AbstractMDSAlgorithm {
 	@Override
 	public LinkedHashSet<Long> mdsAlg(Graph g) {
 		long start = System.currentTimeMillis();
-		LinkedHashSet<Long> result = gms(g.getVertices(), new LinkedHashSet<Long>(), g);
+		LinkedHashSet<Long> result = gms(new ArrayList<>(g.getVertices()), new LinkedHashSet<Long>(), g);
 		runTime = System.currentTimeMillis() - start;
 		return result;
 	}
@@ -22,7 +22,7 @@ public class NaiveAlgorithm implements AbstractMDSAlgorithm {
 			// we have made our choice - let's compute it
 			LinkedHashSet<Long> neighbours = new LinkedHashSet<>();
 			for (Long vertex : chosenVertices) {
-				neighbours.addAll(g.getNeighboursOfVertexIncluded(vertex));
+				neighbours.addAll(g.getN1(vertex));
 			}
 			/*
 			 * for (Long l : chosenVertices) { System.out.print(l);

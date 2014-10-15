@@ -9,8 +9,9 @@ import algorithm.AbstractMDSAlgorithm;
 
 public class UndirectedGraph implements Graph {
 	public ArrayList<Edge> edges;
-	public ArrayList<Long> vertices;
-	public HashMap<Long, LinkedHashSet<Long>> neighboursOf;
+	public LinkedHashSet<Long> vertices;
+	public HashMap<Long, LinkedHashSet<Long>> neig;
+	public HashMap<Long, LinkedHashSet<Long>> neig2;
 	public long verticesCount;
 
 	public UndirectedGraph() {
@@ -18,26 +19,39 @@ public class UndirectedGraph implements Graph {
 		this.verticesCount = 0;
 	}
 
-	public UndirectedGraph(ArrayList<Edge> edges) {
+	public UndirectedGraph(LinkedHashSet<Long> vertices, ArrayList<Edge> edges) {
 		this.edges = edges;
-		this.neighboursOf = new HashMap<Long, LinkedHashSet<Long>>();
-		HashSet<Long> vertices = new HashSet<>();
+		this.neig = new HashMap<Long, LinkedHashSet<Long>>();
+		this.neig2 = new HashMap<Long, LinkedHashSet<Long>>();
 		for (Edge e : getEdges()) {
 			vertices.add(e.from);
 			vertices.add(e.to);
 			LinkedHashSet<Long> a;
-			a = neighboursOf.get(e.from);
+
+			a = neig.get(e.from);
 			if (a == null)
 				a = new LinkedHashSet<Long>();
 			a.add(e.to);
-			neighboursOf.put(e.from, a);
-			a = neighboursOf.get(e.to);
+			neig.put(e.from, a);
+
+			a = neig.get(e.to);
 			if (a == null)
 				a = new LinkedHashSet<Long>();
 			a.add(e.from);
-			neighboursOf.put(e.to, a);
+			neig.put(e.to, a);
 		}
-		this.vertices = new ArrayList<>(vertices);
+		
+		for (Long v : neig.keySet()) {
+			LinkedHashSet<Long> n1 = neig.get(v);
+			LinkedHashSet<Long> n2 = new LinkedHashSet<>(n1);
+			for (Long v2 : n1) {
+				n2.addAll(neig.get(v2));
+			}
+			n1.add(v);
+			neig2.put(v, n2);
+		}
+		
+		this.vertices = new LinkedHashSet<>(vertices);
 		this.verticesCount = vertices.size();
 	}
 
@@ -61,39 +75,31 @@ public class UndirectedGraph implements Graph {
 		return verticesCount;
 	}
 
+//	@Override
+//	public LinkedHashSet<Long> getNeighboursOf(Long vertex) {
+//		return neig.get(vertex);
+//	}
+
 	@Override
-	public LinkedHashSet<Long> getNeighboursOf(Long vertex) {
-		return neighboursOf.get(vertex);
+	public LinkedHashSet<Long> getN1(Long vertex) {
+		return neig.get(vertex);
 	}
 
 	@Override
-	public LinkedHashSet<Long> getNeighboursOfVertexIncluded(Long vertex) {
-		LinkedHashSet<Long> result = getNeighboursOf(vertex);
-		result.add(vertex);
-		return result;
-	}
-
-	@Override
-	public ArrayList<Long> getVertices() {
+	public LinkedHashSet<Long> getVertices() {
 		return vertices;
 	}
 
 	@Override
-	public LinkedHashSet<Long> getNeighboursOfDistance2(Long vertex) {
-		LinkedHashSet<Long> neig = new LinkedHashSet<>();
-		LinkedHashSet<Long> result = new LinkedHashSet<>();
-		neig.addAll(getNeighboursOfVertexIncluded(vertex));
-		for (Long v : neig) {
-			result.addAll(getNeighboursOf(v));
-		}
-		return result;
+	public LinkedHashSet<Long> getN2(Long vertex) {
+		return neig2.get(vertex);
 	}
 
 	@Override
 	public boolean isMDS(LinkedHashSet<Long> mds) {
-		HashSet<Long> set = new HashSet<>(mds);
+		HashSet<Long> set = new HashSet<>();
 		for (Long v : mds) {
-			set.addAll(getNeighboursOf(v));
+			set.addAll(getN1(v));
 		}
 		return set.containsAll(getVertices());
 	}

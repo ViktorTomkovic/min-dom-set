@@ -1,6 +1,7 @@
 package main;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -12,13 +13,13 @@ import model.Edge;
 import algorithm.RepresentedSet;
 
 public class Utils {
-	public static LinkedHashSet<Edge> fordFulkerson (DirectedGraph graph) {
+	public static LinkedHashSet<Edge> fordFulkerson(DirectedGraph graph) {
 		LinkedHashSet<Edge> result = new LinkedHashSet<>();
-		
+
 		LinkedHashSet<Edge> edges = new LinkedHashSet<>(graph.getEdges());
 
 		HashMap<Long, Long> match = new HashMap<>();
-		
+
 		LinkedHashSet<Long> whiteSet = new LinkedHashSet<>();
 		LinkedHashSet<Long> blackSet = new LinkedHashSet<>();
 		for (Edge e : edges) {
@@ -26,7 +27,7 @@ public class Utils {
 			blackSet.add(e.to);
 			match.put(e.to, -1L);
 		}
-		
+
 		for (Long v : whiteSet) {
 			HashSet<Long> visitedBlack = new HashSet<>();
 			aug(edges, v, visitedBlack, match, blackSet);
@@ -49,7 +50,9 @@ public class Utils {
 			}
 			if (contains && !visitedBlack.contains(black)) {
 				visitedBlack.add(black);
-				if (match.get(black) == -1L || aug(edges, match.get(black), visitedBlack, match, blackSet)) {
+				if (match.get(black) == -1L
+						|| aug(edges, match.get(black), visitedBlack, match,
+								blackSet)) {
 					match.put(black, white);
 					return true;
 				}
@@ -139,5 +142,28 @@ public class Utils {
 			 */
 		}
 		return new DirectedGraph(edges);
+	}
+
+	public static <T> String LargeCollectionToString(Collection<T> collection) {
+		String result = "";
+		int magicConstant = 100;
+		if (collection.size() < magicConstant) {
+			result = collection.toString();
+		} else {
+			result = result.concat("[");
+			int a = 0;
+			for (T value : collection) {
+				a++;
+				if (a < magicConstant
+						|| a > collection.size() - magicConstant / 3) {
+					result = result.concat(value.toString()).concat(", ");
+				} else if (a == magicConstant) {
+					result = result.concat("    .    .    .    ");
+				}
+			}
+			result = result.substring(0, result.length()-2);
+			result = result.concat("]");
+		}
+		return result;
 	}
 }

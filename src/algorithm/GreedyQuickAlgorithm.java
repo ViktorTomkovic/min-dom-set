@@ -1,29 +1,29 @@
-package algorithm.fomin;
+package algorithm;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 
 import model.Graph;
-import algorithm.AbstractMDSAlgorithm;
-import algorithm.RepresentedSet;
 
-public class AlgorithmFProper implements AbstractMDSAlgorithm {
+public class GreedyQuickAlgorithm implements AbstractMDSAlgorithm {
 	private long prepTime = -1L;
 	private long runTime = -1L;
 
 	@Override
 	public LinkedHashSet<Long> mdsAlg(Graph g) {
 		long start = System.currentTimeMillis();
-		AlgorithmMSCFProper fn = new AlgorithmMSCFProper();
-		ArrayList<RepresentedSet> sets = new ArrayList<>();
-		for (Long v : g.getVertices()) {
-			sets.add(new RepresentedSet(v, g.getN1(v)));
-		}
+		ArrayList<Long> W = new ArrayList<>(g.getVertices());
 		prepTime = System.currentTimeMillis() - start;
-		LinkedHashSet<Long> result = new LinkedHashSet<>(fn.getMSCforMDS(null,
-				sets, g));
+		Collections.sort(W, new  LessByN1AComparator(g));
+		LinkedHashSet<Long> S = new LinkedHashSet<>();
+		while (!W.isEmpty()) {
+			Long pick = W.get(W.size()-1);
+			W.removeAll(g.getN1(pick));
+			S.add(pick);
+		}
 		runTime = System.currentTimeMillis() - start;
-		return result;
+		return S;
 	}
 
 	@Override
@@ -35,5 +35,4 @@ public class AlgorithmFProper implements AbstractMDSAlgorithm {
 	public long getLastRunTime() {
 		return runTime;
 	}
-
 }

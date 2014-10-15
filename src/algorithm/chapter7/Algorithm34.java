@@ -30,9 +30,12 @@ public class Algorithm34 implements AbstractMDSAlgorithm {
 			allVertices.put(v, state);
 		}
 		times.addLast(System.currentTimeMillis() - start);
-		Long nt = Math.min(nv, 1000);
-		System.out.println(nv);
-
+		// Long nt = Math.min(nv, 1000);
+		Long nt = Math
+				.min(nv, Runtime.getRuntime().availableProcessors() * 256);
+		// Long nt = nv;
+		// System.out.println(nt);
+		
 		// variant 1
 		ArrayList<Thread> pool = new ArrayList<>();
 		for (int i = 0; i < nt; i++) {
@@ -40,6 +43,7 @@ public class Algorithm34 implements AbstractMDSAlgorithm {
 			pool.add(t);
 		}
 		times.addLast(System.currentTimeMillis() - start);
+		prepTime = System.currentTimeMillis() - start;
 		for (Thread t : pool) {
 			t.start();
 		}
@@ -50,7 +54,6 @@ public class Algorithm34 implements AbstractMDSAlgorithm {
 		 * waitForStart.notifyAll(); }
 		 */
 		times.addLast(System.currentTimeMillis() - start);
-		prepTime = System.currentTimeMillis() - start;
 		for (Thread t : pool) {
 			try {
 				t.join();
@@ -71,7 +74,7 @@ public class Algorithm34 implements AbstractMDSAlgorithm {
 		 * (InterruptedException e) { e.printStackTrace(); } }
 		 * times.addLast(System.currentTimeMillis() - start);
 		 */
-		//System.out.println("Time elapsed: " + times);
+		// System.out.println("Time elapsed: " + times);
 		runTime = System.currentTimeMillis() - start;
 		return S;
 	}

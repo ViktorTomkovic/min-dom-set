@@ -24,13 +24,14 @@ public class Algorithm34Vertex2 implements Runnable {
 	}
 
 	synchronized boolean hasWhiteNeighbours(Long v, Graph g, Set<Long> W) {
-		Set<Long> A = g.getNeighboursOf(v);
+		Set<Long> A = g.getN1(v);
 		A.retainAll(W);
+		A.remove(v);
 		return A.size() > 0;
 	}
 
 	synchronized Long computeSpan(Long v, Graph g, Set<Long> W) {
-		Set<Long> A = g.getNeighboursOfVertexIncluded(v);
+		Set<Long> A = g.getN1(v);
 		A.retainAll(W);
 		return (long) A.size();
 	}
@@ -41,7 +42,7 @@ public class Algorithm34Vertex2 implements Runnable {
 
 	synchronized void joinS(Long v, Graph g, Set<Long> S, Set<Long> W) {
 		System.out.print(v + " " + W + " ");
-		W.removeAll(g.getNeighboursOfVertexIncluded(v));
+		W.removeAll(g.getN1(v));
 		System.out.println(W);
 		S.add(v);
 		return;
@@ -64,7 +65,7 @@ public class Algorithm34Vertex2 implements Runnable {
 
 				boolean isBiggest = true;
 				synchronized (lock) {
-					Set<Long> dist2 = g.getNeighboursOfDistance2(v);
+					Set<Long> dist2 = g.getN2(v);
 					dist2.retainAll(W);
 					for (Long v2 : dist2) {
 						if ((spans.get(v2) > w)
