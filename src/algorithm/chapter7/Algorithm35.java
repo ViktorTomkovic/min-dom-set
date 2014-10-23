@@ -1,5 +1,7 @@
 package algorithm.chapter7;
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadMXBean;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -21,7 +23,8 @@ public class Algorithm35 implements AbstractMDSAlgorithm {
 
 	@Override
 	public LinkedHashSet<Long> mdsAlg(Graph g) {
-		long start = System.currentTimeMillis();
+		ThreadMXBean bean = ManagementFactory.getThreadMXBean();
+		long start = bean.getCurrentThreadCpuTime();
 		LinkedList<Long> times = new LinkedList<>();
 		int bla = (int) Math.ceil(g.getNumberOfVertices() * 1.5);
 		allVertices = new LinkedHashMap<>(bla);
@@ -31,7 +34,7 @@ public class Algorithm35 implements AbstractMDSAlgorithm {
 			unfinishedVertices.add(state);
 			allVertices.put(v, state);
 		}
-		times.addLast(System.currentTimeMillis() - start);
+		times.addLast(bean.getCurrentThreadCpuTime() - start);
 		Long nt = Math.min(nv, 1000);
 		System.out.println(nv);
 
@@ -41,12 +44,12 @@ public class Algorithm35 implements AbstractMDSAlgorithm {
 			Thread t = new Thread(new Algorithm35Task(this));
 			pool.add(t);
 		}
-		times.addLast(System.currentTimeMillis() - start);
-		prepTime = System.currentTimeMillis() - start;
+		times.addLast(bean.getCurrentThreadCpuTime() - start);
+		prepTime = bean.getCurrentThreadCpuTime() - start;
 		for (Thread t : pool) {
 			t.start();
 		}
-		times.addLast(System.currentTimeMillis() - start);
+		times.addLast(bean.getCurrentThreadCpuTime() - start);
 		for (Thread t : pool) {
 			try {
 				t.join();
@@ -54,21 +57,21 @@ public class Algorithm35 implements AbstractMDSAlgorithm {
 				e.printStackTrace();
 			}
 		}
-		times.addLast(System.currentTimeMillis() - start);
+		times.addLast(bean.getCurrentThreadCpuTime() - start);
 
 		/*
 		 * // variant 2 Thread[] pool = new Thread[nv.intValue()]; for (int i =
 		 * 0; i < nt; i++) { Thread t = new Thread(new Algorithm34Task(this));
-		 * pool[i] = t; } times.addLast(System.currentTimeMillis() - start); for
+		 * pool[i] = t; } times.addLast(bean.getCurrentThreadCpuTime() - start); for
 		 * (int i = 0; i < nt; i++) { pool[i].start(); }
-		 * times.addLast(System.currentTimeMillis() - start);
+		 * times.addLast(bean.getCurrentThreadCpuTime() - start);
 		 * 
 		 * for (int i = 0; i < nt; i++) { try { pool[i].join(); } catch
 		 * (InterruptedException e) { e.printStackTrace(); } }
-		 * times.addLast(System.currentTimeMillis() - start);
+		 * times.addLast(bean.getCurrentThreadCpuTime() - start);
 		 */
 		// System.out.println("Time elapsed: " + times);
-		runTime = System.currentTimeMillis() - start;
+		runTime = bean.getCurrentThreadCpuTime() - start;
 		return S;
 	}
 

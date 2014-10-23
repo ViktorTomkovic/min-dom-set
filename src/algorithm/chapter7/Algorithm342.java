@@ -1,5 +1,7 @@
 package algorithm.chapter7;
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadMXBean;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 
@@ -16,13 +18,14 @@ public class Algorithm342 implements AbstractMDSAlgorithm {
 
 	@Override
 	public LinkedHashSet<Long> mdsAlg(Graph g) {
-		long start = System.currentTimeMillis();
+		ThreadMXBean bean = ManagementFactory.getThreadMXBean();
+		long start = bean.getCurrentThreadCpuTime();
 		for (Long v : g.getVertices()) {
 			Algorithm34Vertex instance = new Algorithm34Vertex(g, v, S, G,
 					instances, lock);
 			instances.put(v, instance);
 		}
-		prepTime = System.currentTimeMillis() - start;
+		prepTime = bean.getCurrentThreadCpuTime() - start;
 		for (Algorithm34Vertex a : instances.values()) {
 			a.start();
 		}
@@ -34,7 +37,7 @@ public class Algorithm342 implements AbstractMDSAlgorithm {
 				e.printStackTrace();
 			}
 		}
-		runTime = System.currentTimeMillis() - start;
+		runTime = bean.getCurrentThreadCpuTime() - start;
 		return S;
 	}
 

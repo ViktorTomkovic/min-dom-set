@@ -1,5 +1,7 @@
 package algorithm.fomin;
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadMXBean;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 
@@ -13,16 +15,17 @@ public class AlgorithmFProper implements AbstractMDSAlgorithm {
 
 	@Override
 	public LinkedHashSet<Long> mdsAlg(Graph g) {
-		long start = System.currentTimeMillis();
+		ThreadMXBean bean = ManagementFactory.getThreadMXBean();
+		long start = bean.getCurrentThreadCpuTime();
 		AlgorithmMSCFProper fn = new AlgorithmMSCFProper();
 		ArrayList<RepresentedSet> sets = new ArrayList<>();
 		for (Long v : g.getVertices()) {
 			sets.add(new RepresentedSet(v, g.getN1(v)));
 		}
-		prepTime = System.currentTimeMillis() - start;
+		prepTime = bean.getCurrentThreadCpuTime() - start;
 		LinkedHashSet<Long> result = new LinkedHashSet<>(fn.getMSCforMDS(null,
 				sets, g));
-		runTime = System.currentTimeMillis() - start;
+		runTime = bean.getCurrentThreadCpuTime() - start;
 		return result;
 	}
 

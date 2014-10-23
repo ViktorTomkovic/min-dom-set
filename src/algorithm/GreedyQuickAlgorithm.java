@@ -1,5 +1,7 @@
 package algorithm;
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadMXBean;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -12,9 +14,10 @@ public class GreedyQuickAlgorithm implements AbstractMDSAlgorithm {
 
 	@Override
 	public LinkedHashSet<Long> mdsAlg(Graph g) {
-		long start = System.currentTimeMillis();
+		ThreadMXBean bean = ManagementFactory.getThreadMXBean();
+		long start = bean.getCurrentThreadCpuTime();
 		ArrayList<Long> W = new ArrayList<>(g.getVertices());
-		prepTime = System.currentTimeMillis() - start;
+		prepTime = bean.getCurrentThreadCpuTime() - start;
 		Collections.sort(W, new  LessByN1AComparator(g));
 		LinkedHashSet<Long> S = new LinkedHashSet<>();
 		while (!W.isEmpty()) {
@@ -22,7 +25,7 @@ public class GreedyQuickAlgorithm implements AbstractMDSAlgorithm {
 			W.removeAll(g.getN1(pick));
 			S.add(pick);
 		}
-		runTime = System.currentTimeMillis() - start;
+		runTime = bean.getCurrentThreadCpuTime() - start;
 		return S;
 	}
 

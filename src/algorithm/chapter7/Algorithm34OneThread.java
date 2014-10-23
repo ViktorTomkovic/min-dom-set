@@ -1,5 +1,7 @@
 package algorithm.chapter7;
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadMXBean;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -61,14 +63,15 @@ public class Algorithm34OneThread implements AbstractMDSAlgorithm {
 
 	@Override
 	public LinkedHashSet<Long> mdsAlg(Graph g) {
-		long start = System.currentTimeMillis();
+		ThreadMXBean bean = ManagementFactory.getThreadMXBean();
+		long start = bean.getCurrentThreadCpuTime();
 		for (Long v : g.getVertices()) {
 			Algorithm34State state = new Algorithm34State(v, g);
 			unfinishedVertices.add(state);
 			allVertices.put(v, state);
 		}
 		ArrayList<Algorithm34State> deleteThisRound = new ArrayList<>();
-		prepTime = System.currentTimeMillis() - start;
+		prepTime = bean.getCurrentThreadCpuTime() - start;
 		while (!unfinishedVertices.isEmpty()) {
 			deleteThisRound.clear();
 			for (Algorithm34State state : unfinishedVertices) {
@@ -100,7 +103,7 @@ public class Algorithm34OneThread implements AbstractMDSAlgorithm {
 
 			unfinishedVertices.removeAll(deleteThisRound);
 		}
-		runTime = System.currentTimeMillis() - start;
+		runTime = bean.getCurrentThreadCpuTime() - start;
 		return S;
 	}
 

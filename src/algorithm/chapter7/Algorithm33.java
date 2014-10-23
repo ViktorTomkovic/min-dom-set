@@ -1,5 +1,7 @@
 package algorithm.chapter7;
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadMXBean;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 
@@ -26,7 +28,8 @@ public class Algorithm33 implements AbstractMDSAlgorithm {
 
 	@Override
 	public LinkedHashSet<Long> mdsAlg(Graph g) {
-		long start = System.currentTimeMillis();
+		ThreadMXBean bean = ManagementFactory.getThreadMXBean();
+		long start = bean.getCurrentThreadCpuTime();
 		LinkedHashSet<Long> W = new LinkedHashSet<>(g.getVertices());
 		HashMap<Long, LinkedHashSet<Long>> neig = new HashMap<>();
 		for (Long v : W) {

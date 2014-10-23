@@ -1,5 +1,7 @@
 package algorithm;
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadMXBean;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 
@@ -20,22 +22,23 @@ public class GreedyAlgorithm implements AbstractMDSAlgorithm {
 				mc = cc;
 			}
 		}
-		return (long)m;
+		return (long) m;
 	}
 
 	@Override
 	public LinkedHashSet<Long> mdsAlg(Graph g) {
-		long start = System.currentTimeMillis();
+		ThreadMXBean bean = ManagementFactory.getThreadMXBean();
+		long start = bean.getCurrentThreadCpuTime();
 		LinkedHashSet<Long> W = new LinkedHashSet<>(g.getVertices());
 		LinkedHashSet<Long> G = new LinkedHashSet<>(g.getVertices());
 		HashMap<Long, LinkedHashSet<Long>> neigW = new HashMap<>();
-//		HashMap<Long, LinkedHashSet<Long>> neig2 = new HashMap<>();
+		// HashMap<Long, LinkedHashSet<Long>> neig2 = new HashMap<>();
 		for (Long v : W) {
 			neigW.put(v, new LinkedHashSet<>(g.getN1(v)));
-	//		neig2.put(v, g.getNeighboursOfDistance2(v));
+			// neig2.put(v, g.getNeighboursOfDistance2(v));
 		}
 
-		prepTime = System.currentTimeMillis() - start;
+		prepTime = bean.getCurrentThreadCpuTime() - start;
 		LinkedHashSet<Long> S = new LinkedHashSet<>();
 		while (!G.isEmpty()) {
 			Long pick = maxByN1(W, neigW);
@@ -43,13 +46,13 @@ public class GreedyAlgorithm implements AbstractMDSAlgorithm {
 			W.remove(pick);
 			LinkedHashSet<Long> greying = new LinkedHashSet<>(neigW.get(pick));
 			G.removeAll(greying);
-			for (Long v : g.getN2(pick)/*neig2.get(pick)*/) {
+			for (Long v : g.getN2(pick)/* neig2.get(pick) */) {
 				neigW.get(v).removeAll(greying);
 				// neig2.get(v).remove(pick);
 			}
 			S.add(pick);
 		}
-		runTime = System.currentTimeMillis() - start;
+		runTime = bean.getCurrentThreadCpuTime() - start;
 		return S;
 	}
 

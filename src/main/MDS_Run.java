@@ -3,6 +3,8 @@ package main;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadMXBean;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.StringTokenizer;
@@ -26,7 +28,8 @@ import algorithm.my.MyNaive3Algorithm;
 import algorithm.my.MyNaiveAlgorithm;
 
 public class MDS_Run {
-	public static final String MY_ARGS = "data/rnd20k.txt ch7alg33";
+	public static final String MY_ARGS = "data/rnd20k.txt greedyQ";
+	public static final Integer NANOS_IN_MILI = 1000000;
 
 	/**
 	 * @param args
@@ -76,7 +79,7 @@ public class MDS_Run {
 				}
 			}
 			br.close();
-			g = new UndirectedGraph(new LinkedHashSet<Long>(),edgeList);
+			g = new UndirectedGraph(new LinkedHashSet<Long>(), edgeList);
 			System.out.println("Graph loaded - vertices: "
 					+ g.getNumberOfVertices() + ", edges: "
 					+ g.getEdges().size() + ".");
@@ -96,7 +99,9 @@ public class MDS_Run {
 		}
 		LinkedHashSet<Long> mds = new LinkedHashSet<>();
 		AbstractMDSAlgorithm alg = new NaiveAlgorithm();
-		long start = System.currentTimeMillis();
+		ThreadMXBean bean = ManagementFactory.getThreadMXBean();
+		long start2 = System.nanoTime();
+		long start = bean.getCurrentThreadCpuTime();
 		if (algorithm.compareTo("") == 0) {
 			System.out
 					.println("You should specify algorithm you want to use. Naive algorithm is used.");
@@ -129,16 +134,26 @@ public class MDS_Run {
 			alg = new AlgorithmFProper();
 		}
 		mds = g.getMDS(alg);
+		long elapsed = (bean.getCurrentThreadCpuTime() - start) / NANOS_IN_MILI;
+		long elapsed2 = (System.nanoTime() - start2) / NANOS_IN_MILI;
 		System.out.println("Graph ...... - vertices: "
-				+ g.getNumberOfVertices() + ", edges: "
-				+ g.getEdges().size() + ".");
-		System.out.println(mds.size() + " " + Utils.LargeCollectionToString(mds));
+				+ g.getNumberOfVertices() + ", edges: " + g.getEdges().size()
+				+ ".");
+		System.out.println(mds.size() + " "
+				+ Utils.LargeCollectionToString(mds));
 		System.out.println("The set is " + (g.isMDS(mds) ? "" : "not ")
 				+ "a dominating set.");
-		System.out.println("Time elapsed: "
-				+ (System.currentTimeMillis() - start) + "ms. \t\t\t\t\t("
-				+ alg.getLastPrepTime() + "ms + "
-				+ (alg.getLastRunTime() - alg.getLastPrepTime()) + "ms)");
+		StringBuilder sb = new StringBuilder();
+		sb.append("Time elapsed: ");
+		sb.append(elapsed);
+		sb.append("ms. \t(");
+		sb.append(alg.getLastPrepTime() / NANOS_IN_MILI);
+		sb.append("ms + ");
+		sb.append((alg.getLastRunTime() - alg.getLastPrepTime())
+				/ NANOS_IN_MILI);
+		sb.append("ms)\t\t\t");
+		sb.append("Wall time: ");
+		sb.append(elapsed2);
+		System.out.println(sb.toString());
 	}
-
 }

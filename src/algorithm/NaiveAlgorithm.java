@@ -1,5 +1,7 @@
 package algorithm;
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadMXBean;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 
@@ -10,9 +12,10 @@ public class NaiveAlgorithm implements AbstractMDSAlgorithm {
 
 	@Override
 	public LinkedHashSet<Long> mdsAlg(Graph g) {
-		long start = System.currentTimeMillis();
+		ThreadMXBean bean = ManagementFactory.getThreadMXBean();
+		long start = bean.getCurrentThreadCpuTime();
 		LinkedHashSet<Long> result = gms(new ArrayList<>(g.getVertices()), new LinkedHashSet<Long>(), g);
-		runTime = System.currentTimeMillis() - start;
+		runTime = bean.getCurrentThreadCpuTime() - start;
 		return result;
 	}
 
