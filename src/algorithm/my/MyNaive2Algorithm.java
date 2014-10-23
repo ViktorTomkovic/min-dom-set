@@ -108,9 +108,9 @@ public class MyNaive2Algorithm implements AbstractMDSAlgorithm {
 	public LinkedHashSet<Long> mdsAlg(Graph g) {
 		long start = System.currentTimeMillis();
 		ArrayList<Long> vertices = new ArrayList<Long>(g.getVertices());
-		System.out.println(Utils.LargeCollectionToString(vertices));
+		System.out.println(Utils.largeCollectionToString(vertices));
 		Collections.sort(vertices, new algorithm.GreaterByN1BComparator(g));
-		System.out.println(Utils.LargeCollectionToString(vertices));
+		System.out.println(Utils.largeCollectionToString(vertices));
 
 		long height = Math.round(Math.log(maxCores) / Math.log(2));
 		LinkedList<Long> ver2 = new LinkedList<>();
@@ -119,7 +119,7 @@ public class MyNaive2Algorithm implements AbstractMDSAlgorithm {
 			vertices.remove(vertices.size() - 1);
 		}
 		ArrayList<Long> ver3 = new ArrayList<>(ver2);
-		System.out.println(Utils.LargeCollectionToString(ver3));
+		System.out.println(Utils.largeCollectionToString(ver3));
 
 		fillPool(pool, ver3, new LinkedHashSet<Long>(), g, vertices);
 

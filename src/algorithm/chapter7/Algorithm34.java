@@ -16,8 +16,8 @@ public class Algorithm34 implements AbstractMDSAlgorithm {
 	private LinkedHashMap<Long, Algorithm34State> allVertices = new LinkedHashMap<>();
 	private LinkedList<Algorithm34State> unfinishedVertices = new LinkedList<>();
 	private LinkedHashSet<Long> S = new LinkedHashSet<>();
-	public Object joinLock = new Object();
-	public Object waitForStart = new Object();
+	public final Object joinLock = new Object();
+	// public final Object waitForStart = new Object();
 
 	@Override
 	public LinkedHashSet<Long> mdsAlg(Graph g) {
@@ -35,7 +35,7 @@ public class Algorithm34 implements AbstractMDSAlgorithm {
 		times.addLast(bean.getCurrentThreadCpuTime() - start);
 		// Long nt = Math.min(nv, 1000);
 		Long nt = Math
-				.min(nv, Runtime.getRuntime().availableProcessors() * 256);
+				.min(nv, Runtime.getRuntime().availableProcessors() * 256L);
 		// Long nt = nv;
 		// System.out.println(nt);
 		

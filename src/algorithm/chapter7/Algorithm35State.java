@@ -9,11 +9,15 @@ public class Algorithm35State {
 	public final Long v;
 	public LinkedHashSet<Long> W;
 	public LinkedHashSet<Long> N;
+	public final Object wLock = new Object();
 	public Long w = 0L;
+	public final Object cLock = new Object();
 	public Long c = 0L;
 	public LinkedHashSet<Long> dist2NotSorG;
 	public LinkedHashMap<Long, Long> spans;
+	public final Object canJoinLock = new Object();
 	public Long canJoin = 0L;
+	public Object isCandidateLock = new Object();
 	public Boolean isCandidate = false;
 
 	public Algorithm35State(Long forV, Graph g) {
@@ -45,14 +49,14 @@ public class Algorithm35State {
 	}
 
 	public void takeABreakePlease() {
-		synchronized (canJoin) {
+		synchronized (canJoinLock) {
 			canJoin = canJoin + 1;
 		}
 		return;
 	}
 
 	public void thankYou() {
-		synchronized (canJoin) {
+		synchronized (canJoinLock) {
 			canJoin = canJoin - 1;
 		}
 		return;

@@ -1,6 +1,7 @@
 package algorithm.fomin;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 
@@ -31,7 +32,7 @@ public class AlgorithmMSCFProper implements AbstractMSCAlgorithm {
 				twoSetVertices.add(b);
 			}
 			if (set.length == 0) {
-				System.out.println("ERROR " + set);
+				System.out.println("ERROR " + Arrays.toString(set));
 			}
 		}
 		LinkedHashSet<Long> result = new LinkedHashSet<>();

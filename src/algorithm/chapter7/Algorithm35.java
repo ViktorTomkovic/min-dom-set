@@ -16,7 +16,7 @@ public class Algorithm35 implements AbstractMDSAlgorithm {
 	private LinkedHashMap<Long, Algorithm35State> allVertices = new LinkedHashMap<>();
 	private LinkedList<Algorithm35State> unfinishedVertices = new LinkedList<>();
 	private LinkedHashSet<Long> S = new LinkedHashSet<>();
-	public Object joinLock = new Object();
+	public final Object joinLock = new Object();
 
 	public Algorithm35() {
 	}

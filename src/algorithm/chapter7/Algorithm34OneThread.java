@@ -15,20 +15,20 @@ public class Algorithm34OneThread implements AbstractMDSAlgorithm {
 	private LinkedHashMap<Long, Algorithm34State> allVertices = new LinkedHashMap<>();
 	private LinkedHashSet<Algorithm34State> unfinishedVertices = new LinkedHashSet<>();
 	private LinkedHashSet<Long> S = new LinkedHashSet<>();
-	public Object joinLock = new Object();
+	// public Object joinLock = new Object();
 
 	private boolean hasWhiteNeighbours(Long v, Algorithm34State state) {
 		boolean result;
-		synchronized (state.W) {
+		// synchronized (state.W) {
 			state.W.remove(v);
 			result = !state.W.isEmpty();
 			state.W.add(v);
-		}
+		// }
 		return result;
 	}
 
 	private Long computeSpan(Algorithm34State state) {
-		Long w = new Long(state.W.size());
+		Long w = Long.valueOf(state.W.size());
 		return w;
 	}
 
@@ -40,8 +40,9 @@ public class Algorithm34OneThread implements AbstractMDSAlgorithm {
 			ArrayList<Algorithm34State> deleteThisRound) {
 		for (Long v : state.dist2NotSorG) {
 			allVertices.get(v).W.remove(state.v);
-			if (v != state.v)
+			if (!v.equals(state.v)) {
 				allVertices.get(v).dist2NotSorG.remove(state.v);
+			}
 			allVertices.get(v).spans.remove(state.v);
 		}
 		S.add(state.v);
@@ -53,8 +54,9 @@ public class Algorithm34OneThread implements AbstractMDSAlgorithm {
 			ArrayList<Algorithm34State> deleteThisRound) {
 		for (Long v : state.dist2NotSorG) {
 			allVertices.get(v).W.remove(state.v);
-			if (v != state.v)
+			if (!v.equals(state.v)) {
 				allVertices.get(v).dist2NotSorG.remove(state.v);
+			}
 			allVertices.get(v).spans.remove(state.v);
 		}
 		deleteThisRound.add(state);
@@ -75,32 +77,34 @@ public class Algorithm34OneThread implements AbstractMDSAlgorithm {
 		while (!unfinishedVertices.isEmpty()) {
 			deleteThisRound.clear();
 			for (Algorithm34State state : unfinishedVertices) {
+				state.w = computeSpan(state);
+				for (Long v2 : state.dist2NotSorG) {
+					allVertices.get(v2).recieveSpan(state.v, state.w);
+				}
+			}
+			for (Algorithm34State state : unfinishedVertices) {
 				// algorithm!
-				if (hasWhiteNeighbours(state.v, state)) {
-					state.w = computeSpan(state);
-					for (Long v2 : state.dist2NotSorG) {
-						allVertices.get(v2).recieveSpan(state.v, state.w);
-					}
+				if (hasWhiteNeighbours(state.v, state)) {					
 					if (recievedFromAll(state)) {
 						boolean isBiggest = true;
 						for (Long v : state.dist2NotSorG) {
-							if (state.spans.get(v) > state.w
-									|| ((state.spans.get(v) == state.w) && (state.v > v))) {
+							Long getV = state.spans.get(v);
+							if (getV > state.w
+									|| ((!getV.equals(state.w)) && (state.v > v))) {
 								isBiggest = false;
 							}
 						}
 						if (isBiggest) {
 							joinS(state, deleteThisRound);
-							// System.out.println("koniec+ " + state.v);
+							 System.out.println("koniec+ " + state.v);
 						}
 						// state.spans.clear();
 					}
 				} else {
 					joinG(state, deleteThisRound);
-					// System.out.println("koniec- " + state.v);
+					 System.out.println("koniec- " + state.v);
 				}
 			}
-
 			unfinishedVertices.removeAll(deleteThisRound);
 		}
 		runTime = bean.getCurrentThreadCpuTime() - start;

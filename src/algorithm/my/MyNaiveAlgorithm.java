@@ -83,9 +83,9 @@ public class MyNaiveAlgorithm implements AbstractMDSAlgorithm {
 	public LinkedHashSet<Long> mdsAlg(Graph g) {
 		long start = System.currentTimeMillis();
 		ArrayList<Long> input = new ArrayList<Long>(g.getVertices());
-		System.out.println(Utils.LargeCollectionToString(input));
+		System.out.println(Utils.largeCollectionToString(input));
 		Collections.sort(input, new algorithm.GreaterByN1BComparator(g));
-		System.out.println(Utils.LargeCollectionToString(input));
+		System.out.println(Utils.largeCollectionToString(input));
 		MyNaiveRunner r = new MyNaiveRunner(this, input,
 				new LinkedHashSet<Long>(), g);
 		currentCores++;

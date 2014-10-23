@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
+import java.util.Map.Entry;
 import java.util.TreeSet;
 
 import model.DirectedGraph;
@@ -32,8 +33,8 @@ public class Utils {
 			HashSet<Long> visitedBlack = new HashSet<>();
 			aug(edges, v, visitedBlack, match, blackSet);
 		}
-		for (Long to : match.keySet()) {
-			result.add(new Edge(match.get(to), to));
+		for (Entry<Long, Long> entry : match.entrySet()) {
+			result.add(new Edge(entry.getValue(), entry.getKey()));
 		}
 		return result;
 	}
@@ -44,7 +45,7 @@ public class Utils {
 		for (Long black : blackSet) {
 			boolean contains = false;
 			for (Edge e : edges) {
-				if ((e.from == white) && (e.to == black)) {
+				if ((e.from.equals(white)) && (e.to.equals(black))) {
 					contains = true;
 				}
 			}
@@ -94,7 +95,7 @@ public class Utils {
 							Object[] ab2 = rs.getSet().toArray();
 							Long a2 = (Long) ab2[0];
 							Long b2 = (Long) ab2[1];
-							if (a2 == l) {
+							if (a2.equals(l)) {
 								unfinishedBlack.add(b2);
 								edges.add(new Edge(a2, b2));
 								coloredWhite.add(a2);
@@ -119,7 +120,7 @@ public class Utils {
 							Object[] ab2 = rs.getSet().toArray();
 							Long a2 = (Long) ab2[0];
 							Long b2 = (Long) ab2[1];
-							if (a2 == l) {
+							if (a2.equals(l)) {
 								unfinishedWhite.add(b2);
 								edges.add(new Edge(b2, a2));
 								coloredWhite.add(b2);
@@ -144,7 +145,7 @@ public class Utils {
 		return new DirectedGraph(edges);
 	}
 
-	public static <T> String LargeCollectionToString(Collection<T> collection) {
+	public static <T> String largeCollectionToString(Collection<T> collection) {
 		String result = "";
 		int magicConstant = 100;
 		if (collection.size() < magicConstant) {

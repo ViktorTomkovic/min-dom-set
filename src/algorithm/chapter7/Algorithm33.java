@@ -36,7 +36,7 @@ public class Algorithm33 implements AbstractMDSAlgorithm {
 			neig.put(v, new LinkedHashSet<>(g.getN1(v)));
 		}
 
-		prepTime = System.currentTimeMillis() - start;
+		prepTime = bean.getCurrentThreadCpuTime() - start;
 		// Collections.sort(W);
 		LinkedHashSet<Long> S = new LinkedHashSet<>();
 		while (!W.isEmpty()) {
@@ -53,7 +53,7 @@ public class Algorithm33 implements AbstractMDSAlgorithm {
 			 */
 			S.add(pick);
 		}
-		runTime = System.currentTimeMillis() - start;
+		runTime = bean.getCurrentThreadCpuTime() - start;
 		return S;
 	}
 

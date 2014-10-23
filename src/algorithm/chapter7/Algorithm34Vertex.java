@@ -17,9 +17,11 @@ public class Algorithm34Vertex extends Thread {
 	private Object waitingForSpans = new Object();
 	private Map<Long, Long> spans;
 	private LinkedHashMap<Long, Algorithm34Vertex> instances;
+	private final Object canJoinLock = new Object();
 	private Long canJoin = 0L; // mutex - how many unfinished joins are in
 								// neighbourhood
 	private LinkedHashSet<Long> dist2notSorG;
+	private final Object wLock = new Object();
 	private Long w;
 
 	public Algorithm34Vertex(Graph g, Long v, Set<Long> S, Set<Long> G,
@@ -46,9 +48,9 @@ public class Algorithm34Vertex extends Thread {
 	}
 
 	private Long computeSpan(Long v) {
-		Long result = 0L;
+		Long result;
 		synchronized (W) {
-			result = (long) W.size();
+			result = Long.valueOf(W.size());
 		}
 		return result;
 	}
@@ -70,7 +72,7 @@ public class Algorithm34Vertex extends Thread {
 			// System.out.println("W remove recieved from " + from + " at " +
 			// v);
 		}
-		synchronized (w) {
+		synchronized (wLock) {
 			w = computeSpan(this.v);
 		}
 	}
@@ -99,7 +101,7 @@ public class Algorithm34Vertex extends Thread {
 				Algorithm34Vertex alg = instances.get(v2);
 				alg.recieveRemoveFromW(v);
 				// alg.recieveSpan(v, 0L);
-				if (v2 != v) {
+				if (!v2.equals(v)) {
 					alg.recieveJoinS(v);
 				}
 			}
@@ -124,7 +126,7 @@ public class Algorithm34Vertex extends Thread {
 			Algorithm34Vertex alg = instances.get(v2);
 			alg.recieveRemoveFromW(v);
 			// alg.recieveSpan(v, 0L);
-			if (v2 != v) {
+			if (!v2.equals(v)) {
 				alg.recieveJoinG(v);
 			}
 		}
@@ -133,14 +135,14 @@ public class Algorithm34Vertex extends Thread {
 
 	public void thankYou() {
 		// System.out.print(v + " resumed. ");
-		synchronized (this.canJoin) {
+		synchronized (this.canJoinLock) {
 			this.canJoin = this.canJoin + 1;
 		}
 	}
 
 	public void takeABreakPlease() {
 		// System.out.print(v + " is taking a break. ");
-		synchronized (this.canJoin) {
+		synchronized (this.canJoinLock) {
 			this.canJoin = this.canJoin - 1;
 		}
 	}
@@ -186,8 +188,9 @@ public class Algorithm34Vertex extends Thread {
 				boolean isBiggest = true;
 				synchronized (dist2notSorG) {
 					for (Long v2 : dist2notSorG) {
-						if ((spans.get(v2) > w)
-								|| ((spans.get(v2) == w) && (v2 < v))) {
+						Long getV2 = spans.get(v2);
+						if ((getV2 > w)
+								|| ((getV2.equals(w)) && (v2 < v))) {
 							isBiggest = false;
 						}
 					}
@@ -209,7 +212,7 @@ public class Algorithm34Vertex extends Thread {
 
 	private boolean finalTest(boolean isBiggest) {
 		boolean b = isBiggest && hasWhiteNeighbours(v);
-		synchronized (canJoin) {
+		synchronized (canJoinLock) {
 			b = b && (canJoin == 0);
 		}
 		return b;

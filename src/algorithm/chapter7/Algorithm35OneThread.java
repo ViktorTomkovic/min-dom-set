@@ -15,7 +15,7 @@ public class Algorithm35OneThread implements AbstractMDSAlgorithm {
 	private LinkedHashMap<Long, Algorithm35State> allVertices = new LinkedHashMap<>();
 	private LinkedHashSet<Algorithm35State> unfinishedVertices = new LinkedHashSet<>();
 	private LinkedHashSet<Long> S = new LinkedHashSet<>();
-	public Object joinLock = new Object();
+	// public Object joinLock = new Object();
 
 	private boolean hasWhiteNeighbours(Long v, Algorithm35State state) {
 		boolean result;
@@ -45,8 +45,9 @@ public class Algorithm35OneThread implements AbstractMDSAlgorithm {
 			ArrayList<Algorithm35State> deleteThisRound) {
 		for (Long v : state.dist2NotSorG) {
 			allVertices.get(v).W.remove(state.v);
-			if (v != state.v)
+			if (!v.equals(state.v)) {
 				allVertices.get(v).dist2NotSorG.remove(state.v);
+			}
 			allVertices.get(v).spans.remove(state.v);
 		}
 		S.add(state.v);
@@ -58,8 +59,9 @@ public class Algorithm35OneThread implements AbstractMDSAlgorithm {
 			ArrayList<Algorithm35State> deleteThisRound) {
 		for (Long v : state.dist2NotSorG) {
 			allVertices.get(v).W.remove(state.v);
-			if (v != state.v)
+			if (!v.equals(state.v)) {
 				allVertices.get(v).dist2NotSorG.remove(state.v);
+			}
 			allVertices.get(v).spans.remove(state.v);
 		}
 		deleteThisRound.add(state);

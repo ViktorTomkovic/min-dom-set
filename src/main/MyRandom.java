@@ -17,19 +17,19 @@ public class MyRandom {
 		return G.nextInt(2);
 	}
 
-	public static int Int(int n) {
+	public static int nextInt(int n) {
 		return G.nextInt(n);
 	}
 
-	public static int Int(int min, int max) {
+	public static int nextInt(int min, int max) {
 		return G.nextInt(max - min + 1) + min;
 	}
 
-	public static double Double() {
+	public static double nextDouble() {
 		return G.nextDouble();
 	}
 
-	public static long Long() {
+	public static long nextLong() {
 		return G.nextLong();
 	}
 }

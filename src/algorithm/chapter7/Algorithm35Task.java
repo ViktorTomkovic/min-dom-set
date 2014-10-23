@@ -68,7 +68,7 @@ public class Algorithm35Task implements Runnable {
 				for (Long v : state.dist2NotSorG) {
 					Algorithm35State s = states.get(v);
 					s.recieveRemoveFromW(state.v);
-					if (state.v != v) {
+					if (!state.v.equals(v)) {
 						s.recieveRemoveFromDist2(state.v);
 					}
 				}
@@ -91,7 +91,7 @@ public class Algorithm35Task implements Runnable {
 				for (Long v : state.dist2NotSorG) {
 					Algorithm35State s = alg.getAllVertices().get(v);
 					s.recieveRemoveFromW(state.v);
-					if (state.v != v) {
+					if (!state.v.equals(v)) {
 						s.recieveRemoveFromDist2(state.v);
 					}
 				}
@@ -119,7 +119,7 @@ public class Algorithm35Task implements Runnable {
 
 					long maxOtherSpan = maxFromOthers();
 					if (maxOtherSpan <= state.w) {
-						synchronized (state.isCandidate) {
+						synchronized (state.isCandidateLock) {
 							state.isCandidate = true;
 						}
 					}
@@ -158,13 +158,13 @@ public class Algorithm35Task implements Runnable {
 		synchronized (state.W) {
 			for (Long v : state.W) {
 				Algorithm35State s = vertices.get(v);
-				synchronized (s.c) {
+				synchronized (s.cLock) {
 					sum = sum + s.c;
 				}
 			}
 		}
 		boolean c;
-		synchronized (state.w) {
+		synchronized (state.wLock) {
 			c = sum <= 3 * state.w;
 		}
 		return b && c;
@@ -175,7 +175,7 @@ public class Algorithm35Task implements Runnable {
 		synchronized (state.N) {
 			for (Long v : state.N) {
 				Algorithm35State s = vertices.get(v);
-				synchronized (s.isCandidate) {
+				synchronized (s.isCandidateLock) {
 					if (s.isCandidate)
 						c++;
 				}

@@ -43,9 +43,9 @@ public class Algorithm34Vertex3 extends Thread {
 	}
 
 	private Long computeSpan(Long v) {
-		Long result = 0L;
+		Long result;
 		synchronized (W) {
-			result = (long) W.size();
+			result = Long.valueOf(W.size());
 		}
 		return result;
 	}
@@ -154,8 +154,8 @@ public class Algorithm34Vertex3 extends Thread {
 				w = computeSpan(v);
 				boolean isBiggest = true;
 				for (Long v2 : dist2notSorG) {
-					if ((spans.get(v2) > w)
-							|| ((spans.get(v2) == w) && (v2 < v))) {
+					Long getV2 = spans.get(v2);
+					if ((getV2 > w) || ((getV2.equals(w)) && (v2 < v))) {
 						isBiggest = false;
 					}
 				}

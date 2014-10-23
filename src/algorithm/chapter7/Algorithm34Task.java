@@ -39,9 +39,9 @@ public class Algorithm34Task implements Runnable {
 	}
 
 	public Long computeSpan(Long v) {
-		Long result = 0L;
+		Long result;
 		synchronized (state.W) {
-			result = (long) state.W.size();
+			result = Long.valueOf(state.W.size());
 		}
 		return result;
 	}
@@ -58,7 +58,7 @@ public class Algorithm34Task implements Runnable {
 
 	private boolean finalTest(boolean isBiggest) {
 		boolean b = isBiggest && hasWhiteNeighbours(state.v);
-		synchronized (state.canJoin) {
+		synchronized (state.canJoinLock) {
 			b = b && (state.canJoin == 0);
 		}
 		return b;
@@ -74,7 +74,7 @@ public class Algorithm34Task implements Runnable {
 				for (Long v : state.dist2NotSorG) {
 					Algorithm34State s = states.get(v);
 					s.recieveRemoveFromW(state.v);
-					if (state.v != v) {
+					if (!v.equals(state.v)) {
 						s.recieveRemoveFromDist2(state.v);
 					}
 				}
@@ -97,7 +97,7 @@ public class Algorithm34Task implements Runnable {
 				for (Long v : state.dist2NotSorG) {
 					Algorithm34State s = alg.getAllVertices().get(v);
 					s.recieveRemoveFromW(state.v);
-					if (state.v != v) {
+					if (!v.equals(state.v)) {
 						s.recieveRemoveFromDist2(state.v);
 					}
 				}
@@ -130,8 +130,9 @@ public class Algorithm34Task implements Runnable {
 					boolean isBiggest = true;
 					synchronized (state.dist2NotSorG) {
 						for (Long v2 : state.dist2NotSorG) {
-							if ((state.spans.get(v2) > state.w)
-									|| ((state.spans.get(v2) == state.w) && (v2 < state.v))) {
+							Long getV2 = state.spans.get(v2);
+							if ((getV2 > state.w)
+									|| ((getV2.equals(state.w)) && (v2 < state.v))) {
 								isBiggest = false;
 							}
 						}

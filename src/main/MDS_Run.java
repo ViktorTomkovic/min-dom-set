@@ -28,14 +28,12 @@ import algorithm.my.MyNaive3Algorithm;
 import algorithm.my.MyNaiveAlgorithm;
 
 public class MDS_Run {
-	public static final String MY_ARGS = "data/rnd20k.txt greedyQ";
+	public static final String MY_ARGS = "data/ba10.txt ch7alg34OT";
 	public static final Integer NANOS_IN_MILI = 1000000;
 
 	/**
 	 * @param args
 	 *            filename of processed graph
-	 * 
-	 *            TODO make optional arguments
 	 */
 	public static void main(String[] args) {
 		if (MY_ARGS != null && !MY_ARGS.equals("")) {
@@ -53,7 +51,7 @@ public class MDS_Run {
 		try {
 			ArrayList<Edge> edgeList = new ArrayList<>();
 			BufferedReader br = new BufferedReader(new FileReader(filename));
-			String line = new String();
+			String line;
 			while ((line = br.readLine()) != null) {
 				StringTokenizer st = new StringTokenizer(line);
 				Long a = -1L;
@@ -97,7 +95,7 @@ public class MDS_Run {
 		} else {
 			algorithm = args[1];
 		}
-		LinkedHashSet<Long> mds = new LinkedHashSet<>();
+		LinkedHashSet<Long> mds; // = new LinkedHashSet<>();
 		AbstractMDSAlgorithm alg = new NaiveAlgorithm();
 		ThreadMXBean bean = ManagementFactory.getThreadMXBean();
 		long start2 = System.nanoTime();
@@ -140,7 +138,7 @@ public class MDS_Run {
 				+ g.getNumberOfVertices() + ", edges: " + g.getEdges().size()
 				+ ".");
 		System.out.println(mds.size() + " "
-				+ Utils.LargeCollectionToString(mds));
+				+ Utils.largeCollectionToString(mds));
 		System.out.println("The set is " + (g.isMDS(mds) ? "" : "not ")
 				+ "a dominating set.");
 		StringBuilder sb = new StringBuilder();
@@ -154,6 +152,7 @@ public class MDS_Run {
 		sb.append("ms)\t\t\t");
 		sb.append("Wall time: ");
 		sb.append(elapsed2);
+		sb.append("ms.");
 		System.out.println(sb.toString());
 	}
 }

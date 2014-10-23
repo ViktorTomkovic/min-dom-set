@@ -11,6 +11,7 @@ public class Algorithm34State {
 	public Long w = 0L;
 	public LinkedHashSet<Long> dist2NotSorG;
 	public LinkedHashMap<Long, Long> spans;
+	public final Object canJoinLock = new Object();
 	public Long canJoin = 0L;
 
 	public Algorithm34State(Long forV, Graph g) {
@@ -48,14 +49,14 @@ public class Algorithm34State {
 	}
 
 	public void takeABreakePlease() {
-		synchronized (canJoin) {
+		synchronized (canJoinLock) {
 			canJoin = canJoin + 1;
 		}
 		return;
 	}
 
 	public void thankYou() {
-		synchronized (canJoin) {
+		synchronized (canJoinLock) {
 			canJoin = canJoin - 1;
 		}
 		return;

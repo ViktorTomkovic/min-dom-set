@@ -14,7 +14,7 @@ public interface Graph {
 
 	public Long getNumberOfVertices();
 
-//	public LinkedHashSet<Long> getNeighboursOf(Long vertex);
+	// public LinkedHashSet<Long> getNeighboursOf(Long vertex);
 
 	public LinkedHashSet<Long> getN1(Long vertex);
 

@@ -68,8 +68,9 @@ public class Algorithm34Vertex2 implements Runnable {
 					Set<Long> dist2 = g.getN2(v);
 					dist2.retainAll(W);
 					for (Long v2 : dist2) {
-						if ((spans.get(v2) > w)
-								|| (spans.get(v2) == w && v2 < v)) {
+						Long getV2 = spans.get(v2);
+						if ((getV2 > w)
+								|| (getV2.equals(w) && v2 < v)) {
 							isBiggest = false;
 						}
 					}
