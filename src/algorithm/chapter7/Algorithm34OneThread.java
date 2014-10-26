@@ -15,14 +15,15 @@ public class Algorithm34OneThread implements AbstractMDSAlgorithm {
 	private LinkedHashMap<Long, Algorithm34State> allVertices = new LinkedHashMap<>();
 	private LinkedHashSet<Algorithm34State> unfinishedVertices = new LinkedHashSet<>();
 	private LinkedHashSet<Long> S = new LinkedHashSet<>();
+
 	// public Object joinLock = new Object();
 
 	private boolean hasWhiteNeighbours(Long v, Algorithm34State state) {
 		boolean result;
 		// synchronized (state.W) {
-			state.W.remove(v);
-			result = !state.W.isEmpty();
-			state.W.add(v);
+		state.W.remove(v);
+		result = !state.W.isEmpty();
+		state.W.add(v);
 		// }
 		return result;
 	}
@@ -84,25 +85,25 @@ public class Algorithm34OneThread implements AbstractMDSAlgorithm {
 			}
 			for (Algorithm34State state : unfinishedVertices) {
 				// algorithm!
-				if (hasWhiteNeighbours(state.v, state)) {					
+				if (hasWhiteNeighbours(state.v, state)) {
 					if (recievedFromAll(state)) {
 						boolean isBiggest = true;
 						for (Long v : state.dist2NotSorG) {
 							Long getV = state.spans.get(v);
 							if (getV > state.w
-									|| ((!getV.equals(state.w)) && (state.v > v))) {
+									|| (getV.equals(state.w) && (state.v > v))) {
 								isBiggest = false;
 							}
 						}
 						if (isBiggest) {
 							joinS(state, deleteThisRound);
-							 System.out.println("koniec+ " + state.v);
+							// System.out.println("koniec+ " + state.v);
 						}
 						// state.spans.clear();
 					}
 				} else {
 					joinG(state, deleteThisRound);
-					 System.out.println("koniec- " + state.v);
+					// System.out.println("koniec- " + state.v);
 				}
 			}
 			unfinishedVertices.removeAll(deleteThisRound);

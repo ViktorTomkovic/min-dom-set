@@ -132,7 +132,7 @@ public class Algorithm34Task implements Runnable {
 						for (Long v2 : state.dist2NotSorG) {
 							Long getV2 = state.spans.get(v2);
 							if ((getV2 > state.w)
-									|| ((getV2.equals(state.w)) && (v2 < state.v))) {
+									|| (getV2.equals(state.w) && (v2 < state.v))) {
 								isBiggest = false;
 							}
 						}

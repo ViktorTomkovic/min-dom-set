@@ -28,7 +28,7 @@ import algorithm.my.MyNaive3Algorithm;
 import algorithm.my.MyNaiveAlgorithm;
 
 public class MDS_Run {
-	public static final String MY_ARGS = "data/ba10.txt ch7alg34OT";
+	public static final String MY_ARGS = "data/ba1000.txt ch7alg34OT";
 	public static final Integer NANOS_IN_MILI = 1000000;
 
 	/**
