@@ -7,13 +7,13 @@ import model.Graph;
 
 public class MyNaive3Runner implements Runnable {
 	private MyNaive3Algorithm alg;
-	private ArrayList<Long> unchosenVertices;
-	private LinkedHashSet<Long> chosenVertices;
+	private ArrayList<Integer> unchosenVertices;
+	private LinkedHashSet<Integer> chosenVertices;
 	private Graph g;
 
 	public MyNaive3Runner(MyNaive3Algorithm alg,
-			ArrayList<Long> unchosenVertices,
-			LinkedHashSet<Long> chosenVertices, Graph g) {
+			ArrayList<Integer> unchosenVertices,
+			LinkedHashSet<Integer> chosenVertices, Graph g) {
 		this.alg = alg;
 		this.unchosenVertices = new ArrayList<>(unchosenVertices);
 		this.chosenVertices = new LinkedHashSet<>(chosenVertices);
@@ -28,8 +28,8 @@ public class MyNaive3Runner implements Runnable {
 		System.out.print(alg.getCurrentCores() + " ");
 	}
 
-	private void gms(ArrayList<Long> unchosenVertices,
-			LinkedHashSet<Long> chosenVertices, Graph g) {
+	private void gms(ArrayList<Integer> unchosenVertices,
+			LinkedHashSet<Integer> chosenVertices, Graph g) {
 		// System.out.println("u  "+Utils.LargeCollectionToString(unchosenVertices));
 		// System.out.println("ch "+Utils.LargeCollectionToString(chosenVertices));
 
@@ -41,16 +41,16 @@ public class MyNaive3Runner implements Runnable {
 				alg.tryToSetResult(chosenVertices);
 			}
 		} else {
-			Long v = unchosenVertices.get(unchosenVertices.size() - 1);
-			ArrayList<Long> unch1 = new ArrayList<>(unchosenVertices);
-			ArrayList<Long> unch2 = new ArrayList<>(unchosenVertices);
+			Integer v = unchosenVertices.get(unchosenVertices.size() - 1);
+			ArrayList<Integer> unch1 = new ArrayList<>(unchosenVertices);
+			ArrayList<Integer> unch2 = new ArrayList<>(unchosenVertices);
 			unch1.remove(unch1.size() - 1);
 			unch2.remove(unch2.size() - 1);
 			// System.out.println("unch1 "+Utils.LargeCollectionToString(unch1));
 			// System.out.println("unch2 "+Utils.LargeCollectionToString(unch2));
 
-			LinkedHashSet<Long> ch1 = new LinkedHashSet<>(chosenVertices);
-			LinkedHashSet<Long> ch2 = new LinkedHashSet<>(chosenVertices);
+			LinkedHashSet<Integer> ch1 = new LinkedHashSet<>(chosenVertices);
+			LinkedHashSet<Integer> ch2 = new LinkedHashSet<>(chosenVertices);
 			ch2.add(v);
 			// System.out.println("ch1 "+Utils.LargeCollectionToString(ch1));
 			// System.out.println("ch2 "+Utils.LargeCollectionToString(ch2));

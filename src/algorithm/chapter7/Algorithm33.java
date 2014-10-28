@@ -12,43 +12,43 @@ public class Algorithm33 implements AbstractMDSAlgorithm {
 	private long prepTime = -1L;
 	private long runTime = -1L;
 
-	Long maxByN1(LinkedHashSet<Long> white,
-			HashMap<Long, LinkedHashSet<Long>> neig) {
+	Integer maxByN1(LinkedHashSet<Integer> white,
+			HashMap<Integer, LinkedHashSet<Integer>> neig) {
 		int m = 0;
 		int mc = 0;
-		for (Long c : white) {
+		for (Integer c : white) {
 			int cc = neig.get(c).size();
 			if (cc > mc) {
 				m = c.intValue();
 				mc = cc;
 			}
 		}
-		return (long) m;
+		return m;
 	}
 
 	@Override
-	public LinkedHashSet<Long> mdsAlg(Graph g) {
+	public LinkedHashSet<Integer> mdsAlg(Graph g) {
 		ThreadMXBean bean = ManagementFactory.getThreadMXBean();
 		long start = bean.getCurrentThreadCpuTime();
-		LinkedHashSet<Long> W = new LinkedHashSet<>(g.getVertices());
-		HashMap<Long, LinkedHashSet<Long>> neig = new HashMap<>();
-		for (Long v : W) {
+		LinkedHashSet<Integer> W = new LinkedHashSet<>(g.getVertices());
+		HashMap<Integer, LinkedHashSet<Integer>> neig = new HashMap<>();
+		for (Integer v : W) {
 			neig.put(v, new LinkedHashSet<>(g.getN1(v)));
 		}
 
 		prepTime = bean.getCurrentThreadCpuTime() - start;
 		// Collections.sort(W);
-		LinkedHashSet<Long> S = new LinkedHashSet<>();
+		LinkedHashSet<Integer> S = new LinkedHashSet<>();
 		while (!W.isEmpty()) {
-			Long pick = maxByN1(W, neig);
+			Integer pick = maxByN1(W, neig);
 			// W.removeAll(g.getNeighboursOfVertexIncluded(pick));
 			W.removeAll(neig.get(pick));
-			for (Long v : neig.get(pick)) {
+			for (Integer v : neig.get(pick)) {
 				neig.get(v).remove(pick);
 			}
 
 			/*
-			 * Long mv = w(v, g, W); for (Long v2 : W) { Long mv2 = w(v2, g, W);
+			 * Integer mv = w(v, g, W); for (Integer v2 : W) { Integer mv2 = w(v2, g, W);
 			 * if (mv2 > mv) { v = v2; mv = mv2; } }
 			 */
 			S.add(pick);

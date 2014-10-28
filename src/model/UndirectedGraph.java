@@ -9,42 +9,42 @@ import algorithm.AbstractMDSAlgorithm;
 
 public class UndirectedGraph implements Graph {
 	public ArrayList<Edge> edges;
-	public LinkedHashSet<Long> vertices;
-	public HashMap<Long, LinkedHashSet<Long>> neig;
-	public HashMap<Long, LinkedHashSet<Long>> neig2;
-	public long verticesCount;
+	public LinkedHashSet<Integer> vertices;
+	public HashMap<Integer, LinkedHashSet<Integer>> neig;
+	public HashMap<Integer, LinkedHashSet<Integer>> neig2;
+	public int verticesCount;
 
 	public UndirectedGraph() {
 		this.edges = new ArrayList<>();
 		this.verticesCount = 0;
 	}
 
-	public UndirectedGraph(LinkedHashSet<Long> vertices, ArrayList<Edge> edges) {
+	public UndirectedGraph(LinkedHashSet<Integer> vertices, ArrayList<Edge> edges) {
 		this.edges = edges;
-		this.neig = new HashMap<Long, LinkedHashSet<Long>>();
-		this.neig2 = new HashMap<Long, LinkedHashSet<Long>>();
+		this.neig = new HashMap<Integer, LinkedHashSet<Integer>>();
+		this.neig2 = new HashMap<Integer, LinkedHashSet<Integer>>();
 		for (Edge e : getEdges()) {
 			vertices.add(e.from);
 			vertices.add(e.to);
-			LinkedHashSet<Long> a;
+			LinkedHashSet<Integer> a;
 
 			a = neig.get(e.from);
 			if (a == null)
-				a = new LinkedHashSet<Long>();
+				a = new LinkedHashSet<Integer>();
 			a.add(e.to);
 			neig.put(e.from, a);
 
 			a = neig.get(e.to);
 			if (a == null)
-				a = new LinkedHashSet<Long>();
+				a = new LinkedHashSet<Integer>();
 			a.add(e.from);
 			neig.put(e.to, a);
 		}
 		
-		for (Long v : neig.keySet()) {
-			LinkedHashSet<Long> n1 = neig.get(v);
-			LinkedHashSet<Long> n2 = new LinkedHashSet<>(n1);
-			for (Long v2 : n1) {
+		for (Integer v : neig.keySet()) {
+			LinkedHashSet<Integer> n1 = neig.get(v);
+			LinkedHashSet<Integer> n2 = new LinkedHashSet<>(n1);
+			for (Integer v2 : n1) {
 				n2.addAll(neig.get(v2));
 			}
 			n1.add(v);
@@ -66,39 +66,39 @@ public class UndirectedGraph implements Graph {
 	}
 
 	@Override
-	public LinkedHashSet<Long> getMDS(AbstractMDSAlgorithm algorithm) {
+	public LinkedHashSet<Integer> getMDS(AbstractMDSAlgorithm algorithm) {
 		return algorithm.mdsAlg(this);
 	}
 
 	@Override
-	public Long getNumberOfVertices() {
+	public Integer getNumberOfVertices() {
 		return verticesCount;
 	}
 
 //	@Override
-//	public LinkedHashSet<Long> getNeighboursOf(Long vertex) {
+//	public LinkedHashSet<Integer> getNeighboursOf(Integer vertex) {
 //		return neig.get(vertex);
 //	}
 
 	@Override
-	public LinkedHashSet<Long> getN1(Long vertex) {
+	public LinkedHashSet<Integer> getN1(Integer vertex) {
 		return neig.get(vertex);
 	}
 
 	@Override
-	public LinkedHashSet<Long> getVertices() {
+	public LinkedHashSet<Integer> getVertices() {
 		return vertices;
 	}
 
 	@Override
-	public LinkedHashSet<Long> getN2(Long vertex) {
+	public LinkedHashSet<Integer> getN2(Integer vertex) {
 		return neig2.get(vertex);
 	}
 
 	@Override
-	public boolean isMDS(LinkedHashSet<Long> mds) {
-		HashSet<Long> set = new HashSet<>();
-		for (Long v : mds) {
+	public boolean isMDS(LinkedHashSet<Integer> mds) {
+		HashSet<Integer> set = new HashSet<>();
+		for (Integer v : mds) {
 			set.addAll(getN1(v));
 		}
 		return set.containsAll(getVertices());

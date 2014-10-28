@@ -14,19 +14,19 @@ import algorithm.RepresentedSet;
 
 public class AlgorithmMSCFProper implements AbstractMSCAlgorithm {
 
-	private LinkedHashSet<Long> polyMSC(ArrayList<RepresentedSet> sets) {
+	private LinkedHashSet<Integer> polyMSC(ArrayList<RepresentedSet> sets) {
 		DirectedGraph graph = Utils.getDirectedGraphFromRepresentedSets(sets);
 		LinkedHashSet<Edge> pickedEdges = Utils.fordFulkerson(graph);
-		HashSet<Long> pickedVertices = new HashSet<>();
+		HashSet<Integer> pickedVertices = new HashSet<>();
 		for (Edge e : pickedEdges) {
 			pickedVertices.add(e.from);
 			pickedVertices.add(e.to);
 		}
-		HashSet<Long> twoSetVertices = new HashSet<>();
+		HashSet<Integer> twoSetVertices = new HashSet<>();
 		for (RepresentedSet rs : sets) {
 			Object[] set = rs.getSet().toArray();
-			Long a = (Long) set[0];
-			Long b = (Long) set[1];
+			Integer a = (Integer) set[0];
+			Integer b = (Integer) set[1];
 			if (set.length == 2) {
 				twoSetVertices.add(a);
 				twoSetVertices.add(b);
@@ -35,11 +35,11 @@ public class AlgorithmMSCFProper implements AbstractMSCAlgorithm {
 				System.out.println("ERROR " + Arrays.toString(set));
 			}
 		}
-		LinkedHashSet<Long> result = new LinkedHashSet<>();
+		LinkedHashSet<Integer> result = new LinkedHashSet<>();
 		for (RepresentedSet rs : sets) {
-			LinkedHashSet<Long> set = rs.getSet();
+			LinkedHashSet<Integer> set = rs.getSet();
 			if (set.size() == 1) {
-				Long v = (Long) set.toArray()[0];
+				Integer v = (Integer) set.toArray()[0];
 				if (!twoSetVertices.contains(v)) {
 					result.add(rs.getRepresentant());
 				}
@@ -47,7 +47,7 @@ public class AlgorithmMSCFProper implements AbstractMSCAlgorithm {
 		}
 		for (Edge e : pickedEdges) {
 			for (RepresentedSet rs : sets) {
-				LinkedHashSet<Long> set = rs.getSet();
+				LinkedHashSet<Integer> set = rs.getSet();
 				if (set.contains(e.from) && set.contains(e.to)) {
 					result.add(rs.getRepresentant());
 				}
@@ -57,8 +57,8 @@ public class AlgorithmMSCFProper implements AbstractMSCAlgorithm {
 		return result;
 	}
 
-	private ArrayList<Long> getUniversum(ArrayList<RepresentedSet> sets) {
-		HashSet<Long> result = new HashSet<>();
+	private ArrayList<Integer> getUniversum(ArrayList<RepresentedSet> sets) {
+		HashSet<Integer> result = new HashSet<>();
 		for (RepresentedSet s : sets) {
 			result.addAll(s.getSet());
 		}
@@ -69,7 +69,7 @@ public class AlgorithmMSCFProper implements AbstractMSCAlgorithm {
 			ArrayList<RepresentedSet> sets) {
 		ArrayList<RepresentedSet> result = new ArrayList<>();
 		for (RepresentedSet rs : sets) {
-			LinkedHashSet<Long> ss = new LinkedHashSet<>(rs.getSet());
+			LinkedHashSet<Integer> ss = new LinkedHashSet<>(rs.getSet());
 			ss.removeAll(set.getSet());
 			if (ss.size() > 0) {
 				RepresentedSet ns = new RepresentedSet(rs.getRepresentant(), ss);
@@ -79,8 +79,8 @@ public class AlgorithmMSCFProper implements AbstractMSCAlgorithm {
 		return result;
 	}
 
-	private LinkedHashSet<Long> msc(ArrayList<RepresentedSet> sets,
-			LinkedHashSet<Long> chosen, Graph g) {
+	private LinkedHashSet<Integer> msc(ArrayList<RepresentedSet> sets,
+			LinkedHashSet<Integer> chosen, Graph g) {
 		if (sets.size() == 0) {
 			return g.isMDS(chosen) ? new LinkedHashSet<>(chosen) : null;
 		}
@@ -107,15 +107,15 @@ public class AlgorithmMSCFProper implements AbstractMSCAlgorithm {
 		}
 		if (included != null) {
 			sets.remove(included);
-			LinkedHashSet<Long> result = msc(sets, chosen, g);
+			LinkedHashSet<Integer> result = msc(sets, chosen, g);
 			sets.add(included);
 			return result;
 		}
 
 		// is unique
-		ArrayList<Long> universum = getUniversum(sets);
-		for (Long l : universum) {
-			Long counter = 0L;
+		ArrayList<Integer> universum = getUniversum(sets);
+		for (Integer l : universum) {
+			Integer counter = 0;
 			RepresentedSet theRightSet = null;
 			for (RepresentedSet s : sets) {
 				if (s.getSet().contains(l)) {
@@ -125,9 +125,9 @@ public class AlgorithmMSCFProper implements AbstractMSCAlgorithm {
 			}
 			if (counter == 1L) {
 				ArrayList<RepresentedSet> newSets = getDel(theRightSet, sets);
-				LinkedHashSet<Long> chosen2 = new LinkedHashSet<>(chosen);
+				LinkedHashSet<Integer> chosen2 = new LinkedHashSet<>(chosen);
 				chosen2.add(theRightSet.getRepresentant());
-				LinkedHashSet<Long> result = msc(newSets, chosen2, g);
+				LinkedHashSet<Integer> result = msc(newSets, chosen2, g);
 				return result;
 			}
 		}
@@ -143,16 +143,16 @@ public class AlgorithmMSCFProper implements AbstractMSCAlgorithm {
 		}
 
 		if (maxCardinality == 2L) {
-			LinkedHashSet<Long> finalChoice = polyMSC(sets);
+			LinkedHashSet<Integer> finalChoice = polyMSC(sets);
 			chosen.addAll(finalChoice);
 			return g.isMDS(chosen) ? new LinkedHashSet<>(chosen) : null;
 		}
 				
 		sets.remove(theRightSet);
-		LinkedHashSet<Long> result1 = msc(sets, chosen, g);
+		LinkedHashSet<Integer> result1 = msc(sets, chosen, g);
 
 		chosen.add(theRightSet.getRepresentant());
-		LinkedHashSet<Long> result2 = msc(getDel(theRightSet, sets), chosen, g);
+		LinkedHashSet<Integer> result2 = msc(getDel(theRightSet, sets), chosen, g);
 		chosen.remove(theRightSet.getRepresentant());
 
 		sets.add(theRightSet);
@@ -166,9 +166,9 @@ public class AlgorithmMSCFProper implements AbstractMSCAlgorithm {
 
 
 	@Override
-	public LinkedHashSet<Long> getMSCforMDS(LinkedHashSet<Long> universum,
+	public LinkedHashSet<Integer> getMSCforMDS(LinkedHashSet<Integer> universum,
 			ArrayList<RepresentedSet> sets, Graph g) {
-		return msc(sets, new LinkedHashSet<Long>(), g);
+		return msc(sets, new LinkedHashSet<Integer>(), g);
 	}
 
 }

@@ -11,16 +11,16 @@ import algorithm.AbstractMDSAlgorithm;
 public class Algorithm342 implements AbstractMDSAlgorithm {
 	private long prepTime = -1L;
 	private long runTime = -1L;
-	public volatile static LinkedHashSet<Long> S = new LinkedHashSet<>();
-	public volatile static LinkedHashSet<Long> G = new LinkedHashSet<>();
-	public volatile static LinkedHashMap<Long, Algorithm34Vertex> instances = new LinkedHashMap<>();
+	public volatile static LinkedHashSet<Integer> S = new LinkedHashSet<>();
+	public volatile static LinkedHashSet<Integer> G = new LinkedHashSet<>();
+	public volatile static LinkedHashMap<Integer, Algorithm34Vertex> instances = new LinkedHashMap<>();
 	public volatile static Object lock = new Object();
 
 	@Override
-	public LinkedHashSet<Long> mdsAlg(Graph g) {
+	public LinkedHashSet<Integer> mdsAlg(Graph g) {
 		ThreadMXBean bean = ManagementFactory.getThreadMXBean();
 		long start = bean.getCurrentThreadCpuTime();
-		for (Long v : g.getVertices()) {
+		for (Integer v : g.getVertices()) {
 			Algorithm34Vertex instance = new Algorithm34Vertex(g, v, S, G,
 					instances, lock);
 			instances.put(v, instance);

@@ -28,7 +28,7 @@ import algorithm.my.MyNaive3Algorithm;
 import algorithm.my.MyNaiveAlgorithm;
 
 public class MDS_Run {
-	public static final String MY_ARGS = "data/ba1000.txt ch7alg34OT";
+	public static final String MY_ARGS = "data/ca-3.txt greedy";
 	public static final Integer NANOS_IN_MILI = 1000000;
 
 	/**
@@ -54,19 +54,19 @@ public class MDS_Run {
 			String line;
 			while ((line = br.readLine()) != null) {
 				StringTokenizer st = new StringTokenizer(line);
-				Long a = -1L;
-				Long b = -1L;
+				Integer a = -1;
+				Integer b = -1;
 				int count = 0;
 				if (st.hasMoreTokens()) {
 					try {
-						a = Long.parseLong(st.nextToken());
+						a = Integer.parseInt(st.nextToken());
 						count++;
 					} catch (NumberFormatException e) {
 					}
 				}
 				if (st.hasMoreTokens()) {
 					try {
-						b = Long.parseLong(st.nextToken());
+						b = Integer.parseInt(st.nextToken());
 						count++;
 					} catch (NumberFormatException e) {
 					}
@@ -77,7 +77,7 @@ public class MDS_Run {
 				}
 			}
 			br.close();
-			g = new UndirectedGraph(new LinkedHashSet<Long>(), edgeList);
+			g = new UndirectedGraph(new LinkedHashSet<Integer>(), edgeList);
 			System.out.println("Graph loaded - vertices: "
 					+ g.getNumberOfVertices() + ", edges: "
 					+ g.getEdges().size() + ".");
@@ -95,7 +95,7 @@ public class MDS_Run {
 		} else {
 			algorithm = args[1];
 		}
-		LinkedHashSet<Long> mds; // = new LinkedHashSet<>();
+		LinkedHashSet<Integer> mds; // = new LinkedHashSet<>();
 		AbstractMDSAlgorithm alg = new NaiveAlgorithm();
 		ThreadMXBean bean = ManagementFactory.getThreadMXBean();
 		long start2 = System.nanoTime();

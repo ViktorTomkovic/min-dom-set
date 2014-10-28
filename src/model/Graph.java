@@ -10,17 +10,17 @@ public interface Graph {
 
 	public ArrayList<Edge> getEdges();
 
-	public LinkedHashSet<Long> getVertices();
+	public LinkedHashSet<Integer> getVertices();
 
-	public Long getNumberOfVertices();
+	public Integer getNumberOfVertices();
 
 	// public LinkedHashSet<Long> getNeighboursOf(Long vertex);
 
-	public LinkedHashSet<Long> getN1(Long vertex);
+	public LinkedHashSet<Integer> getN1(Integer vertex);
 
-	public LinkedHashSet<Long> getN2(Long vertex);
+	public LinkedHashSet<Integer> getN2(Integer vertex);
 
-	public LinkedHashSet<Long> getMDS(AbstractMDSAlgorithm algorithm);
+	public LinkedHashSet<Integer> getMDS(AbstractMDSAlgorithm algorithm);
 
-	public boolean isMDS(LinkedHashSet<Long> mds);
+	public boolean isMDS(LinkedHashSet<Integer> mds);
 }

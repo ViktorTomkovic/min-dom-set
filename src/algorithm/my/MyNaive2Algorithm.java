@@ -13,7 +13,7 @@ public class MyNaive2Algorithm implements AbstractMDSAlgorithm {
 	private long runTime = -1L;
 	private int currentCores;
 	private int maxCores;
-	private LinkedHashSet<Long> result;
+	private LinkedHashSet<Integer> result;
 	private int currentBest;
 	private Object isWriting = new Object();
 	private Object isCreatingNewThread = new Object();
@@ -39,7 +39,7 @@ public class MyNaive2Algorithm implements AbstractMDSAlgorithm {
 		return result;
 	}
 
-	public void tryToSetResult(LinkedHashSet<Long> newBest) {
+	public void tryToSetResult(LinkedHashSet<Integer> newBest) {
 		synchronized (isWriting) {
 			if (newBest.size() < this.currentBest) {
 				this.result = new LinkedHashSet<>(newBest);
@@ -52,8 +52,8 @@ public class MyNaive2Algorithm implements AbstractMDSAlgorithm {
 		}
 	}
 
-	public Thread tryToCreateNewThread(ArrayList<Long> unchosenVertices,
-			LinkedHashSet<Long> chosenVertices, Graph g) {
+	public Thread tryToCreateNewThread(ArrayList<Integer> unchosenVertices,
+			LinkedHashSet<Integer> chosenVertices, Graph g) {
 		Thread result = null;
 		synchronized (isCreatingNewThread) {
 			if (currentCores < maxCores) {
@@ -74,8 +74,8 @@ public class MyNaive2Algorithm implements AbstractMDSAlgorithm {
 		}
 	}
 
-	public void fillPool(ArrayList<Thread> pool, ArrayList<Long> unch,
-			LinkedHashSet<Long> ch, Graph g, ArrayList<Long> unchP) {
+	public void fillPool(ArrayList<Thread> pool, ArrayList<Integer> unch,
+			LinkedHashSet<Integer> ch, Graph g, ArrayList<Integer> unchP) {
 		if (unch.size() == 0) {
 			Thread t = new Thread(new MyNaive2Runner(this, unchP, ch, g));
 			pool.add(t);
@@ -83,10 +83,10 @@ public class MyNaive2Algorithm implements AbstractMDSAlgorithm {
 			return;
 		}
 		
-		Long v = unch.get(unch.size() - 1);
+		Integer v = unch.get(unch.size() - 1);
 		unch.remove(unch.size() - 1);
 
-		LinkedHashSet<Long> nch2 = new LinkedHashSet<>(ch);
+		LinkedHashSet<Integer> nch2 = new LinkedHashSet<>(ch);
 		nch2.add(v);
 
 		fillPool(pool, unch, ch, g, unchP);
@@ -105,23 +105,23 @@ public class MyNaive2Algorithm implements AbstractMDSAlgorithm {
 	}
 
 	@Override
-	public LinkedHashSet<Long> mdsAlg(Graph g) {
+	public LinkedHashSet<Integer> mdsAlg(Graph g) {
 		long start = System.currentTimeMillis();
-		ArrayList<Long> vertices = new ArrayList<Long>(g.getVertices());
+		ArrayList<Integer> vertices = new ArrayList<Integer>(g.getVertices());
 		System.out.println(Utils.largeCollectionToString(vertices));
 		Collections.sort(vertices, new algorithm.GreaterByN1BComparator(g));
 		System.out.println(Utils.largeCollectionToString(vertices));
 
 		long height = Math.round(Math.log(maxCores) / Math.log(2));
-		LinkedList<Long> ver2 = new LinkedList<>();
+		LinkedList<Integer> ver2 = new LinkedList<>();
 		for (int i = 0; i < height; i++) {
 			ver2.addFirst(vertices.get(vertices.size() - 1));
 			vertices.remove(vertices.size() - 1);
 		}
-		ArrayList<Long> ver3 = new ArrayList<>(ver2);
+		ArrayList<Integer> ver3 = new ArrayList<>(ver2);
 		System.out.println(Utils.largeCollectionToString(ver3));
 
-		fillPool(pool, ver3, new LinkedHashSet<Long>(), g, vertices);
+		fillPool(pool, ver3, new LinkedHashSet<Integer>(), g, vertices);
 
 		for (Thread t : pool) {
 			t.start();

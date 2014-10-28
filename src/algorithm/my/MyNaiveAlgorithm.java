@@ -12,7 +12,7 @@ public class MyNaiveAlgorithm implements AbstractMDSAlgorithm {
 	private long runTime = -1L;
 	private int currentCores;
 	private int maxCores;
-	private LinkedHashSet<Long> result;
+	private LinkedHashSet<Integer> result;
 	private int currentBest;
 	private Object isWriting = new Object();
 	private Object isCreatingNewThread = new Object();
@@ -37,7 +37,7 @@ public class MyNaiveAlgorithm implements AbstractMDSAlgorithm {
 		return result;
 	}
 
-	public void tryToSetResult(LinkedHashSet<Long> newBest) {
+	public void tryToSetResult(LinkedHashSet<Integer> newBest) {
 		synchronized (isWriting) {
 			if (newBest.size() < this.currentBest) {
 				this.result = new LinkedHashSet<>(newBest);
@@ -50,8 +50,8 @@ public class MyNaiveAlgorithm implements AbstractMDSAlgorithm {
 		}
 	}
 
-	public Thread tryToCreateNewThread(ArrayList<Long> unchosenVertices,
-			LinkedHashSet<Long> chosenVertices, Graph g) {
+	public Thread tryToCreateNewThread(ArrayList<Integer> unchosenVertices,
+			LinkedHashSet<Integer> chosenVertices, Graph g) {
 		Thread result = null;
 		synchronized (isCreatingNewThread) {
 			if (currentCores < maxCores) {
@@ -80,14 +80,14 @@ public class MyNaiveAlgorithm implements AbstractMDSAlgorithm {
 	}
 
 	@Override
-	public LinkedHashSet<Long> mdsAlg(Graph g) {
+	public LinkedHashSet<Integer> mdsAlg(Graph g) {
 		long start = System.currentTimeMillis();
-		ArrayList<Long> input = new ArrayList<Long>(g.getVertices());
+		ArrayList<Integer> input = new ArrayList<Integer>(g.getVertices());
 		System.out.println(Utils.largeCollectionToString(input));
 		Collections.sort(input, new algorithm.GreaterByN1BComparator(g));
 		System.out.println(Utils.largeCollectionToString(input));
 		MyNaiveRunner r = new MyNaiveRunner(this, input,
-				new LinkedHashSet<Long>(), g);
+				new LinkedHashSet<Integer>(), g);
 		currentCores++;
 		Thread t = new Thread(r);
 		t.start();

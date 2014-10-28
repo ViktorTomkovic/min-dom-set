@@ -12,12 +12,12 @@ import algorithm.AbstractMDSAlgorithm;
 public class Algorithm35OneThread implements AbstractMDSAlgorithm {
 	private long prepTime = -1L;
 	private long runTime = -1L;
-	private LinkedHashMap<Long, Algorithm35State> allVertices = new LinkedHashMap<>();
+	private LinkedHashMap<Integer, Algorithm35State> allVertices = new LinkedHashMap<>();
 	private LinkedHashSet<Algorithm35State> unfinishedVertices = new LinkedHashSet<>();
-	private LinkedHashSet<Long> S = new LinkedHashSet<>();
+	private LinkedHashSet<Integer> S = new LinkedHashSet<>();
 	// public Object joinLock = new Object();
 
-	private boolean hasWhiteNeighbours(Long v, Algorithm35State state) {
+	private boolean hasWhiteNeighbours(Integer v, Algorithm35State state) {
 		boolean result;
 		synchronized (state.W) {
 			state.W.remove(v);
@@ -27,13 +27,13 @@ public class Algorithm35OneThread implements AbstractMDSAlgorithm {
 		return result;
 	}
 
-	private Long computeSpan(Algorithm35State state) {
+	private Integer computeSpan(Algorithm35State state) {
 		int w = 0;
 		synchronized (state.W) {
 			w = state.W.size();
 		}
 		Double a = Math.pow(2, Math.floor(Math.log(w) / Math.log(2)));
-		long result = a.intValue();
+		Integer result = a.intValue();
 		return result;
 	}
 
@@ -43,7 +43,7 @@ public class Algorithm35OneThread implements AbstractMDSAlgorithm {
 
 	private void joinS(Algorithm35State state,
 			ArrayList<Algorithm35State> deleteThisRound) {
-		for (Long v : state.dist2NotSorG) {
+		for (Integer v : state.dist2NotSorG) {
 			allVertices.get(v).W.remove(state.v);
 			if (!v.equals(state.v)) {
 				allVertices.get(v).dist2NotSorG.remove(state.v);
@@ -57,7 +57,7 @@ public class Algorithm35OneThread implements AbstractMDSAlgorithm {
 
 	private void joinG(Algorithm35State state,
 			ArrayList<Algorithm35State> deleteThisRound) {
-		for (Long v : state.dist2NotSorG) {
+		for (Integer v : state.dist2NotSorG) {
 			allVertices.get(v).W.remove(state.v);
 			if (!v.equals(state.v)) {
 				allVertices.get(v).dist2NotSorG.remove(state.v);
@@ -70,7 +70,7 @@ public class Algorithm35OneThread implements AbstractMDSAlgorithm {
 
 	private long maxFromOthers(Algorithm35State state) {
 		long max = 0L;
-		for (Long l : state.spans.values()) {
+		for (Integer l : state.spans.values()) {
 			if (l > max) {
 				max = l;
 			}
@@ -81,7 +81,7 @@ public class Algorithm35OneThread implements AbstractMDSAlgorithm {
 	private boolean joinTest(Algorithm35State state) {
 		boolean b = state.isCandidate;
 		long sum = 0L;
-		for (Long v : state.W) {
+		for (Integer v : state.W) {
 			sum = sum + allVertices.get(v).c;
 		}
 		sum -= state.c;
@@ -90,9 +90,9 @@ public class Algorithm35OneThread implements AbstractMDSAlgorithm {
 		return b && c;
 	}
 
-	private Long computeC(Algorithm35State state) {
-		long c = 0L;
-		for (Long v : state.N) {
+	private Integer computeC(Algorithm35State state) {
+		Integer c = 0;
+		for (Integer v : state.N) {
 			Algorithm35State s = allVertices.get(v);
 			if (s.isCandidate)
 				c++;
@@ -101,10 +101,10 @@ public class Algorithm35OneThread implements AbstractMDSAlgorithm {
 	}
 
 	@Override
-	public LinkedHashSet<Long> mdsAlg(Graph g) {
+	public LinkedHashSet<Integer> mdsAlg(Graph g) {
 		ThreadMXBean bean = ManagementFactory.getThreadMXBean();
 		long start = bean.getCurrentThreadCpuTime();
-		for (Long v : g.getVertices()) {
+		for (Integer v : g.getVertices()) {
 			Algorithm35State state = new Algorithm35State(v, g);
 			unfinishedVertices.add(state);
 			allVertices.put(v, state);
@@ -117,7 +117,7 @@ public class Algorithm35OneThread implements AbstractMDSAlgorithm {
 				// algorithm!
 				if (hasWhiteNeighbours(state.v, state)) {
 					state.w = computeSpan(state);
-					for (Long v2 : state.dist2NotSorG) {
+					for (Integer v2 : state.dist2NotSorG) {
 						allVertices.get(v2).recieveSpan(state.v, state.w);
 					}
 					if (recievedFromAll(state)) {

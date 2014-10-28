@@ -7,14 +7,14 @@ import model.Graph;
 
 public class Algorithm34Vertex2 implements Runnable {
 	private Graph g;
-	private Set<Long> W;
-	private Set<Long> S;
-	private Long v;
+	private Set<Integer> W;
+	private Set<Integer> S;
+	private Integer v;
 	private Object lock;
-	private Map<Long, Long> spans;
+	private Map<Integer, Integer> spans;
 
-	public Algorithm34Vertex2(Graph g, Long v, Set<Long> W, Set<Long> S,
-			Map<Long, Long> spans, Object lock) {
+	public Algorithm34Vertex2(Graph g, Integer v, Set<Integer> W, Set<Integer> S,
+			Map<Integer, Integer> spans, Object lock) {
 		this.g = g;
 		this.W = W;
 		this.S = S;
@@ -23,24 +23,24 @@ public class Algorithm34Vertex2 implements Runnable {
 		this.lock = lock;
 	}
 
-	synchronized boolean hasWhiteNeighbours(Long v, Graph g, Set<Long> W) {
-		Set<Long> A = g.getN1(v);
+	synchronized boolean hasWhiteNeighbours(Integer v, Graph g, Set<Integer> W) {
+		Set<Integer> A = g.getN1(v);
 		A.retainAll(W);
 		A.remove(v);
 		return A.size() > 0;
 	}
 
-	synchronized Long computeSpan(Long v, Graph g, Set<Long> W) {
-		Set<Long> A = g.getN1(v);
+	synchronized Integer computeSpan(Integer v, Graph g, Set<Integer> W) {
+		Set<Integer> A = g.getN1(v);
 		A.retainAll(W);
-		return (long) A.size();
+		return A.size();
 	}
 
-	void updateSpan(Long v, Long span) {
+	void updateSpan(Integer v, Integer span) {
 		spans.put(v, span);
 	}
 
-	synchronized void joinS(Long v, Graph g, Set<Long> S, Set<Long> W) {
+	synchronized void joinS(Integer v, Graph g, Set<Integer> S, Set<Integer> W) {
 		System.out.print(v + " " + W + " ");
 		W.removeAll(g.getN1(v));
 		System.out.println(W);
@@ -56,7 +56,7 @@ public class Algorithm34Vertex2 implements Runnable {
 		 * (InterruptedException e) { e.printStackTrace(); } if (W.contains(v))
 		 * { W.removeAll(g.getNeighboursOfVertexIncluded(v)); S.add(v); }
 		 */
-		Long w = computeSpan(v, g, W); // span
+		Integer w = computeSpan(v, g, W); // span
 		updateSpan(v, w);
 		while (true) {
 			if (hasWhiteNeighbours(v, g, W)) {
@@ -65,10 +65,10 @@ public class Algorithm34Vertex2 implements Runnable {
 
 				boolean isBiggest = true;
 				synchronized (lock) {
-					Set<Long> dist2 = g.getN2(v);
+					Set<Integer> dist2 = g.getN2(v);
 					dist2.retainAll(W);
-					for (Long v2 : dist2) {
-						Long getV2 = spans.get(v2);
+					for (Integer v2 : dist2) {
+						Integer getV2 = spans.get(v2);
 						if ((getV2 > w)
 								|| (getV2.equals(w) && v2 < v)) {
 							isBiggest = false;

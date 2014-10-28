@@ -6,21 +6,21 @@ import java.util.LinkedHashSet;
 import model.Graph;
 
 public class Algorithm35State {
-	public final Long v;
-	public LinkedHashSet<Long> W;
-	public LinkedHashSet<Long> N;
+	public final Integer v;
+	public LinkedHashSet<Integer> W;
+	public LinkedHashSet<Integer> N;
 	public final Object wLock = new Object();
-	public Long w = 0L;
+	public Integer w = 0;
 	public final Object cLock = new Object();
-	public Long c = 0L;
-	public LinkedHashSet<Long> dist2NotSorG;
-	public LinkedHashMap<Long, Long> spans;
+	public Integer c = 0;
+	public LinkedHashSet<Integer> dist2NotSorG;
+	public LinkedHashMap<Integer, Integer> spans;
 	public final Object canJoinLock = new Object();
-	public Long canJoin = 0L;
+	public Integer canJoin = 0;
 	public Object isCandidateLock = new Object();
 	public Boolean isCandidate = false;
 
-	public Algorithm35State(Long forV, Graph g) {
+	public Algorithm35State(Integer forV, Graph g) {
 		this.v = forV;
 		this.W = new LinkedHashSet<>(g.getN1(forV));
 		this.N = new LinkedHashSet<>(g.getN1(forV));
@@ -28,21 +28,21 @@ public class Algorithm35State {
 		this.spans = new LinkedHashMap<>();
 	}
 
-	public void recieveSpan(Long from, Long value) {
+	public void recieveSpan(Integer from, Integer value) {
 		synchronized (spans) {
 			spans.put(from, value);
 		}
 		return;
 	}
 
-	public void recieveRemoveFromW(Long v) {
+	public void recieveRemoveFromW(Integer v) {
 		synchronized (W) {
 			W.remove(v);
 		}
 		return;
 	}
 
-	public void recieveRemoveFromDist2(Long v) {
+	public void recieveRemoveFromDist2(Integer v) {
 		synchronized (dist2NotSorG) {
 			dist2NotSorG.remove(v);
 		}

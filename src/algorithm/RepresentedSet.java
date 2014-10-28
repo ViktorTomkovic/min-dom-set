@@ -3,23 +3,23 @@ package algorithm;
 import java.util.LinkedHashSet;
 
 public class RepresentedSet {
-	private Long representant;
+	private Integer representant;
 
-	private LinkedHashSet<Long> set;
+	private LinkedHashSet<Integer> set;
 
-	public Long getRepresentant() {
+	public Integer getRepresentant() {
 		return representant;
 	}
 
-	public LinkedHashSet<Long> getSet() {
+	public LinkedHashSet<Integer> getSet() {
 		return set;
 	}
 
-	public void removeFromSet(LinkedHashSet<Long> set) {
+	public void removeFromSet(LinkedHashSet<Integer> set) {
 		this.set.removeAll(set);
 	}
 
-	public RepresentedSet(Long representant, LinkedHashSet<Long> set) {
+	public RepresentedSet(Integer representant, LinkedHashSet<Integer> set) {
 		this.representant = representant;
 		this.set = new LinkedHashSet<>(set);
 	}

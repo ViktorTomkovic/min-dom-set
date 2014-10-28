@@ -14,16 +14,16 @@ public class AlgorithmFProper implements AbstractMDSAlgorithm {
 	private long runTime = -1L;
 
 	@Override
-	public LinkedHashSet<Long> mdsAlg(Graph g) {
+	public LinkedHashSet<Integer> mdsAlg(Graph g) {
 		ThreadMXBean bean = ManagementFactory.getThreadMXBean();
 		long start = bean.getCurrentThreadCpuTime();
 		AlgorithmMSCFProper fn = new AlgorithmMSCFProper();
 		ArrayList<RepresentedSet> sets = new ArrayList<>();
-		for (Long v : g.getVertices()) {
+		for (Integer v : g.getVertices()) {
 			sets.add(new RepresentedSet(v, g.getN1(v)));
 		}
 		prepTime = bean.getCurrentThreadCpuTime() - start;
-		LinkedHashSet<Long> result = new LinkedHashSet<>(fn.getMSCforMDS(null,
+		LinkedHashSet<Integer> result = new LinkedHashSet<>(fn.getMSCforMDS(null,
 				sets, g));
 		runTime = bean.getCurrentThreadCpuTime() - start;
 		return result;

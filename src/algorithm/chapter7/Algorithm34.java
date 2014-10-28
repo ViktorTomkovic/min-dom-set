@@ -13,30 +13,30 @@ import algorithm.AbstractMDSAlgorithm;
 public class Algorithm34 implements AbstractMDSAlgorithm {
 	private long prepTime = -1L;
 	private long runTime = -1L;
-	private LinkedHashMap<Long, Algorithm34State> allVertices = new LinkedHashMap<>();
+	private LinkedHashMap<Integer, Algorithm34State> allVertices = new LinkedHashMap<>();
 	private LinkedList<Algorithm34State> unfinishedVertices = new LinkedList<>();
-	private LinkedHashSet<Long> S = new LinkedHashSet<>();
+	private LinkedHashSet<Integer> S = new LinkedHashSet<>();
 	public final Object joinLock = new Object();
 	// public final Object waitForStart = new Object();
 
 	@Override
-	public LinkedHashSet<Long> mdsAlg(Graph g) {
+	public LinkedHashSet<Integer> mdsAlg(Graph g) {
 		ThreadMXBean bean = ManagementFactory.getThreadMXBean();
 		long start = bean.getCurrentThreadCpuTime();
 		LinkedList<Long> times = new LinkedList<>();
 		int bla = (int) Math.ceil(g.getNumberOfVertices() * 1.5);
 		allVertices = new LinkedHashMap<>(bla);
-		Long nv = g.getNumberOfVertices();
-		for (Long v : g.getVertices()) {
+		Integer nv = g.getNumberOfVertices();
+		for (Integer v : g.getVertices()) {
 			Algorithm34State state = new Algorithm34State(v, g);
 			unfinishedVertices.add(state);
 			allVertices.put(v, state);
 		}
 		times.addLast(bean.getCurrentThreadCpuTime() - start);
-		// Long nt = Math.min(nv, 1000);
+		// Integer nt = Math.min(nv, 1000);
 		Long nt = Math
 				.min(nv, Runtime.getRuntime().availableProcessors() * 256L);
-		// Long nt = nv;
+		// Integer nt = nv;
 		// System.out.println(nt);
 		
 		// variant 1
@@ -82,7 +82,7 @@ public class Algorithm34 implements AbstractMDSAlgorithm {
 		return S;
 	}
 
-	public LinkedHashMap<Long, Algorithm34State> getAllVertices() {
+	public LinkedHashMap<Integer, Algorithm34State> getAllVertices() {
 		return this.allVertices;
 	}
 
@@ -101,7 +101,7 @@ public class Algorithm34 implements AbstractMDSAlgorithm {
 		return;
 	}
 
-	public void joinS(Long v) {
+	public void joinS(Integer v) {
 		synchronized (S) {
 			S.add(v);
 		}

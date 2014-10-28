@@ -1,15 +1,15 @@
 package model;
 
 public class Edge {
-	public Long from;
-	public Long to;
+	public Integer from;
+	public Integer to;
 
 	public Edge() {
-		this.from = 0L;
-		this.to = 0L;
+		this.from = 0;
+		this.to = 0;
 	}
 
-	public Edge(Long from, Long to) {
+	public Edge(Integer from, Integer to) {
 		this.from = from;
 		this.to = to;
 	}

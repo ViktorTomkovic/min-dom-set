@@ -13,15 +13,15 @@ public class GreedyQuickAlgorithm implements AbstractMDSAlgorithm {
 	private long runTime = -1L;
 
 	@Override
-	public LinkedHashSet<Long> mdsAlg(Graph g) {
+	public LinkedHashSet<Integer> mdsAlg(Graph g) {
 		ThreadMXBean bean = ManagementFactory.getThreadMXBean();
 		long start = bean.getCurrentThreadCpuTime();
-		ArrayList<Long> W = new ArrayList<>(g.getVertices());
+		ArrayList<Integer> W = new ArrayList<>(g.getVertices());
 		prepTime = bean.getCurrentThreadCpuTime() - start;
 		Collections.sort(W, new  LessByN1AComparator(g));
-		LinkedHashSet<Long> S = new LinkedHashSet<>();
+		LinkedHashSet<Integer> S = new LinkedHashSet<>();
 		while (!W.isEmpty()) {
-			Long pick = W.get(W.size()-1);
+			Integer pick = W.get(W.size()-1);
 			W.removeAll(g.getN1(pick));
 			S.add(pick);
 		}

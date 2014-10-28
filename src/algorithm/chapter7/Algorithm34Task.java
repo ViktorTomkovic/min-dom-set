@@ -5,7 +5,7 @@ import java.util.LinkedHashMap;
 public class Algorithm34Task implements Runnable {
 	private Algorithm34 alg;
 	private Algorithm34State state;
-	private LinkedHashMap<Long, Algorithm34State> vertices;
+	private LinkedHashMap<Integer, Algorithm34State> vertices;
 	private boolean finished;
 
 	public Algorithm34Task(Algorithm34 alg) {
@@ -28,7 +28,7 @@ public class Algorithm34Task implements Runnable {
 		return;
 	}
 
-	private boolean hasWhiteNeighbours(Long v) {
+	private boolean hasWhiteNeighbours(Integer v) {
 		boolean result;
 		synchronized (state.W) {
 			state.W.remove(v);
@@ -38,10 +38,10 @@ public class Algorithm34Task implements Runnable {
 		return result;
 	}
 
-	public Long computeSpan(Long v) {
-		Long result;
+	public Integer computeSpan(Integer v) {
+		Integer result;
 		synchronized (state.W) {
-			result = Long.valueOf(state.W.size());
+			result = Integer.valueOf(state.W.size());
 		}
 		return result;
 	}
@@ -66,12 +66,12 @@ public class Algorithm34Task implements Runnable {
 
 	private void joinS() {
 		synchronized (alg.joinLock) {
-			LinkedHashMap<Long, Algorithm34State> states = alg.getAllVertices();
+			LinkedHashMap<Integer, Algorithm34State> states = alg.getAllVertices();
 			synchronized (state.dist2NotSorG) {
-				for (Long v : state.dist2NotSorG) {
+				for (Integer v : state.dist2NotSorG) {
 					states.get(v).takeABreakePlease();
 				}
-				for (Long v : state.dist2NotSorG) {
+				for (Integer v : state.dist2NotSorG) {
 					Algorithm34State s = states.get(v);
 					s.recieveRemoveFromW(state.v);
 					if (!v.equals(state.v)) {
@@ -79,7 +79,7 @@ public class Algorithm34Task implements Runnable {
 					}
 				}
 				alg.joinS(state.v);
-				for (Long v : state.dist2NotSorG) {
+				for (Integer v : state.dist2NotSorG) {
 					states.get(v).thankYou();
 				}
 			}
@@ -89,19 +89,19 @@ public class Algorithm34Task implements Runnable {
 
 	private void joinG() {
 		synchronized (alg.joinLock) {
-			LinkedHashMap<Long, Algorithm34State> states = alg.getAllVertices();
+			LinkedHashMap<Integer, Algorithm34State> states = alg.getAllVertices();
 			synchronized (state.dist2NotSorG) {
-				for (Long v : state.dist2NotSorG) {
+				for (Integer v : state.dist2NotSorG) {
 					states.get(v).takeABreakePlease();
 				}
-				for (Long v : state.dist2NotSorG) {
+				for (Integer v : state.dist2NotSorG) {
 					Algorithm34State s = alg.getAllVertices().get(v);
 					s.recieveRemoveFromW(state.v);
 					if (!v.equals(state.v)) {
 						s.recieveRemoveFromDist2(state.v);
 					}
 				}
-				for (Long v : state.dist2NotSorG) {
+				for (Integer v : state.dist2NotSorG) {
 					states.get(v).thankYou();
 				}
 			}
@@ -120,7 +120,7 @@ public class Algorithm34Task implements Runnable {
 			if (hasWhiteNeighbours(state.v)) {
 				state.w = computeSpan(state.v);
 				synchronized (state.dist2NotSorG) {
-					for (Long v2 : state.dist2NotSorG) {
+					for (Integer v2 : state.dist2NotSorG) {
 						vertices.get(v2).recieveSpan(state.v, state.w);
 					}
 				}
@@ -129,8 +129,8 @@ public class Algorithm34Task implements Runnable {
 
 					boolean isBiggest = true;
 					synchronized (state.dist2NotSorG) {
-						for (Long v2 : state.dist2NotSorG) {
-							Long getV2 = state.spans.get(v2);
+						for (Integer v2 : state.dist2NotSorG) {
+							Integer getV2 = state.spans.get(v2);
 							if ((getV2 > state.w)
 									|| (getV2.equals(state.w) && (v2 < state.v))) {
 								isBiggest = false;

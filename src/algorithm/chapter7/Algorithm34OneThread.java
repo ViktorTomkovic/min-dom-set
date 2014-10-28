@@ -12,13 +12,13 @@ import algorithm.AbstractMDSAlgorithm;
 public class Algorithm34OneThread implements AbstractMDSAlgorithm {
 	private long prepTime = -1L;
 	private long runTime = -1L;
-	private LinkedHashMap<Long, Algorithm34State> allVertices = new LinkedHashMap<>();
+	private LinkedHashMap<Integer, Algorithm34State> allVertices = new LinkedHashMap<>();
 	private LinkedHashSet<Algorithm34State> unfinishedVertices = new LinkedHashSet<>();
-	private LinkedHashSet<Long> S = new LinkedHashSet<>();
+	private LinkedHashSet<Integer> S = new LinkedHashSet<>();
 
 	// public Object joinLock = new Object();
 
-	private boolean hasWhiteNeighbours(Long v, Algorithm34State state) {
+	private boolean hasWhiteNeighbours(Integer v, Algorithm34State state) {
 		boolean result;
 		// synchronized (state.W) {
 		state.W.remove(v);
@@ -28,8 +28,8 @@ public class Algorithm34OneThread implements AbstractMDSAlgorithm {
 		return result;
 	}
 
-	private Long computeSpan(Algorithm34State state) {
-		Long w = Long.valueOf(state.W.size());
+	private Integer computeSpan(Algorithm34State state) {
+		Integer w = Integer.valueOf(state.W.size());
 		return w;
 	}
 
@@ -39,7 +39,7 @@ public class Algorithm34OneThread implements AbstractMDSAlgorithm {
 
 	private void joinS(Algorithm34State state,
 			ArrayList<Algorithm34State> deleteThisRound) {
-		for (Long v : state.dist2NotSorG) {
+		for (Integer v : state.dist2NotSorG) {
 			allVertices.get(v).W.remove(state.v);
 			if (!v.equals(state.v)) {
 				allVertices.get(v).dist2NotSorG.remove(state.v);
@@ -53,7 +53,7 @@ public class Algorithm34OneThread implements AbstractMDSAlgorithm {
 
 	private void joinG(Algorithm34State state,
 			ArrayList<Algorithm34State> deleteThisRound) {
-		for (Long v : state.dist2NotSorG) {
+		for (Integer v : state.dist2NotSorG) {
 			allVertices.get(v).W.remove(state.v);
 			if (!v.equals(state.v)) {
 				allVertices.get(v).dist2NotSorG.remove(state.v);
@@ -65,10 +65,10 @@ public class Algorithm34OneThread implements AbstractMDSAlgorithm {
 	}
 
 	@Override
-	public LinkedHashSet<Long> mdsAlg(Graph g) {
+	public LinkedHashSet<Integer> mdsAlg(Graph g) {
 		ThreadMXBean bean = ManagementFactory.getThreadMXBean();
 		long start = bean.getCurrentThreadCpuTime();
-		for (Long v : g.getVertices()) {
+		for (Integer v : g.getVertices()) {
 			Algorithm34State state = new Algorithm34State(v, g);
 			unfinishedVertices.add(state);
 			allVertices.put(v, state);
@@ -79,7 +79,7 @@ public class Algorithm34OneThread implements AbstractMDSAlgorithm {
 			deleteThisRound.clear();
 			for (Algorithm34State state : unfinishedVertices) {
 				state.w = computeSpan(state);
-				for (Long v2 : state.dist2NotSorG) {
+				for (Integer v2 : state.dist2NotSorG) {
 					allVertices.get(v2).recieveSpan(state.v, state.w);
 				}
 			}
@@ -88,8 +88,8 @@ public class Algorithm34OneThread implements AbstractMDSAlgorithm {
 				if (hasWhiteNeighbours(state.v, state)) {
 					if (recievedFromAll(state)) {
 						boolean isBiggest = true;
-						for (Long v : state.dist2NotSorG) {
-							Long getV = state.spans.get(v);
+						for (Integer v : state.dist2NotSorG) {
+							Integer getV = state.spans.get(v);
 							if (getV > state.w
 									|| (getV.equals(state.w) && (state.v > v))) {
 								isBiggest = false;

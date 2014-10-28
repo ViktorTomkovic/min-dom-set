@@ -11,25 +11,25 @@ public class NaiveAlgorithm implements AbstractMDSAlgorithm {
 	private long runTime = -1L;
 
 	@Override
-	public LinkedHashSet<Long> mdsAlg(Graph g) {
+	public LinkedHashSet<Integer> mdsAlg(Graph g) {
 		ThreadMXBean bean = ManagementFactory.getThreadMXBean();
 		long start = bean.getCurrentThreadCpuTime();
-		LinkedHashSet<Long> result = gms(new ArrayList<>(g.getVertices()), new LinkedHashSet<Long>(), g);
+		LinkedHashSet<Integer> result = gms(new ArrayList<>(g.getVertices()), new LinkedHashSet<Integer>(), g);
 		runTime = bean.getCurrentThreadCpuTime() - start;
 		return result;
 	}
 
-	private LinkedHashSet<Long> gms(ArrayList<Long> choiceVertex,
-			LinkedHashSet<Long> chosenVertices, Graph g) {
+	private LinkedHashSet<Integer> gms(ArrayList<Integer> choiceVertex,
+			LinkedHashSet<Integer> chosenVertices, Graph g) {
 		if (choiceVertex.size() == 0) {
 			// we have made our choice - let's compute it
-			LinkedHashSet<Long> neighbours = new LinkedHashSet<>();
-			for (Long vertex : chosenVertices) {
+			LinkedHashSet<Integer> neighbours = new LinkedHashSet<>();
+			for (Integer vertex : chosenVertices) {
 				neighbours.addAll(g.getN1(vertex));
 			}
 			/*
-			 * for (Long l : chosenVertices) { System.out.print(l);
-			 * System.out.print(" "); } System.out.print(" --> "); for (Long l :
+			 * for (Integer l : chosenVertices) { System.out.print(l);
+			 * System.out.print(" "); } System.out.print(" --> "); for (Integer l :
 			 * neighbours) { System.out.print(l); System.out.print(" "); }
 			 */
 			if (neighbours.size() == g.getNumberOfVertices()) {
@@ -40,17 +40,17 @@ public class NaiveAlgorithm implements AbstractMDSAlgorithm {
 				return null;
 			}
 		} else {
-			Long v = choiceVertex.get(choiceVertex.size() - 1);
-			ArrayList<Long> ch = new ArrayList<>(choiceVertex);
+			Integer v = choiceVertex.get(choiceVertex.size() - 1);
+			ArrayList<Integer> ch = new ArrayList<>(choiceVertex);
 			ch.remove(choiceVertex.size() - 1);
 
 			// choose vertices
 			// don't choose current
-			LinkedHashSet<Long> set1 = gms(ch, chosenVertices, g);
+			LinkedHashSet<Integer> set1 = gms(ch, chosenVertices, g);
 			// choose current
-			LinkedHashSet<Long> chV = new LinkedHashSet<>(chosenVertices);
+			LinkedHashSet<Integer> chV = new LinkedHashSet<>(chosenVertices);
 			chV.add(v);
-			LinkedHashSet<Long> set2 = gms(ch, chV, g);
+			LinkedHashSet<Integer> set2 = gms(ch, chV, g);
 			if (set1 == null)
 				return set2;
 			if ((set2 != null) && (set2.size() <= set1.size()))

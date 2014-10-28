@@ -19,30 +19,30 @@ public class Utils {
 
 		LinkedHashSet<Edge> edges = new LinkedHashSet<>(graph.getEdges());
 
-		HashMap<Long, Long> match = new HashMap<>();
+		HashMap<Integer, Integer> match = new HashMap<>();
 
-		LinkedHashSet<Long> whiteSet = new LinkedHashSet<>();
-		LinkedHashSet<Long> blackSet = new LinkedHashSet<>();
+		LinkedHashSet<Integer> whiteSet = new LinkedHashSet<>();
+		LinkedHashSet<Integer> blackSet = new LinkedHashSet<>();
 		for (Edge e : edges) {
 			whiteSet.add(e.from);
 			blackSet.add(e.to);
-			match.put(e.to, -1L);
+			match.put(e.to, -1);
 		}
 
-		for (Long v : whiteSet) {
-			HashSet<Long> visitedBlack = new HashSet<>();
+		for (Integer v : whiteSet) {
+			HashSet<Integer> visitedBlack = new HashSet<>();
 			aug(edges, v, visitedBlack, match, blackSet);
 		}
-		for (Entry<Long, Long> entry : match.entrySet()) {
+		for (Entry<Integer, Integer> entry : match.entrySet()) {
 			result.add(new Edge(entry.getValue(), entry.getKey()));
 		}
 		return result;
 	}
 
-	private static boolean aug(LinkedHashSet<Edge> edges, Long white,
-			HashSet<Long> visitedBlack, HashMap<Long, Long> match,
-			LinkedHashSet<Long> blackSet) {
-		for (Long black : blackSet) {
+	private static boolean aug(LinkedHashSet<Edge> edges, Integer white,
+			HashSet<Integer> visitedBlack, HashMap<Integer, Integer> match,
+			LinkedHashSet<Integer> blackSet) {
+		for (Integer black : blackSet) {
 			boolean contains = false;
 			for (Edge e : edges) {
 				if ((e.from.equals(white)) && (e.to.equals(black))) {
@@ -71,15 +71,15 @@ public class Utils {
 				twoSets.remove(s);
 			}
 		}
-		LinkedHashSet<Long> coloredBlack = new LinkedHashSet<>();
-		LinkedHashSet<Long> coloredWhite = new LinkedHashSet<>();
-		TreeSet<Long> unfinishedWhite = new TreeSet<>();
-		TreeSet<Long> unfinishedBlack = new TreeSet<>();
+		LinkedHashSet<Integer> coloredBlack = new LinkedHashSet<>();
+		LinkedHashSet<Integer> coloredWhite = new LinkedHashSet<>();
+		TreeSet<Integer> unfinishedWhite = new TreeSet<>();
+		TreeSet<Integer> unfinishedBlack = new TreeSet<>();
 		while (!twoSets.isEmpty()) {
 			RepresentedSet s = twoSets.pollFirst();
 			Object[] ab = s.getSet().toArray();
-			Long a = (Long) ab[0];
-			Long b = (Long) ab[1];
+			Integer a = (Integer) ab[0];
+			Integer b = (Integer) ab[1];
 			coloredWhite.add(a);
 			coloredBlack.add(b);
 			unfinishedWhite.add(a);
@@ -88,13 +88,13 @@ public class Utils {
 
 			while (!unfinishedBlack.isEmpty() || !unfinishedWhite.isEmpty()) {
 				while (!unfinishedWhite.isEmpty()) {
-					Long l = unfinishedWhite.pollFirst();
+					Integer l = unfinishedWhite.pollFirst();
 					ArrayList<RepresentedSet> toDelete = new ArrayList<>();
 					for (RepresentedSet rs : twoSets) {
 						if (rs.getSet().contains(l)) {
 							Object[] ab2 = rs.getSet().toArray();
-							Long a2 = (Long) ab2[0];
-							Long b2 = (Long) ab2[1];
+							Integer a2 = (Integer) ab2[0];
+							Integer b2 = (Integer) ab2[1];
 							if (a2.equals(l)) {
 								unfinishedBlack.add(b2);
 								edges.add(new Edge(a2, b2));
@@ -113,13 +113,13 @@ public class Utils {
 				}
 
 				while (!unfinishedBlack.isEmpty()) {
-					Long l = unfinishedBlack.pollFirst();
+					Integer l = unfinishedBlack.pollFirst();
 					ArrayList<RepresentedSet> toDelete = new ArrayList<>();
 					for (RepresentedSet rs : twoSets) {
 						if (rs.getSet().contains(l)) {
 							Object[] ab2 = rs.getSet().toArray();
-							Long a2 = (Long) ab2[0];
-							Long b2 = (Long) ab2[1];
+							Integer a2 = (Integer) ab2[0];
+							Integer b2 = (Integer) ab2[1];
 							if (a2.equals(l)) {
 								unfinishedWhite.add(b2);
 								edges.add(new Edge(b2, a2));
@@ -138,8 +138,8 @@ public class Utils {
 				}
 			}
 			/*
-			 * for (Long v : coloredWhite) { edges.add(new Edge(-1L, v)); } for
-			 * (Long v : coloredBlack) { edges.add(new Edge(v, -2L)); }
+			 * for (Integer v : coloredWhite) { edges.add(new Edge(-1L, v)); } for
+			 * (Integer v : coloredBlack) { edges.add(new Edge(v, -2L)); }
 			 */
 		}
 		return new DirectedGraph(edges);
