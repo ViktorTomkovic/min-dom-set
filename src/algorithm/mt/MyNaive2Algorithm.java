@@ -1,4 +1,4 @@
-package algorithm.my;
+package algorithm.mt;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -9,11 +9,9 @@ import main.Utils;
 import model.Graph;
 import algorithm.AbstractMDSAlgorithm;
 
-public class MyNaive3Algorithm implements AbstractMDSAlgorithm {
+public class MyNaive2Algorithm implements AbstractMDSAlgorithm {
 	private long runTime = -1L;
 	private int currentCores;
-	@SuppressWarnings("unused")
-	private int currentPoolCores;
 	private int maxCores;
 	private LinkedHashSet<Integer> result;
 	private int currentBest;
@@ -60,7 +58,7 @@ public class MyNaive3Algorithm implements AbstractMDSAlgorithm {
 		synchronized (isCreatingNewThread) {
 			if (currentCores < maxCores) {
 				currentCores++;
-				Thread t = new Thread(new MyNaive3Runner(this,
+				Thread t = new Thread(new MyNaive2Runner(this,
 						unchosenVertices, chosenVertices, g));
 				result = t;
 			} else {
@@ -79,9 +77,9 @@ public class MyNaive3Algorithm implements AbstractMDSAlgorithm {
 	public void fillPool(ArrayList<Thread> pool, ArrayList<Integer> unch,
 			LinkedHashSet<Integer> ch, Graph g, ArrayList<Integer> unchP) {
 		if (unch.size() == 0) {
-			Thread t = new Thread(new MyNaive3Runner(this, unchP, ch, g));
+			Thread t = new Thread(new MyNaive2Runner(this, unchP, ch, g));
 			pool.add(t);
-			currentPoolCores++;
+			currentCores++;
 			return;
 		}
 		
@@ -98,9 +96,8 @@ public class MyNaive3Algorithm implements AbstractMDSAlgorithm {
 		return;
 	}
 
-	public MyNaive3Algorithm() {
+	public MyNaive2Algorithm() {
 		currentCores = 0;
-		currentPoolCores = 0;
 		maxCores = Runtime.getRuntime().availableProcessors();
 		result = new LinkedHashSet<>();
 		currentBest = Integer.MAX_VALUE;
@@ -133,9 +130,6 @@ public class MyNaive3Algorithm implements AbstractMDSAlgorithm {
 		for (Thread t : pool) {
 			try {
 				t.join();
-				synchronized (isCreatingNewThread) {
-					currentPoolCores--;
-				}
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

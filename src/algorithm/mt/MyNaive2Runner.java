@@ -1,17 +1,17 @@
-package algorithm.my;
+package algorithm.mt;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 
 import model.Graph;
 
-public class MyNaive3Runner implements Runnable {
-	private MyNaive3Algorithm alg;
+public class MyNaive2Runner implements Runnable {
+	private MyNaive2Algorithm alg;
 	private ArrayList<Integer> unchosenVertices;
 	private LinkedHashSet<Integer> chosenVertices;
 	private Graph g;
 
-	public MyNaive3Runner(MyNaive3Algorithm alg,
+	public MyNaive2Runner(MyNaive2Algorithm alg,
 			ArrayList<Integer> unchosenVertices,
 			LinkedHashSet<Integer> chosenVertices, Graph g) {
 		this.alg = alg;

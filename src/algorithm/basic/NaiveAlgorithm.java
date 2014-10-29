@@ -1,10 +1,11 @@
-package algorithm;
+package algorithm.basic;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 
+import algorithm.AbstractMDSAlgorithm;
 import model.Graph;
 
 public class NaiveAlgorithm implements AbstractMDSAlgorithm {

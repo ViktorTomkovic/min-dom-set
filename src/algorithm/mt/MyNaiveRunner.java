@@ -1,4 +1,4 @@
-package algorithm.my;
+package algorithm.mt;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;

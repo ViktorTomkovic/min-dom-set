@@ -13,22 +13,23 @@ import model.Edge;
 import model.Graph;
 import model.UndirectedGraph;
 import algorithm.AbstractMDSAlgorithm;
-import algorithm.GreedyAlgorithm;
-import algorithm.GreedyQuickAlgorithm;
-import algorithm.NaiveAlgorithm;
+import algorithm.basic.GreedyAlgorithm;
+import algorithm.basic.GreedyQuickAlgorithm;
+import algorithm.basic.NaiveAlgorithm;
 import algorithm.chapter7.Algorithm33;
 import algorithm.chapter7.Algorithm34;
 import algorithm.chapter7.Algorithm34OneThread;
 import algorithm.chapter7.Algorithm35;
 import algorithm.chapter7.Algorithm35OneThread;
+import algorithm.flower.FlowerUniqueAlgorithm;
 import algorithm.fomin.AlgorithmFNaive;
 import algorithm.fomin.AlgorithmFProper;
-import algorithm.my.MyNaive2Algorithm;
-import algorithm.my.MyNaive3Algorithm;
-import algorithm.my.MyNaiveAlgorithm;
+import algorithm.mt.MyNaive2Algorithm;
+import algorithm.mt.MyNaive3Algorithm;
+import algorithm.mt.MyNaiveAlgorithm;
 
 public class MDS_Run {
-	public static final String MY_ARGS = "data/ca-3.txt greedy";
+	public static final String MY_ARGS = "data/ca-2.txt greedy";
 	public static final Integer NANOS_IN_MILI = 1000000;
 
 	/**
@@ -101,9 +102,8 @@ public class MDS_Run {
 		long start2 = System.nanoTime();
 		long start = bean.getCurrentThreadCpuTime();
 		if (algorithm.compareTo("") == 0) {
-			System.out
-					.println("You should specify algorithm you want to use. Naive algorithm is used.");
-			alg = new NaiveAlgorithm();
+			throw new IllegalArgumentException(
+					"You should specify algorithm you want to use. Naive algorithm is used.");
 		} else if (algorithm.compareTo("naive") == 0) {
 			alg = new NaiveAlgorithm();
 		} else if (algorithm.compareTo("mynaive") == 0) {
@@ -130,6 +130,10 @@ public class MDS_Run {
 			alg = new AlgorithmFNaive();
 		} else if (algorithm.compareTo("fproper") == 0) {
 			alg = new AlgorithmFProper();
+		} else if (algorithm.compareTo("floweru") == 0) {
+			alg = new FlowerUniqueAlgorithm();
+		} else {
+			throw new IllegalArgumentException("Algorithm is not implemented.");
 		}
 		mds = g.getMDS(alg);
 		long elapsed = (bean.getCurrentThreadCpuTime() - start) / NANOS_IN_MILI;
