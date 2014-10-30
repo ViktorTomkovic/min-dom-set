@@ -29,7 +29,7 @@ import algorithm.mt.MyNaive3Algorithm;
 import algorithm.mt.MyNaiveAlgorithm;
 
 public class MDS_Run {
-	public static final String MY_ARGS = "data/ca-2.txt greedy";
+	public static final String MY_ARGS = "data/ca-2.txt floweru";
 	public static final Integer NANOS_IN_MILI = 1000000;
 
 	/**
@@ -97,7 +97,7 @@ public class MDS_Run {
 			algorithm = args[1];
 		}
 		LinkedHashSet<Integer> mds; // = new LinkedHashSet<>();
-		AbstractMDSAlgorithm alg = new NaiveAlgorithm();
+		AbstractMDSAlgorithm alg;
 		ThreadMXBean bean = ManagementFactory.getThreadMXBean();
 		long start2 = System.nanoTime();
 		long start = bean.getCurrentThreadCpuTime();
@@ -135,6 +135,7 @@ public class MDS_Run {
 		} else {
 			throw new IllegalArgumentException("Algorithm is not implemented.");
 		}
+		assert alg != null : "Algorith is null!";
 		mds = g.getMDS(alg);
 		long elapsed = (bean.getCurrentThreadCpuTime() - start) / NANOS_IN_MILI;
 		long elapsed2 = (System.nanoTime() - start2) / NANOS_IN_MILI;
