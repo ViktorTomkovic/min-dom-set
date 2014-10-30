@@ -30,6 +30,7 @@ public class GreedyAlgorithm implements AbstractMDSAlgorithm {
 		ResultHolder rh = new ResultHolder();
 		rh.skipped = 0;
 		int iterations = 0;
+		myloop:
 		for (Integer current : white) {
 			iterations = iterations + 1;
 			int currentCount = neig.get(current).size();
@@ -39,15 +40,15 @@ public class GreedyAlgorithm implements AbstractMDSAlgorithm {
 			}
 			if (oldMaxCount.equals(currentCount)) {
 				rh.skipped = 1;
-				rh.result = max;
-				rh.neighCount = maxCount;
-				rh.iterations = iterations;
-				return rh;
+				break myloop;
 			}
 		}
 		rh.result = max;
 		rh.neighCount = maxCount;
 		rh.iterations = iterations;
+//		if (white.size() - iterations > 10) {
+//			System.out.println("("+iterations+","+(white.size()-iterations)+")");
+//		}
 		// System.out.print("("+oldMaxCount+","+rh.neighCount);
 		return rh;
 	}
@@ -70,12 +71,9 @@ public class GreedyAlgorithm implements AbstractMDSAlgorithm {
 		Integer lastMaxCount = -1;
 		int skipped = 0;
 		Collections.sort(G, new GreaterByN1BComparator(g));
-		for (Integer ach : G) {
-			System.out.print("("+ach+","+g.getN1(ach).size()+")");
-		}
 		while (!G.isEmpty()) {
 			iterations = iterations + 1;
-			Collections.sort(G, new GreaterByN1BComparator(g));
+			// Collections.sort(G, new GreaterByN1BComparator(g));
 			ResultHolder rh = maxByN1(W, neigW, lastMaxCount);
 			iterations = iterations + rh.iterations;
 			lastMaxCount = rh.neighCount;

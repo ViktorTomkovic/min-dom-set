@@ -29,7 +29,7 @@ import algorithm.mt.MyNaive3Algorithm;
 import algorithm.mt.MyNaiveAlgorithm;
 
 public class MDS_Run {
-	public static final String MY_ARGS = "data/ca-2.txt floweru";
+	public static final String MY_ARGS = "data/ca-1.txt greedy";
 	public static final Integer NANOS_IN_MILI = 1000000;
 
 	/**
