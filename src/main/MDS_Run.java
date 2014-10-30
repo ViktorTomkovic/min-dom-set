@@ -29,8 +29,9 @@ import algorithm.mt.MyNaive3Algorithm;
 import algorithm.mt.MyNaiveAlgorithm;
 
 public class MDS_Run {
-	public static final String MY_ARGS = "data/ca-1.txt greedy";
+	public static final String MY_ARGS = "data/ca-2.txt greedy";
 	public static final Integer NANOS_IN_MILI = 1000000;
+	public static final int LONG_OFFSET = 32;
 
 	/**
 	 * @param args
@@ -49,14 +50,17 @@ public class MDS_Run {
 			return;
 		}
 		String filename = args[0];
-		try {
+		try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
+			long startReading = System.currentTimeMillis();
 			ArrayList<Edge> edgeList = new ArrayList<>();
-			BufferedReader br = new BufferedReader(new FileReader(filename));
-			String line;
-			while ((line = br.readLine()) != null) {
+			int sizeOfList = 16;
+			int firstFree = 0;
+			long[] edgeList2 = new long[sizeOfList];
+			String line = br.readLine();
+			while (line != null) {
 				StringTokenizer st = new StringTokenizer(line);
-				Integer a = -1;
-				Integer b = -1;
+				int a = -1;
+				int b = -1;
 				int count = 0;
 				if (st.hasMoreTokens()) {
 					try {
@@ -73,15 +77,30 @@ public class MDS_Run {
 					}
 				}
 				if (count == 2) {
-					Edge e = new Edge(a, b);
-					edgeList.add(e);
+					 Edge e = new Edge(a, b);
+					 edgeList.add(e);
+					long number = (((long)a) << LONG_OFFSET) + b;
+					// System.out.println(Long.toBinaryString(number));
+//					edgeList2[firstFree] = number;
+//					firstFree = firstFree + 1;
+//					if (firstFree == sizeOfList) {
+//						sizeOfList = sizeOfList<<1;
+//						long[] edgeList3 = new long[sizeOfList];
+//						for (int i = 0; i < firstFree; i++) {
+//							edgeList3[i] = edgeList2[i];
+//						}
+//						edgeList2 = edgeList3;
+//					}
 				}
+				line = br.readLine();
 			}
 			br.close();
+			System.out.println("Read time: " + (System.currentTimeMillis() - startReading) + "ms.");
+//			g = new UndirectedGraph(new LinkedHashSet<Integer>(), edgeList2, firstFree);
 			g = new UndirectedGraph(new LinkedHashSet<Integer>(), edgeList);
 			System.out.println("Graph loaded - vertices: "
 					+ g.getNumberOfVertices() + ", edges: "
-					+ g.getEdges().size() + ".");
+					+ g.getEdges().size() + ". Time: " + (System.currentTimeMillis() - startReading) + "ms.");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

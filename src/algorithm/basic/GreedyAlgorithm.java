@@ -9,8 +9,7 @@ import java.util.LinkedHashSet;
 
 import model.Graph;
 import algorithm.AbstractMDSAlgorithm;
-import algorithm.GreaterByN1BComparator;
-import algorithm.LessByN1BComparator;
+import algorithm.LessByN1NComparator;
 
 public class GreedyAlgorithm implements AbstractMDSAlgorithm {
 	private long prepTime = -1L;
@@ -23,11 +22,11 @@ public class GreedyAlgorithm implements AbstractMDSAlgorithm {
 		public Integer skipped;
 	}
 
-	private ResultHolder maxByN1(LinkedHashSet<Integer> white,
+	private ResultHolder maxByN1(ArrayList<Integer> white,
 			HashMap<Integer, LinkedHashSet<Integer>> neig, Integer oldMaxCount) {
+		ResultHolder rh = new ResultHolder();
 		int max = 0;
 		int maxCount = 0;
-		ResultHolder rh = new ResultHolder();
 		rh.skipped = 0;
 		int iterations = 0;
 		myloop:
@@ -57,12 +56,14 @@ public class GreedyAlgorithm implements AbstractMDSAlgorithm {
 	public LinkedHashSet<Integer> mdsAlg(Graph g) {
 		ThreadMXBean bean = ManagementFactory.getThreadMXBean();
 		long start = bean.getCurrentThreadCpuTime();
-		LinkedHashSet<Integer> W = new LinkedHashSet<>(g.getVertices());
-		ArrayList<Integer> G = new ArrayList<>(g.getVertices());
+		ArrayList<Integer> vertices = new ArrayList<>(g.getVertices());
 		HashMap<Integer, LinkedHashSet<Integer>> neigW = new HashMap<>();
-		for (Integer v : W) {
+		for (Integer v : vertices) {
 			neigW.put(v, new LinkedHashSet<>(g.getN1(v)));
 		}
+		// Collections.sort(vertices, new LessByN1NComparator(neigW));
+		ArrayList<Integer> W = new ArrayList<>(vertices);
+		ArrayList<Integer> G = new ArrayList<>(vertices);
 
 		prepTime = bean.getCurrentThreadCpuTime() - start;
 		int initialSize = (int)Math.ceil(g.getNumberOfVertices() * (1/0.65)) + 1;
@@ -70,10 +71,20 @@ public class GreedyAlgorithm implements AbstractMDSAlgorithm {
 		int iterations = 0;
 		Integer lastMaxCount = -1;
 		int skipped = 0;
-		Collections.sort(G, new GreaterByN1BComparator(g));
+//		for (int i = 0; i < 30; i++) {
+//			System.out.print("("+G.get(i)+","+g.getN1(G.get(i)).size()+")");
+//		}
+//		System.out.println();
+//		Collections.sort(G, new LessByN1BComparator(g));
+//		for (int i = 0; i < 30; i++) {
+//			System.out.print("("+G.get(i)+","+g.getN1(G.get(i)).size()+")");
+//		}
+//		System.out.println();
+//		return new LinkedHashSet<>();
+		//ResultHolder rh = new ResultHolder();
 		while (!G.isEmpty()) {
 			iterations = iterations + 1;
-			// Collections.sort(G, new GreaterByN1BComparator(g));
+			// Collections.sort(W, new LessByN1NComparator(neigW));
 			ResultHolder rh = maxByN1(W, neigW, lastMaxCount);
 			iterations = iterations + rh.iterations;
 			lastMaxCount = rh.neighCount;
