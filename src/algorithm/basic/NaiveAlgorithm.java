@@ -5,8 +5,8 @@ import java.lang.management.ThreadMXBean;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 
+import datastructure.graph.Graph;
 import algorithm.AbstractMDSAlgorithm;
-import model.Graph;
 
 public class NaiveAlgorithm implements AbstractMDSAlgorithm {
 	private long runTime = -1L;

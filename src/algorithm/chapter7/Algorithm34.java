@@ -7,7 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 
-import model.Graph;
+import datastructure.graph.Graph;
 import algorithm.AbstractMDSAlgorithm;
 
 public class Algorithm34 implements AbstractMDSAlgorithm {

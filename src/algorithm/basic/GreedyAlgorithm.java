@@ -7,7 +7,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 
-import model.Graph;
+import datastructure.graph.Graph;
 import algorithm.AbstractMDSAlgorithm;
 import algorithm.LessByN1NComparator;
 

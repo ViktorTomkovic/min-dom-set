@@ -3,7 +3,7 @@ package algorithm;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 
-import model.Graph;
+import datastructure.graph.Graph;
 
 public interface AbstractMSCAlgorithm {
 	public LinkedHashSet<Integer> getMSCforMDS(LinkedHashSet<Integer> universum,

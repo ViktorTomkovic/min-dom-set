@@ -6,9 +6,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 
+import datastructure.graph.Graph;
 import algorithm.AbstractMDSAlgorithm;
 import algorithm.LessByN1AComparator;
-import model.Graph;
 
 public class GreedyQuickAlgorithm implements AbstractMDSAlgorithm {
 	private long prepTime = -1L;

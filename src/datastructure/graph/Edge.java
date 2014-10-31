@@ -1,15 +1,15 @@
-package model;
+package datastructure.graph;
 
 public class Edge {
-	public Integer from;
-	public Integer to;
+	public int from;
+	public int to;
 
 	public Edge() {
 		this.from = 0;
 		this.to = 0;
 	}
 
-	public Edge(Integer from, Integer to) {
+	public Edge(int from, int to) {
 		this.from = from;
 		this.to = to;
 	}

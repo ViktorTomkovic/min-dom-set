@@ -3,7 +3,7 @@ package algorithm.chapter7;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 
-import model.Graph;
+import datastructure.graph.Graph;
 
 public class Algorithm35State {
 	public final Integer v;

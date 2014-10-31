@@ -1,4 +1,4 @@
-package model;
+package datastructure.graph;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;

@@ -3,7 +3,7 @@ package algorithm.chapter7;
 import java.util.Map;
 import java.util.Set;
 
-import model.Graph;
+import datastructure.graph.Graph;
 
 public class Algorithm34Vertex2 implements Runnable {
 	private Graph g;

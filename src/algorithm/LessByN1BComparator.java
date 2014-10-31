@@ -2,7 +2,7 @@ package algorithm;
 
 import java.util.Comparator;
 
-import model.Graph;
+import datastructure.graph.Graph;
 
 public class LessByN1BComparator implements Comparator<Integer> {
 	private Graph g;

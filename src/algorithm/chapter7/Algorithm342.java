@@ -5,7 +5,7 @@ import java.lang.management.ThreadMXBean;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 
-import model.Graph;
+import datastructure.graph.Graph;
 import algorithm.AbstractMDSAlgorithm;
 
 public class Algorithm342 implements AbstractMDSAlgorithm {

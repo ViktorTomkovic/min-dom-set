@@ -4,8 +4,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 
-import model.Graph;
-
+import datastructure.graph.Graph;
 import algorithm.AbstractMSCAlgorithm;
 import algorithm.RepresentedSet;
 

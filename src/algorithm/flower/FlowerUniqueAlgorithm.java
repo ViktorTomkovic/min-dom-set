@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 
-import model.Graph;
+import datastructure.graph.Graph;
 import algorithm.AbstractMDSAlgorithm;
 
 public class FlowerUniqueAlgorithm implements AbstractMDSAlgorithm {

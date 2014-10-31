@@ -9,8 +9,8 @@ import java.util.LinkedList;
 import java.util.Map.Entry;
 import java.util.TreeSet;
 
-import model.DirectedGraph;
-import model.Edge;
+import datastructure.graph.DirectedGraph;
+import datastructure.graph.Edge;
 import algorithm.RepresentedSet;
 
 public class Utils {

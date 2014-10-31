@@ -13,3 +13,4 @@ data/
 *.jar
 *.war
 *.ear
+/lib/

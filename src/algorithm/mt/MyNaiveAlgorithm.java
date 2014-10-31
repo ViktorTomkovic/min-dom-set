@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 
+import datastructure.graph.Graph;
 import main.Utils;
-import model.Graph;
 import algorithm.AbstractMDSAlgorithm;
 
 public class MyNaiveAlgorithm implements AbstractMDSAlgorithm {

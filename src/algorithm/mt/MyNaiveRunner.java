@@ -3,7 +3,7 @@ package algorithm.mt;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 
-import model.Graph;
+import datastructure.graph.Graph;
 
 public class MyNaiveRunner implements Runnable {
 	private MyNaiveAlgorithm alg;

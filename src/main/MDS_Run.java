@@ -9,9 +9,10 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.StringTokenizer;
 
-import model.Edge;
-import model.Graph;
-import model.UndirectedGraph;
+import datastructure.graph.CompactUndirectedGraph;
+import datastructure.graph.Edge;
+import datastructure.graph.Graph;
+import datastructure.graph.UndirectedGraph;
 import algorithm.AbstractMDSAlgorithm;
 import algorithm.basic.GreedyAlgorithm;
 import algorithm.basic.GreedyQuickAlgorithm;
@@ -29,7 +30,7 @@ import algorithm.mt.MyNaive3Algorithm;
 import algorithm.mt.MyNaiveAlgorithm;
 
 public class MDS_Run {
-	public static final String MY_ARGS = "data/ca-2.txt greedy";
+	public static final String MY_ARGS = "data/ca-1.txt greedy";
 	public static final Integer NANOS_IN_MILI = 1000000;
 	public static final int LONG_OFFSET = 32;
 
@@ -77,27 +78,25 @@ public class MDS_Run {
 					}
 				}
 				if (count == 2) {
-					 Edge e = new Edge(a, b);
-					 edgeList.add(e);
+//					 Edge e = new Edge(a, b);
+//					 edgeList.add(e);
 					long number = (((long)a) << LONG_OFFSET) + b;
 					// System.out.println(Long.toBinaryString(number));
-//					edgeList2[firstFree] = number;
-//					firstFree = firstFree + 1;
-//					if (firstFree == sizeOfList) {
-//						sizeOfList = sizeOfList<<1;
-//						long[] edgeList3 = new long[sizeOfList];
-//						for (int i = 0; i < firstFree; i++) {
-//							edgeList3[i] = edgeList2[i];
-//						}
-//						edgeList2 = edgeList3;
-//					}
+					edgeList2[firstFree] = number;
+					firstFree = firstFree + 1;
+					if (firstFree == sizeOfList) {
+						sizeOfList = sizeOfList<<1;
+						long[] edgeList3 = new long[sizeOfList];
+						System.arraycopy(edgeList2, 0, edgeList3, 0, firstFree);
+						edgeList2 = edgeList3;
+					}
 				}
 				line = br.readLine();
 			}
 			br.close();
 			System.out.println("Read time: " + (System.currentTimeMillis() - startReading) + "ms.");
-//			g = new UndirectedGraph(new LinkedHashSet<Integer>(), edgeList2, firstFree);
-			g = new UndirectedGraph(new LinkedHashSet<Integer>(), edgeList);
+			g = new CompactUndirectedGraph(new LinkedHashSet<Integer>(), edgeList2);
+//			g = new UndirectedGraph(new LinkedHashSet<Integer>(), edgeList);
 			System.out.println("Graph loaded - vertices: "
 					+ g.getNumberOfVertices() + ", edges: "
 					+ g.getEdges().size() + ". Time: " + (System.currentTimeMillis() - startReading) + "ms.");

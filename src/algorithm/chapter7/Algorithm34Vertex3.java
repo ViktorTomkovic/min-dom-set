@@ -5,7 +5,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-import model.Graph;
+import datastructure.graph.Graph;
 
 public class Algorithm34Vertex3 extends Thread {
 	private Graph g;

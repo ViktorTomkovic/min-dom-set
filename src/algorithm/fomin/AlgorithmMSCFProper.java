@@ -5,10 +5,10 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 
+import datastructure.graph.DirectedGraph;
+import datastructure.graph.Edge;
+import datastructure.graph.Graph;
 import main.Utils;
-import model.DirectedGraph;
-import model.Edge;
-import model.Graph;
 import algorithm.AbstractMSCAlgorithm;
 import algorithm.RepresentedSet;
 
