@@ -3,13 +3,11 @@ package algorithm.basic;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 
-import datastructure.graph.Graph;
 import algorithm.AbstractMDSAlgorithm;
-import algorithm.LessByN1NComparator;
+import datastructure.graph.Graph;
 
 public class GreedyAlgorithm implements AbstractMDSAlgorithm {
 	private long prepTime = -1L;

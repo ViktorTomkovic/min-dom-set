@@ -1,18 +1,9 @@
 package main;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
-import java.util.ArrayList;
 import java.util.LinkedHashSet;
-import java.util.StringTokenizer;
 
-import datastructure.graph.CompactUndirectedGraph;
-import datastructure.graph.Edge;
-import datastructure.graph.Graph;
-import datastructure.graph.UndirectedGraph;
 import algorithm.AbstractMDSAlgorithm;
 import algorithm.basic.GreedyAlgorithm;
 import algorithm.basic.GreedyQuickAlgorithm;
@@ -28,12 +19,12 @@ import algorithm.fomin.AlgorithmFProper;
 import algorithm.mt.MyNaive2Algorithm;
 import algorithm.mt.MyNaive3Algorithm;
 import algorithm.mt.MyNaiveAlgorithm;
+import datastructure.Dataset;
+import datastructure.graph.CompactUndirectedGraph;
+import datastructure.graph.Graph;
 
 public class MDS_Run {
-	public static final String MY_ARGS = "data/ca-1.txt greedy";
-	public static final Integer NANOS_IN_MILI = 1000000;
-	public static final int LONG_OFFSET = 32;
-
+	public static final String MY_ARGS = "data/ca-2.txt greedy";
 	/**
 	 * @param args
 	 *            filename of processed graph
@@ -44,65 +35,23 @@ public class MDS_Run {
 		}
 		for (String s : args)
 			System.out.println(s);
-		Graph g = new UndirectedGraph();
+		Graph g;
 		if (args.length < 1) {
 			System.out
 					.println("Please use the first argument as input filename.");
 			return;
 		}
+		long startReading = System.currentTimeMillis();
 		String filename = args[0];
-		try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
-			long startReading = System.currentTimeMillis();
-			ArrayList<Edge> edgeList = new ArrayList<>();
-			int sizeOfList = 16;
-			int firstFree = 0;
-			long[] edgeList2 = new long[sizeOfList];
-			String line = br.readLine();
-			while (line != null) {
-				StringTokenizer st = new StringTokenizer(line);
-				int a = -1;
-				int b = -1;
-				int count = 0;
-				if (st.hasMoreTokens()) {
-					try {
-						a = Integer.parseInt(st.nextToken());
-						count++;
-					} catch (NumberFormatException e) {
-					}
-				}
-				if (st.hasMoreTokens()) {
-					try {
-						b = Integer.parseInt(st.nextToken());
-						count++;
-					} catch (NumberFormatException e) {
-					}
-				}
-				if (count == 2) {
-//					 Edge e = new Edge(a, b);
-//					 edgeList.add(e);
-					long number = (((long)a) << LONG_OFFSET) + b;
-					// System.out.println(Long.toBinaryString(number));
-					edgeList2[firstFree] = number;
-					firstFree = firstFree + 1;
-					if (firstFree == sizeOfList) {
-						sizeOfList = sizeOfList<<1;
-						long[] edgeList3 = new long[sizeOfList];
-						System.arraycopy(edgeList2, 0, edgeList3, 0, firstFree);
-						edgeList2 = edgeList3;
-					}
-				}
-				line = br.readLine();
-			}
-			br.close();
-			System.out.println("Read time: " + (System.currentTimeMillis() - startReading) + "ms.");
-			g = new CompactUndirectedGraph(new LinkedHashSet<Integer>(), edgeList2);
-//			g = new UndirectedGraph(new LinkedHashSet<Integer>(), edgeList);
-			System.out.println("Graph loaded - vertices: "
-					+ g.getNumberOfVertices() + ", edges: "
-					+ g.getEdges().size() + ". Time: " + (System.currentTimeMillis() - startReading) + "ms.");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		Dataset dataset = Utils.readEdgeListFromFile(filename);
+		System.out.println("Read time: "
+				+ (System.currentTimeMillis() - startReading) + "ms.");
+		g = new CompactUndirectedGraph(dataset);
+		// g = new UndirectedGraph(new LinkedHashSet<Integer>(), edgeList);
+		System.out.println("Graph loaded - vertices: "
+				+ g.getNumberOfVertices() + ", edges: " + g.getEdges().size()
+				+ ". Time: " + (System.currentTimeMillis() - startReading)
+				+ "ms.");
 		if ((g.getEdges().size() == 0) && (g.getNumberOfVertices() == 0)) {
 			System.out
 					.println("The graph has no vertices or does not load correctly.");
@@ -155,8 +104,8 @@ public class MDS_Run {
 		}
 		assert alg != null : "Algorith is null!";
 		mds = g.getMDS(alg);
-		long elapsed = (bean.getCurrentThreadCpuTime() - start) / NANOS_IN_MILI;
-		long elapsed2 = (System.nanoTime() - start2) / NANOS_IN_MILI;
+		long elapsed = (bean.getCurrentThreadCpuTime() - start) / Utils.NANOS_IN_MILI;
+		long elapsed2 = (System.nanoTime() - start2) / Utils.NANOS_IN_MILI;
 		System.out.println("Graph ...... - vertices: "
 				+ g.getNumberOfVertices() + ", edges: " + g.getEdges().size()
 				+ ".");
@@ -168,10 +117,10 @@ public class MDS_Run {
 		sb.append("Time elapsed: ");
 		sb.append(elapsed);
 		sb.append("ms. \t(");
-		sb.append(alg.getLastPrepTime() / NANOS_IN_MILI);
+		sb.append(alg.getLastPrepTime() / Utils.NANOS_IN_MILI);
 		sb.append("ms + ");
 		sb.append((alg.getLastRunTime() - alg.getLastPrepTime())
-				/ NANOS_IN_MILI);
+				/ Utils.NANOS_IN_MILI);
 		sb.append("ms)\t\t\t");
 		sb.append("Wall time: ");
 		sb.append(elapsed2);

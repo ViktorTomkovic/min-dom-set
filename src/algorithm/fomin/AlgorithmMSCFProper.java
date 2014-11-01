@@ -8,9 +8,9 @@ import java.util.LinkedHashSet;
 import datastructure.graph.DirectedGraph;
 import datastructure.graph.Edge;
 import datastructure.graph.Graph;
-import main.Utils;
 import algorithm.AbstractMSCAlgorithm;
 import algorithm.RepresentedSet;
+import algorithm.Utils;
 
 public class AlgorithmMSCFProper implements AbstractMSCAlgorithm {
 

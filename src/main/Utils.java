@@ -1,170 +1,116 @@
 package main;
 
-import java.util.ArrayList;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.Map.Entry;
-import java.util.TreeSet;
+import java.util.StringTokenizer;
 
-import datastructure.graph.DirectedGraph;
-import datastructure.graph.Edge;
-import algorithm.RepresentedSet;
+import datastructure.Dataset;
 
 public class Utils {
-	public static LinkedHashSet<Edge> fordFulkerson(DirectedGraph graph) {
-		LinkedHashSet<Edge> result = new LinkedHashSet<>();
+	public static final int LONG_OFFSET = 32;
+	public static final Integer NANOS_IN_MILI = 1000000;
+	private static final int TEXT_SPLITTING_CONSTANT = 100;
 
-		LinkedHashSet<Edge> edges = new LinkedHashSet<>(graph.getEdges());
-
-		HashMap<Integer, Integer> match = new HashMap<>();
-
-		LinkedHashSet<Integer> whiteSet = new LinkedHashSet<>();
-		LinkedHashSet<Integer> blackSet = new LinkedHashSet<>();
-		for (Edge e : edges) {
-			whiteSet.add(e.from);
-			blackSet.add(e.to);
-			match.put(e.to, -1);
-		}
-
-		for (Integer v : whiteSet) {
-			HashSet<Integer> visitedBlack = new HashSet<>();
-			aug(edges, v, visitedBlack, match, blackSet);
-		}
-		for (Entry<Integer, Integer> entry : match.entrySet()) {
-			result.add(new Edge(entry.getValue(), entry.getKey()));
-		}
-		return result;
+	private Utils() {
 	}
 
-	private static boolean aug(LinkedHashSet<Edge> edges, Integer white,
-			HashSet<Integer> visitedBlack, HashMap<Integer, Integer> match,
-			LinkedHashSet<Integer> blackSet) {
-		for (Integer black : blackSet) {
-			boolean contains = false;
-			for (Edge e : edges) {
-				if ((e.from.equals(white)) && (e.to.equals(black))) {
-					contains = true;
+	public static String largeIntArrayToString(int[] array) {
+		StringBuilder sb = new StringBuilder();
+		if (array.length < TEXT_SPLITTING_CONSTANT) {
+			sb.append(Arrays.toString(array));
+		} else {
+			sb.append("[");
+			int a = 0;
+			for (int value : array) {
+				a++;
+				if (a < TEXT_SPLITTING_CONSTANT
+						|| a > array.length - TEXT_SPLITTING_CONSTANT / 3) {
+					sb.append(value);
+					sb.append(", ");
+				} else if (a == TEXT_SPLITTING_CONSTANT) {
+					sb.append("    .    .    .    ");
 				}
 			}
-			if (contains && !visitedBlack.contains(black)) {
-				visitedBlack.add(black);
-				if (match.get(black) == -1L
-						|| aug(edges, match.get(black), visitedBlack, match,
-								blackSet)) {
-					match.put(black, white);
-					return true;
-				}
-			}
+			sb.append("]");
 		}
-		return false;
-	}
-
-	public static DirectedGraph getDirectedGraphFromRepresentedSets(
-			ArrayList<RepresentedSet> sets) {
-		ArrayList<Edge> edges = new ArrayList<>();
-		LinkedList<RepresentedSet> twoSets = new LinkedList<>(sets);
-		for (RepresentedSet s : sets) {
-			if (s.getSet().size() == 1) {
-				twoSets.remove(s);
-			}
-		}
-		LinkedHashSet<Integer> coloredBlack = new LinkedHashSet<>();
-		LinkedHashSet<Integer> coloredWhite = new LinkedHashSet<>();
-		TreeSet<Integer> unfinishedWhite = new TreeSet<>();
-		TreeSet<Integer> unfinishedBlack = new TreeSet<>();
-		while (!twoSets.isEmpty()) {
-			RepresentedSet s = twoSets.pollFirst();
-			Object[] ab = s.getSet().toArray();
-			Integer a = (Integer) ab[0];
-			Integer b = (Integer) ab[1];
-			coloredWhite.add(a);
-			coloredBlack.add(b);
-			unfinishedWhite.add(a);
-			unfinishedBlack.add(b);
-			edges.add(new Edge(a, b));
-
-			while (!unfinishedBlack.isEmpty() || !unfinishedWhite.isEmpty()) {
-				while (!unfinishedWhite.isEmpty()) {
-					Integer l = unfinishedWhite.pollFirst();
-					ArrayList<RepresentedSet> toDelete = new ArrayList<>();
-					for (RepresentedSet rs : twoSets) {
-						if (rs.getSet().contains(l)) {
-							Object[] ab2 = rs.getSet().toArray();
-							Integer a2 = (Integer) ab2[0];
-							Integer b2 = (Integer) ab2[1];
-							if (a2.equals(l)) {
-								unfinishedBlack.add(b2);
-								edges.add(new Edge(a2, b2));
-								coloredWhite.add(a2);
-								coloredBlack.add(b2);
-							} else {
-								unfinishedBlack.add(a2);
-								edges.add(new Edge(b2, a2));
-								coloredWhite.add(b2);
-								coloredBlack.add(a2);
-							}
-							toDelete.add(rs);
-						}
-					}
-					twoSets.removeAll(toDelete);
-				}
-
-				while (!unfinishedBlack.isEmpty()) {
-					Integer l = unfinishedBlack.pollFirst();
-					ArrayList<RepresentedSet> toDelete = new ArrayList<>();
-					for (RepresentedSet rs : twoSets) {
-						if (rs.getSet().contains(l)) {
-							Object[] ab2 = rs.getSet().toArray();
-							Integer a2 = (Integer) ab2[0];
-							Integer b2 = (Integer) ab2[1];
-							if (a2.equals(l)) {
-								unfinishedWhite.add(b2);
-								edges.add(new Edge(b2, a2));
-								coloredWhite.add(b2);
-								coloredBlack.add(a2);
-							} else {
-								unfinishedWhite.add(a2);
-								edges.add(new Edge(a2, b2));
-								coloredWhite.add(a2);
-								coloredBlack.add(b2);
-							}
-							toDelete.add(rs);
-						}
-					}
-					twoSets.removeAll(toDelete);
-				}
-			}
-			/*
-			 * for (Integer v : coloredWhite) { edges.add(new Edge(-1L, v)); } for
-			 * (Integer v : coloredBlack) { edges.add(new Edge(v, -2L)); }
-			 */
-		}
-		return new DirectedGraph(edges);
+		return sb.toString();
 	}
 
 	public static <T> String largeCollectionToString(Collection<T> collection) {
-		String result = "";
-		int magicConstant = 100;
-		if (collection.size() < magicConstant) {
-			result = collection.toString();
+		StringBuilder sb = new StringBuilder();
+		if (collection.size() < TEXT_SPLITTING_CONSTANT) {
+			sb.append(collection.toString());
 		} else {
-			result = result.concat("[");
+			sb.append("[");
 			int a = 0;
 			for (T value : collection) {
 				a++;
-				if (a < magicConstant
-						|| a > collection.size() - magicConstant / 3) {
-					result = result.concat(value.toString()).concat(", ");
-				} else if (a == magicConstant) {
-					result = result.concat("    .    .    .    ");
+				if (a < TEXT_SPLITTING_CONSTANT
+						|| a > collection.size() - TEXT_SPLITTING_CONSTANT / 3) {
+					sb.append(value);
+					sb.append(", ");
+				} else if (a == TEXT_SPLITTING_CONSTANT) {
+					sb.append("    .    .    .    ");
 				}
 			}
-			result = result.substring(0, result.length()-2);
-			result = result.concat("]");
+			sb.append("]");
 		}
-		return result;
+		return sb.toString();
+	}
+
+	public static Dataset readEdgeListFromFile(String filename) {
+		Dataset dataset = new Dataset();
+		try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
+			// ArrayList<Edge> edgeList = new ArrayList<>();
+			int sizeOfList = 16;
+			int firstFree = 0;
+			int[] edgesFrom = new int[sizeOfList];
+			int[] edgesTo = new int[sizeOfList];
+			String line = br.readLine();
+			while (line != null) {
+				StringTokenizer st = new StringTokenizer(line);
+				int a = -1;
+				int b = -1;
+				int count = 0;
+				if (st.hasMoreTokens()) {
+					try {
+						a = Integer.parseInt(st.nextToken());
+						count++;
+					} catch (NumberFormatException e) {
+					}
+				}
+				if (st.hasMoreTokens()) {
+					try {
+						b = Integer.parseInt(st.nextToken());
+						count++;
+					} catch (NumberFormatException e) {
+					}
+				}
+				if (count == 2) {
+					edgesFrom[firstFree] = a;
+					edgesTo[firstFree] = b;
+					firstFree = firstFree + 1;
+					if (firstFree == sizeOfList) {
+						sizeOfList = sizeOfList << 1;
+						int[] tempEdgeList = new int[sizeOfList];
+						System.arraycopy(edgesFrom, 0, tempEdgeList, 0,
+								firstFree);
+						edgesFrom = tempEdgeList;
+						tempEdgeList = new int[sizeOfList];
+						System.arraycopy(edgesTo, 0, tempEdgeList, 0, firstFree);
+						edgesTo = tempEdgeList;
+					}
+				}
+				line = br.readLine();
+			}
+			dataset.setRawEdges(edgesFrom, edgesTo, firstFree);
+			br.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return dataset;
 	}
 }

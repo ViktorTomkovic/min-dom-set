@@ -4,27 +4,27 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 
+import com.carrotsearch.hppc.IntObjectOpenHashMap;
+import com.carrotsearch.hppc.IntOpenHashSet;
+import com.carrotsearch.hppc.ObjectArrayList;
+
+import datastructure.Dataset;
 import algorithm.AbstractMDSAlgorithm;
 
 public class CompactUndirectedGraph implements Graph {
-	private static final int LONG_OFFSET = 32;
-	private static final long MASK_B = (1L << 32) - 1;
-	private static final long MASK_A = (-1L) ^ MASK_B;
-	private int edgesCount;
-	private long[] edges;
+	private int edgesCount = 0;
+	private int maxVertexNumber = 0;
+	private ObjectArrayList<Edge> edges = new ObjectArrayList<Edge>();
+	private IntObjectOpenHashMap<IntOpenHashSet> neig1 = new IntObjectOpenHashMap<>();
+	private IntObjectOpenHashMap<IntOpenHashSet> neig2 = new IntObjectOpenHashMap<>();
 
-	public CompactUndirectedGraph(LinkedHashSet<Integer> vertices, long[] aedges) {
-		if (aedges.length > (Integer.MAX_VALUE >> 1)) {
-			throw new IllegalArgumentException("Too much edges.");
-		}
-		edgesCount = aedges.length;
-		edges = new long[aedges.length];
-		System.arraycopy(aedges, 0, edges, 0, aedges.length);
-//		Map<Integer, Integer> Verte = new HashMap<>();
-//		for (int i = 0; i < this.edges.length; i++) {
-//			int aa = (int) ((edges[i] & MASK_A) >> LONG_OFFSET);
-//			int bb = (int) (edges[i] & MASK_B);
-//		}
+	public CompactUndirectedGraph(Dataset dataset) {
+		dataset.setAll();
+		edgesCount = dataset.edgesCount;
+		maxVertexNumber = dataset.maxVertexNumber;
+		edges = new ObjectArrayList<Edge>(dataset.edges);
+		neig1 = new IntObjectOpenHashMap<IntOpenHashSet>(dataset.neig1);
+		neig2 = new IntObjectOpenHashMap<IntOpenHashSet>(dataset.neig2);
 	}
 
 	@Override
@@ -35,23 +35,20 @@ public class CompactUndirectedGraph implements Graph {
 	@Override
 	public ArrayList<Edge> getEdges() {
 		ArrayList<Edge> result = new ArrayList<>(edgesCount * 2);
-		for (int i = 0; i < edges.length; i++) {
-			int aa = (int) ((edges[i] & MASK_A) >> LONG_OFFSET);
-			int bb = (int) (edges[i] & MASK_B);
-			result.add(new Edge(aa, bb));
-			result.add(new Edge(bb, aa));
+		Object[] values = edges.buffer;
+		for (int i = 0; i < edges.elementsCount; i++) {
+			Edge edge = (Edge)values[i];
+			result.add(new Edge(edge.from, edge.to));
+			result.add(new Edge(edge.to, edge.from));
 		}
 		return result;
 	}
 
 	@Override
 	public LinkedHashSet<Integer> getVertices() {
-		LinkedHashSet<Integer> result = new LinkedHashSet<>();
-		for (int i = 0; i < edges.length; i++) {
-			int aa = (int) ((edges[i] & MASK_A) >> LONG_OFFSET);
-			int bb = (int) (edges[i] & MASK_B);
-			result.add(aa);
-			result.add(bb);
+		LinkedHashSet<Integer> result = new LinkedHashSet<>(maxVertexNumber);
+		for (int i = 1; i < maxVertexNumber; i++) {
+			result.add(i);
 		}
 		return result;
 	}
@@ -64,32 +61,26 @@ public class CompactUndirectedGraph implements Graph {
 	@Override
 	public LinkedHashSet<Integer> getN1(Integer vertex) {
 		LinkedHashSet<Integer> result = new LinkedHashSet<>();
-		for (int i = 0; i < edges.length; i++) {
-			int aa = (int) ((edges[i] & MASK_A) >> LONG_OFFSET);
-			int bb = (int) (edges[i] & MASK_B);
-			if (aa == vertex) {
-				result.add(bb);
-			}
-			if (bb == vertex) {
-				result.add(aa);
+		IntOpenHashSet cres = neig1.get(vertex);
+		int[] keys = cres.keys;
+		boolean[] allocated = cres.allocated;
+		for (int i = 0; i < allocated.length; i++) {
+			if (allocated[i]) {
+				result.add(keys[i]);
 			}
 		}
-		result.add(vertex);
 		return result;
 	}
 
 	@Override
 	public LinkedHashSet<Integer> getN2(Integer vertex) {
-		LinkedHashSet<Integer> n1 = getN1(vertex);
 		LinkedHashSet<Integer> result = new LinkedHashSet<>();
-		for (int i = 0; i < edges.length; i++) {
-			int aa = (int) ((edges[i] & MASK_A) >> LONG_OFFSET);
-			int bb = (int) (edges[i] & MASK_B);
-			if (n1.contains(aa)) {
-				result.add(bb);
-			}
-			if (n1.contains(bb)) {
-				result.add(aa);
+		IntOpenHashSet cres = neig2.get(vertex);
+		int[] keys = cres.keys;
+		boolean[] allocated = cres.allocated;
+		for (int i = 0; i < allocated.length; i++) {
+			if (allocated[i]) {
+				result.add(keys[i]);
 			}
 		}
 		return result;

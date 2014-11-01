@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 
-import datastructure.graph.Graph;
 import main.Utils;
 import algorithm.AbstractMDSAlgorithm;
+import datastructure.graph.Graph;
 
 public class MyNaiveAlgorithm implements AbstractMDSAlgorithm {
 	private long runTime = -1L;
