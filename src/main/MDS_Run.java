@@ -24,7 +24,7 @@ import datastructure.graph.CompactUndirectedGraph;
 import datastructure.graph.Graph;
 
 public class MDS_Run {
-	public static final String MY_ARGS = "data/ca-2.txt greedy";
+	public static final String MY_ARGS = "data/ca-2.txt floweru";
 	/**
 	 * @param args
 	 *            filename of processed graph
