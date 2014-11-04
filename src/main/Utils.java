@@ -1,10 +1,15 @@
 package main;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.StringTokenizer;
 
 import datastructure.Dataset;
@@ -112,5 +117,54 @@ public class Utils {
 			e.printStackTrace();
 		}
 		return dataset;
+	}
+
+	public static LinkedHashSet<Integer> importResult(String filename) {
+		LinkedHashSet<Integer> result = new LinkedHashSet<Integer>();
+		try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
+			String line = br.readLine();
+			if (line == null) {
+				throw new RuntimeException("Bad format of input file.");
+			}
+			int size = Integer.parseInt(line);
+			result = new LinkedHashSet<Integer>((int) Math.ceil(size / 0.75));
+			for (int i = 0; i < size; i++) {
+				line = br.readLine();
+				if (line == null) {
+					throw new RuntimeException("Bad format of input file.");
+				}
+				result.add(Integer.valueOf(line));
+			}
+			br.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+
+	public static void exportResult(String filename, LinkedHashSet<Integer> algResult) {
+		try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
+				new FileOutputStream(filename)))) {
+			int size = algResult.size();
+			writer.write(String.valueOf(size));
+			writer.newLine();
+			for (Integer i : algResult) {
+				writer.write(i.toString());
+				writer.newLine();
+			}
+			writer.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static void createAndCheckDirectory(String dirname) {
+		File resultDir = new File(dirname);
+		if (!resultDir.exists()) {
+			boolean wasDirCreated = resultDir.mkdirs();
+			if (!wasDirCreated) {
+				throw new RuntimeException("Directory was not created.");
+			}
+		}
 	}
 }

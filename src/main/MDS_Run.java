@@ -1,5 +1,6 @@
 package main;
 
+import java.io.File;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
 import java.util.LinkedHashSet;
@@ -24,7 +25,10 @@ import datastructure.graph.CompactUndirectedGraph;
 import datastructure.graph.Graph;
 
 public class MDS_Run {
-	public static final String MY_ARGS = "data/ca-2.txt floweru";
+	public static final String MY_ARGS = "ca-1.txt greedyq true";
+	private static final String DATASET_DIRECTORY = "data";
+	private static final String RESULTS_DIRECTORY = "results";
+
 	/**
 	 * @param args
 	 *            filename of processed graph
@@ -38,12 +42,17 @@ public class MDS_Run {
 		Graph g;
 		if (args.length < 1) {
 			System.out
-					.println("Please use the first argument as input filename.");
+					.println("Please use the first argument as an input filename.");
 			return;
 		}
 		long startReading = System.currentTimeMillis();
-		String filename = args[0];
-		Dataset dataset = Utils.readEdgeListFromFile(filename);
+		StringBuilder datasetFilenameBuilder = new StringBuilder();
+		datasetFilenameBuilder.append(DATASET_DIRECTORY);
+		Utils.createAndCheckDirectory(datasetFilenameBuilder.toString());
+		datasetFilenameBuilder.append('/');
+		datasetFilenameBuilder.append(args[0]);
+		Dataset dataset = Utils.readEdgeListFromFile(datasetFilenameBuilder
+				.toString());
 		System.out.println("Read time: "
 				+ (System.currentTimeMillis() - startReading) + "ms.");
 		g = new CompactUndirectedGraph(dataset);
@@ -70,7 +79,7 @@ public class MDS_Run {
 		long start = bean.getCurrentThreadCpuTime();
 		if (algorithm.compareTo("") == 0) {
 			throw new IllegalArgumentException(
-					"You should specify algorithm you want to use. Naive algorithm is used.");
+					"You should specify algorithm you want to use.");
 		} else if (algorithm.compareTo("naive") == 0) {
 			alg = new NaiveAlgorithm();
 		} else if (algorithm.compareTo("mynaive") == 0) {
@@ -104,7 +113,8 @@ public class MDS_Run {
 		}
 		assert alg != null : "Algorith is null!";
 		mds = g.getMDS(alg);
-		long elapsed = (bean.getCurrentThreadCpuTime() - start) / Utils.NANOS_IN_MILI;
+		long elapsed = (bean.getCurrentThreadCpuTime() - start)
+				/ Utils.NANOS_IN_MILI;
 		long elapsed2 = (System.nanoTime() - start2) / Utils.NANOS_IN_MILI;
 		System.out.println("Graph ...... - vertices: "
 				+ g.getNumberOfVertices() + ", edges: " + g.getEdges().size()
@@ -126,5 +136,22 @@ public class MDS_Run {
 		sb.append(elapsed2);
 		sb.append("ms.");
 		System.out.println(sb.toString());
+
+		if (args.length >= 3) {
+			boolean writeOutput = Boolean.parseBoolean(args[2]);
+			if (writeOutput) {
+				StringBuilder resultFilenameBuilder = new StringBuilder();
+				resultFilenameBuilder.append(RESULTS_DIRECTORY);
+				Utils.createAndCheckDirectory(resultFilenameBuilder.toString());
+				resultFilenameBuilder.append('/');
+				resultFilenameBuilder.append(algorithm);
+				Utils.createAndCheckDirectory(resultFilenameBuilder.toString());
+				resultFilenameBuilder.append("/result-");
+				resultFilenameBuilder.append(args[0]);
+				Utils.exportResult(resultFilenameBuilder.toString(), mds);
+				System.out.println("MDS written to: "
+						+ resultFilenameBuilder.toString());
+			}
+		}
 	}
 }

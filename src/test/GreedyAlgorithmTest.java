@@ -3,7 +3,6 @@
  */
 package test;
 
-import java.io.IOException;
 import java.util.LinkedHashSet;
 
 import main.Utils;
@@ -19,8 +18,6 @@ import algorithm.basic.GreedyAlgorithm;
 
 import com.carrotsearch.junitbenchmarks.BenchmarkOptions;
 import com.carrotsearch.junitbenchmarks.BenchmarkRule;
-import com.carrotsearch.junitbenchmarks.IResultsConsumer;
-import com.carrotsearch.junitbenchmarks.Result;
 
 import datastructure.Dataset;
 import datastructure.graph.CompactUndirectedGraph;
@@ -37,16 +34,17 @@ public class GreedyAlgorithmTest {
 	private static LinkedHashSet<Integer> result;
 
 	@Rule
-	public TestRule benchmarkRun = new BenchmarkRule(new IResultsConsumer() {
+	public TestRule benchmarkRun = new BenchmarkRule();
 
-		@Override
-		public void accept(Result result) throws IOException {
-			// TODO Auto-generated method stub
-			String s = String.format("Time average: %.3fs (+- %.3fs)",
-					result.roundAverage.avg, result.roundAverage.stddev);
-			System.out.println(s);
-		}
-	});
+	/*
+	 * new IResultsConsumer() {
+	 * 
+	 * @Override public void accept(Result result) throws IOException { // TODO
+	 * Auto-generated method stub String s =
+	 * String.format("Time average: %.3fs (+- %.3fs)",
+	 * result.roundAverage.location, result.roundAverage.dispersion);
+	 * System.out.println(s); } }
+	 */
 
 	@BeforeClass
 	public static void setUp() throws Exception {

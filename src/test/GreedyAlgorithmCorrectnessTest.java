@@ -3,54 +3,63 @@
  */
 package test;
 
-import java.io.IOException;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 
 import main.Utils;
 
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Rule;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.rules.TestRule;
 
 import algorithm.AbstractMDSAlgorithm;
 import algorithm.basic.GreedyAlgorithm;
-
-import com.carrotsearch.junitbenchmarks.BenchmarkOptions;
-import com.carrotsearch.junitbenchmarks.BenchmarkRule;
-import com.carrotsearch.junitbenchmarks.IResultsConsumer;
-import com.carrotsearch.junitbenchmarks.Result;
-
+import algorithm.basic.GreedyQuickAlgorithm;
+import algorithm.flower.FlowerUniqueAlgorithm;
 import datastructure.Dataset;
 import datastructure.graph.CompactUndirectedGraph;
 import datastructure.graph.Graph;
 
 /**
+ * <p>
+ * This test is generated to check correctness of specific algorithm on a
+ * specific dataset. It is generated with parameters:
+ * </p>
+ * <p>
+ * <ul>
+ * <li>Class of algorithm: GreedyAlgorithm</li>
+ * <li>Path to dataset: data/ca-1.txt</li>
+ * <li>Path to file with correct result: results/greedy.mdsres</li>
+ * </ul>
+ * </p>
+ * 
+ * 
  * @author viktort
  *
  */
 public class GreedyAlgorithmCorrectnessTest {
-	private static Graph g;
-	private static boolean isMDS;
-	private static AbstractMDSAlgorithm greedyAlgorithm;
-	private static LinkedHashSet<Integer> result;
+	private Graph g;
+	private AbstractMDSAlgorithm algorithm;
+	private LinkedHashSet<Integer> result;
+	private final String resultFilename = "results/greedyq/result-ca-1.txt";
+	private LinkedHashSet<Integer> readResult;
 
 	@Before
-	public static void setUp() throws Exception {
-		String filename = "data/ca-2.txt";
+	public void setUp() throws Exception {
+		String filename = "data/ca-1.txt";
 		Dataset dataset = Utils.readEdgeListFromFile(filename);
 		g = new CompactUndirectedGraph(dataset);
-		greedyAlgorithm = new GreedyAlgorithm();
+		algorithm = new GreedyQuickAlgorithm();
+		readResult = Utils.importResult(resultFilename);
 	}
 
-	@AfterClass
-	public static void tearDown() throws Exception {
-		isMDS = g.isMDS(result);
+	@After
+	public void tearDown() throws Exception {
 		g = null;
 		result = null;
-		greedyAlgorithm = null;
+		algorithm = null;
 	}
 
 	/**
@@ -60,10 +69,12 @@ public class GreedyAlgorithmCorrectnessTest {
 	 */
 	@Test
 	public final void testMdsAlg() {
-		result = g.getMDS(greedyAlgorithm);
+		result = g.getMDS(algorithm);
 		Assert.assertNotNull(result);
 		Assert.assertTrue(g.isMDS(result));
-		Assert.assertEquals(result.size(), 345);
+		Assert.assertEquals(1582, result.size());
+		Assert.assertEquals(result, readResult);
+		System.out.println(readResult.size());
 	}
 
 }
