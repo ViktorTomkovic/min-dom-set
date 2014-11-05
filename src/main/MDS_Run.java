@@ -1,33 +1,16 @@
 package main;
 
-import java.io.File;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
 import java.util.LinkedHashSet;
 
 import algorithm.AbstractMDSAlgorithm;
-import algorithm.basic.GreedyAlgorithm;
-import algorithm.basic.GreedyQuickAlgorithm;
-import algorithm.basic.NaiveAlgorithm;
-import algorithm.chapter7.Algorithm33;
-import algorithm.chapter7.Algorithm34;
-import algorithm.chapter7.Algorithm34OneThread;
-import algorithm.chapter7.Algorithm35;
-import algorithm.chapter7.Algorithm35OneThread;
-import algorithm.flower.FlowerUniqueAlgorithm;
-import algorithm.fomin.AlgorithmFNaive;
-import algorithm.fomin.AlgorithmFProper;
-import algorithm.mt.MyNaive2Algorithm;
-import algorithm.mt.MyNaive3Algorithm;
-import algorithm.mt.MyNaiveAlgorithm;
 import datastructure.Dataset;
 import datastructure.graph.CompactUndirectedGraph;
 import datastructure.graph.Graph;
 
 public class MDS_Run {
-	public static final String MY_ARGS = "ca-1.txt greedyq true";
-	private static final String DATASET_DIRECTORY = "data";
-	private static final String RESULTS_DIRECTORY = "results";
+	public static final String MY_ARGS = "maly.txt naive true";
 
 	/**
 	 * @param args
@@ -37,8 +20,11 @@ public class MDS_Run {
 		if (MY_ARGS != null && !MY_ARGS.equals("")) {
 			args = MY_ARGS.split(" ");
 		}
-		for (String s : args)
-			System.out.println(s);
+		for (String s : args) {
+			System.out.print(s);
+			System.out.print("\t");
+		}
+		System.out.println();
 		Graph g;
 		if (args.length < 1) {
 			System.out
@@ -46,13 +32,10 @@ public class MDS_Run {
 			return;
 		}
 		long startReading = System.currentTimeMillis();
-		StringBuilder datasetFilenameBuilder = new StringBuilder();
-		datasetFilenameBuilder.append(DATASET_DIRECTORY);
-		Utils.createAndCheckDirectory(datasetFilenameBuilder.toString());
-		datasetFilenameBuilder.append('/');
-		datasetFilenameBuilder.append(args[0]);
-		Dataset dataset = Utils.readEdgeListFromFile(datasetFilenameBuilder
-				.toString());
+		String datasetName = args[0];
+		String filename = Utils.getDatasetFilename(Utils.DATASET_DIRECTORY,
+				datasetName);
+		Dataset dataset = Utils.readEdgeListFromFile(filename);
 		System.out.println("Read time: "
 				+ (System.currentTimeMillis() - startReading) + "ms.");
 		g = new CompactUndirectedGraph(dataset);
@@ -65,52 +48,19 @@ public class MDS_Run {
 			System.out
 					.println("The graph has no vertices or does not load correctly.");
 		}
-		String algorithm = "";
+		String algorithmName = "";
 		if (args.length < 2) {
 			System.out
 					.println("You can use the second argument to choose an algorithm.");
 		} else {
-			algorithm = args[1];
+			algorithmName = args[1];
 		}
 		LinkedHashSet<Integer> mds; // = new LinkedHashSet<>();
 		AbstractMDSAlgorithm alg;
 		ThreadMXBean bean = ManagementFactory.getThreadMXBean();
 		long start2 = System.nanoTime();
 		long start = bean.getCurrentThreadCpuTime();
-		if (algorithm.compareTo("") == 0) {
-			throw new IllegalArgumentException(
-					"You should specify algorithm you want to use.");
-		} else if (algorithm.compareTo("naive") == 0) {
-			alg = new NaiveAlgorithm();
-		} else if (algorithm.compareTo("mynaive") == 0) {
-			alg = new MyNaiveAlgorithm();
-		} else if (algorithm.compareTo("mynaive2") == 0) {
-			alg = new MyNaive2Algorithm();
-		} else if (algorithm.compareTo("mynaive3") == 0) {
-			alg = new MyNaive3Algorithm();
-		} else if (algorithm.compareTo("greedy") == 0) {
-			alg = new GreedyAlgorithm();
-		} else if (algorithm.compareTo("greedyq") == 0) {
-			alg = new GreedyQuickAlgorithm();
-		} else if (algorithm.compareTo("ch7alg33") == 0) {
-			alg = new Algorithm33();
-		} else if (algorithm.compareTo("ch7alg34") == 0) {
-			alg = new Algorithm34();
-		} else if (algorithm.compareTo("ch7alg34OT") == 0) {
-			alg = new Algorithm34OneThread();
-		} else if (algorithm.compareTo("ch7alg35") == 0) {
-			alg = new Algorithm35();
-		} else if (algorithm.compareTo("ch7alg35OT") == 0) {
-			alg = new Algorithm35OneThread();
-		} else if (algorithm.compareTo("fnaive") == 0) {
-			alg = new AlgorithmFNaive();
-		} else if (algorithm.compareTo("fproper") == 0) {
-			alg = new AlgorithmFProper();
-		} else if (algorithm.compareTo("floweru") == 0) {
-			alg = new FlowerUniqueAlgorithm();
-		} else {
-			throw new IllegalArgumentException("Algorithm is not implemented.");
-		}
+		alg = Utils.getAlgorithm(algorithmName);
 		assert alg != null : "Algorith is null!";
 		mds = g.getMDS(alg);
 		long elapsed = (bean.getCurrentThreadCpuTime() - start)
@@ -140,17 +90,10 @@ public class MDS_Run {
 		if (args.length >= 3) {
 			boolean writeOutput = Boolean.parseBoolean(args[2]);
 			if (writeOutput) {
-				StringBuilder resultFilenameBuilder = new StringBuilder();
-				resultFilenameBuilder.append(RESULTS_DIRECTORY);
-				Utils.createAndCheckDirectory(resultFilenameBuilder.toString());
-				resultFilenameBuilder.append('/');
-				resultFilenameBuilder.append(algorithm);
-				Utils.createAndCheckDirectory(resultFilenameBuilder.toString());
-				resultFilenameBuilder.append("/result-");
-				resultFilenameBuilder.append(args[0]);
-				Utils.exportResult(resultFilenameBuilder.toString(), mds);
-				System.out.println("MDS written to: "
-						+ resultFilenameBuilder.toString());
+				String outputFilename = Utils.getResultFilename(
+						Utils.RESULTS_DIRECTORY, algorithmName, datasetName);
+				Utils.exportResult(outputFilename, mds);
+				System.out.println("MDS written to: " + outputFilename);
 			}
 		}
 	}

@@ -38,10 +38,78 @@ public class Dataset {
 		}
 	}
 
-	public void setRawEdges(int[] edgesFrom, int[] edgesTo, int edgesCount) {
-		if (edgesFrom.length != edgesTo.length) {
-			throw new IllegalArgumentException("Not equal size of edges.");
+	public void initAll(int[] edgesFrom, int[] edgesTo, int edgesCount) {
+		this.edgesCount = edgesCount;
+		IntIntOpenHashMap inputVerticesMap = new IntIntOpenHashMap(
+				edgesCount >> 4);
+		int currentVertexNumber = 1;
+		for (int i = 0; i < edgesCount; i++) {
+			if (inputVerticesMap.putIfAbsent(edgesFrom[i], currentVertexNumber)) {
+				currentVertexNumber++;
+			}
+			if (inputVerticesMap.putIfAbsent(edgesTo[i], currentVertexNumber)) {
+				currentVertexNumber++;
+			}
 		}
+		maxVertexNumber = currentVertexNumber;
+		this.edgesFrom = new int[edgesCount];
+		this.edgesTo = new int[edgesCount];
+		for (int i = 0; i < edgesCount; i++) {
+			this.edgesFrom[i] = inputVerticesMap.get(edgesFrom[i]);
+			this.edgesTo[i] = inputVerticesMap.get(edgesTo[i]);
+		}
+		areRawEdgesSet = true;
+		// //
+		neig1 = new IntObjectOpenHashMap<>(maxVertexNumber);
+		for (int i = 1; i <= maxVertexNumber; i++) {
+			IntOpenHashSet emptySet1 = new IntOpenHashSet();
+			emptySet1.add(i);
+			neig1.put(i, emptySet1);
+		}
+		edges = new ObjectArrayList<Edge>(edgesCount);
+		for (int i = 0; i < edgesCount; i++) {
+			edges.add(new Edge(edgesFrom[i], edgesTo[i]));
+			neig1.get(edgesFrom[i]).add(edgesTo[i]);
+			neig1.get(edgesTo[i]).add(edgesFrom[i]);
+		}
+		areEdgesSet = true;
+		isNeig1Set = true;
+		// //
+		neig2 = new IntObjectOpenHashMap<>(maxVertexNumber);
+		for (int i = 1; i <= maxVertexNumber; i++) {
+			IntOpenHashSet neig1set = new IntOpenHashSet(neig1.get(i));
+			neig2.put(i, neig1set);
+		}
+		for (int i = 0; i < edgesCount; i++) {
+			neig2.get(edgesFrom[i]).add(edgesTo[i]);
+			neig2.get(edgesTo[i]).add(edgesFrom[i]);
+		}
+
+		for (int i = 1; i <= maxVertexNumber; i++) {
+			IntOpenHashSet neig1set = neig1.get(i);
+			IntOpenHashSet neig2set = neig2.get(i);
+
+			int[] keys = neig1set.keys;
+			boolean[] allocated = neig1set.allocated;
+			for (int j = 0; j < allocated.length; j++) {
+				if (allocated[j]) {
+					int neigh = keys[j];
+					IntOpenHashSet neighNeig1set = neig1.get(neigh);
+					int[] neighKeys = neighNeig1set.keys;
+					boolean[] neighAllocated = neighNeig1set.allocated;
+					for (int k = 0; k < neighAllocated.length; k++) {
+						if (neighAllocated[k]) {
+							neig2set.add(neighKeys[k]);
+						}
+					}
+				}
+			}
+		}
+
+		isNeig2Set = true;
+	}
+
+	public void setRawEdges(int[] edgesFrom, int[] edgesTo, int edgesCount) {
 		this.edgesCount = edgesCount;
 		IntIntOpenHashMap inputVerticesMap = new IntIntOpenHashMap(
 				edgesCount >> 4);
@@ -117,15 +185,15 @@ public class Dataset {
 		}
 
 		for (int i = 1; i <= maxVertexNumber; i++) {
-			IntOpenHashSet neig1set = neig1.get(i);			
+			IntOpenHashSet neig1set = neig1.get(i);
 			IntOpenHashSet neig2set = neig2.get(i);
-			
+
 			int[] keys = neig1set.keys;
 			boolean[] allocated = neig1set.allocated;
 			for (int j = 0; j < allocated.length; j++) {
 				if (allocated[j]) {
 					int neigh = keys[j];
-					IntOpenHashSet neighNeig1set = neig1.get(neigh);			
+					IntOpenHashSet neighNeig1set = neig1.get(neigh);
 					int[] neighKeys = neighNeig1set.keys;
 					boolean[] neighAllocated = neighNeig1set.allocated;
 					for (int k = 0; k < neighAllocated.length; k++) {
@@ -161,6 +229,24 @@ public class Dataset {
 					"Table of neighbours distance 2 is not set yet.");
 		}
 		return neig2;
+	}
+
+	public Dataset deepCopy() {
+		Dataset that = new Dataset();
+		that.edgesFrom = new int[this.edgesCount];
+		System.arraycopy(this.edgesFrom, 0, that.edgesFrom, 0, this.edgesCount);
+		that.edgesTo = new int[this.edgesCount];
+		System.arraycopy(this.edgesTo, 0, that.edgesTo, 0, this.edgesCount);
+		that.edgesCount = this.edgesCount;
+		that.areRawEdgesSet = this.areRawEdgesSet;
+		that.maxVertexNumber = this.maxVertexNumber;
+		that.edges = new ObjectArrayList<>(this.edgesCount);
+		that.areEdgesSet = this.areEdgesSet;
+		that.neig1 = new IntObjectOpenHashMap<>(this.neig1);
+		that.isNeig1Set = this.isNeig1Set;
+		that.neig2 = new IntObjectOpenHashMap<>(this.neig2);
+		that.isNeig2Set = this.isNeig2Set;
+		return that;
 	}
 
 }

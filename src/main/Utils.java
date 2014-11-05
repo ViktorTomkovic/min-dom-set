@@ -12,12 +12,29 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.StringTokenizer;
 
+import algorithm.AbstractMDSAlgorithm;
+import algorithm.basic.GreedyAlgorithm;
+import algorithm.basic.GreedyQuickAlgorithm;
+import algorithm.basic.NaiveAlgorithm;
+import algorithm.chapter7.Algorithm33;
+import algorithm.chapter7.Algorithm34;
+import algorithm.chapter7.Algorithm34OneThread;
+import algorithm.chapter7.Algorithm35;
+import algorithm.chapter7.Algorithm35OneThread;
+import algorithm.flower.FlowerUniqueAlgorithm;
+import algorithm.fomin.AlgorithmFNaive;
+import algorithm.fomin.AlgorithmFProper;
+import algorithm.mt.MyNaive2Algorithm;
+import algorithm.mt.MyNaive3Algorithm;
+import algorithm.mt.MyNaiveAlgorithm;
 import datastructure.Dataset;
 
 public class Utils {
 	public static final int LONG_OFFSET = 32;
 	public static final Integer NANOS_IN_MILI = 1000000;
 	private static final int TEXT_SPLITTING_CONSTANT = 100;
+	public static final String DATASET_DIRECTORY = "data";
+	public static final String RESULTS_DIRECTORY = "results";
 
 	private Utils() {
 	}
@@ -142,7 +159,8 @@ public class Utils {
 		return result;
 	}
 
-	public static void exportResult(String filename, LinkedHashSet<Integer> algResult) {
+	public static void exportResult(String filename,
+			LinkedHashSet<Integer> algResult) {
 		try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
 				new FileOutputStream(filename)))) {
 			int size = algResult.size();
@@ -157,7 +175,7 @@ public class Utils {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public static void createAndCheckDirectory(String dirname) {
 		File resultDir = new File(dirname);
 		if (!resultDir.exists()) {
@@ -166,5 +184,76 @@ public class Utils {
 				throw new RuntimeException("Directory was not created.");
 			}
 		}
+	}
+
+	public static AbstractMDSAlgorithm getAlgorithm(String name) {
+		AbstractMDSAlgorithm algorithm;
+		if (name.compareTo("") == 0) {
+			throw new IllegalArgumentException(
+					"You should specify algorithm you want to use.");
+		} else if (name.compareTo("naive") == 0) {
+			algorithm = new NaiveAlgorithm();
+		} else if (name.compareTo("mynaive") == 0) {
+			algorithm = new MyNaiveAlgorithm();
+		} else if (name.compareTo("mynaive2") == 0) {
+			algorithm = new MyNaive2Algorithm();
+		} else if (name.compareTo("mynaive3") == 0) {
+			algorithm = new MyNaive3Algorithm();
+		} else if (name.compareTo("greedy") == 0) {
+			algorithm = new GreedyAlgorithm();
+		} else if (name.compareTo("greedyq") == 0) {
+			algorithm = new GreedyQuickAlgorithm();
+		} else if (name.compareTo("ch7alg33") == 0) {
+			algorithm = new Algorithm33();
+		} else if (name.compareTo("ch7alg34") == 0) {
+			algorithm = new Algorithm34();
+		} else if (name.compareTo("ch7alg34OT") == 0) {
+			algorithm = new Algorithm34OneThread();
+		} else if (name.compareTo("ch7alg35") == 0) {
+			algorithm = new Algorithm35();
+		} else if (name.compareTo("ch7alg35OT") == 0) {
+			algorithm = new Algorithm35OneThread();
+		} else if (name.compareTo("fnaive") == 0) {
+			algorithm = new AlgorithmFNaive();
+		} else if (name.compareTo("fproper") == 0) {
+			algorithm = new AlgorithmFProper();
+		} else if (name.compareTo("floweru") == 0) {
+			algorithm = new FlowerUniqueAlgorithm();
+		} else {
+			throw new IllegalArgumentException("Algorithm is not implemented.");
+		}
+		return algorithm;
+	}
+
+	public static String getDatasetFilename(String datasetName) {
+		return getDatasetFilename(DATASET_DIRECTORY, datasetName);
+	}
+
+	public static String getDatasetFilename(String datasetFolder,
+			String datasetName) {
+		StringBuilder datasetFilenameBuilder = new StringBuilder();
+		datasetFilenameBuilder.append(datasetFolder);
+		Utils.createAndCheckDirectory(datasetFilenameBuilder.toString());
+		datasetFilenameBuilder.append('/');
+		datasetFilenameBuilder.append(datasetName);
+		return datasetFilenameBuilder.toString();
+	}
+
+	public static String getResultFilename(String algorithmName,
+			String datasetName) {
+		return getResultFilename(RESULTS_DIRECTORY, algorithmName, datasetName);
+	}
+
+	public static String getResultFilename(String resultFolder,
+			String algorithmName, String datasetName) {
+		StringBuilder resultFilenameBuilder = new StringBuilder();
+		resultFilenameBuilder.append(Utils.RESULTS_DIRECTORY);
+		Utils.createAndCheckDirectory(resultFilenameBuilder.toString());
+		resultFilenameBuilder.append('/');
+		resultFilenameBuilder.append(algorithmName);
+		Utils.createAndCheckDirectory(resultFilenameBuilder.toString());
+		resultFilenameBuilder.append("/result-");
+		resultFilenameBuilder.append(datasetName);
+		return resultFilenameBuilder.toString();
 	}
 }
