@@ -7,8 +7,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 
+import com.carrotsearch.hppc.IntOpenHashSet;
+
 import datastructure.graph.Graph;
 import algorithm.AbstractMDSAlgorithm;
+import algorithm.AbstractMDSResult;
+import algorithm.MDSResultBackedByIntOpenHashSet;
 
 public class FlowerUniqueAlgorithm implements AbstractMDSAlgorithm {
 	private long prepTime = -1L;
@@ -44,7 +48,7 @@ public class FlowerUniqueAlgorithm implements AbstractMDSAlgorithm {
 	}
 
 	@Override
-	public LinkedHashSet<Integer> mdsAlg(Graph g) {
+	public AbstractMDSResult mdsAlg(Graph g) {
 		ThreadMXBean bean = ManagementFactory.getThreadMXBean();
 		long start = bean.getCurrentThreadCpuTime();
 		LinkedHashSet<Integer> W = new LinkedHashSet<>(g.getVertices());
@@ -101,7 +105,13 @@ public class FlowerUniqueAlgorithm implements AbstractMDSAlgorithm {
 		}
 		runTime = bean.getCurrentThreadCpuTime() - start;
 		System.out.println("Number of iterations: " + iterations);
-		return S;
+		MDSResultBackedByIntOpenHashSet result = new MDSResultBackedByIntOpenHashSet();
+		IntOpenHashSet resultData = new IntOpenHashSet(S.size());
+		for (Integer i : S) {
+			resultData.add(i);
+		}
+		result.setResult(resultData);
+		return result;
 	}
 
 	@Override

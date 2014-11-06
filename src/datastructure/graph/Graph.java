@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 
 import algorithm.AbstractMDSAlgorithm;
+import algorithm.AbstractMDSResult;
 
 public interface Graph {
 	public boolean isDirected();
@@ -20,7 +21,9 @@ public interface Graph {
 
 	public LinkedHashSet<Integer> getN2(Integer vertex);
 
-	public LinkedHashSet<Integer> getMDS(AbstractMDSAlgorithm algorithm);
+	public AbstractMDSResult getMDS(AbstractMDSAlgorithm algorithm);
+
+	public boolean isMDS(AbstractMDSResult mds);
 
 	public boolean isMDS(LinkedHashSet<Integer> mds);
 }

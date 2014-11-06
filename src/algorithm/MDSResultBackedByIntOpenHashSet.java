@@ -1,21 +1,19 @@
 package algorithm;
 
-import java.util.LinkedHashSet;
-
-import com.carrotsearch.hppc.IntArrayList;
-import com.carrotsearch.hppc.cursors.IntCursor;
-
 import main.Utils;
 
-public class MDSResultBackedByLinkedHashSet implements AbstractMDSResult {
-	private LinkedHashSet<Integer> internalData;
+import com.carrotsearch.hppc.IntOpenHashSet;
+import com.carrotsearch.hppc.cursors.IntCursor;
 
-	public MDSResultBackedByLinkedHashSet() {
-		internalData = new LinkedHashSet<>();
+public class MDSResultBackedByIntOpenHashSet implements AbstractMDSResult {
+	private IntOpenHashSet internalData;
+
+	public MDSResultBackedByIntOpenHashSet() {
+		internalData = new IntOpenHashSet();
 	}
 	
-	public void setResult(LinkedHashSet<Integer> result) {
-		internalData = new LinkedHashSet<>(result);
+	public void setResult(IntOpenHashSet result) {
+		internalData = new IntOpenHashSet(result);
 	}
 
 	@Override
@@ -45,10 +43,10 @@ public class MDSResultBackedByLinkedHashSet implements AbstractMDSResult {
 		if (obj == null) {
 			return false;
 		}
-		if (!(obj instanceof MDSResultBackedByLinkedHashSet)) {
+		if (!(obj instanceof MDSResultBackedByIntOpenHashSet)) {
 			return false;
 		}
-		MDSResultBackedByLinkedHashSet other = (MDSResultBackedByLinkedHashSet) obj;
+		MDSResultBackedByIntOpenHashSet other = (MDSResultBackedByIntOpenHashSet) obj;
 		if (internalData == null) {
 			if (other.internalData != null) {
 				return false;
@@ -61,11 +59,7 @@ public class MDSResultBackedByLinkedHashSet implements AbstractMDSResult {
 
 	@Override
 	public Iterable<IntCursor> getIterableStructure() {
-		IntArrayList result = new IntArrayList(internalData.size());
-		for (Integer i : internalData) {
-			result.add(i);
-		}
-		return result;
+		return internalData;
 	}
 
 }

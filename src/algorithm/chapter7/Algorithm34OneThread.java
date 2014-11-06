@@ -6,8 +6,12 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 
+import com.carrotsearch.hppc.IntOpenHashSet;
+
 import datastructure.graph.Graph;
 import algorithm.AbstractMDSAlgorithm;
+import algorithm.AbstractMDSResult;
+import algorithm.MDSResultBackedByIntOpenHashSet;
 
 public class Algorithm34OneThread implements AbstractMDSAlgorithm {
 	private long prepTime = -1L;
@@ -65,7 +69,7 @@ public class Algorithm34OneThread implements AbstractMDSAlgorithm {
 	}
 
 	@Override
-	public LinkedHashSet<Integer> mdsAlg(Graph g) {
+	public AbstractMDSResult mdsAlg(Graph g) {
 		ThreadMXBean bean = ManagementFactory.getThreadMXBean();
 		long start = bean.getCurrentThreadCpuTime();
 		for (Integer v : g.getVertices()) {
@@ -109,7 +113,13 @@ public class Algorithm34OneThread implements AbstractMDSAlgorithm {
 			unfinishedVertices.removeAll(deleteThisRound);
 		}
 		runTime = bean.getCurrentThreadCpuTime() - start;
-		return S;
+		MDSResultBackedByIntOpenHashSet result = new MDSResultBackedByIntOpenHashSet();
+		IntOpenHashSet resultData = new IntOpenHashSet(S.size());
+		for (Integer i : S) {
+			resultData.add(i);
+		}
+		result.setResult(resultData);
+		return result;
 	}
 
 	@Override

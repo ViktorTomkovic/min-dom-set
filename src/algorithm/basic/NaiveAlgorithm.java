@@ -5,18 +5,28 @@ import java.lang.management.ThreadMXBean;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 
+import com.carrotsearch.hppc.IntOpenHashSet;
+
 import datastructure.graph.Graph;
 import algorithm.AbstractMDSAlgorithm;
+import algorithm.AbstractMDSResult;
+import algorithm.MDSResultBackedByIntOpenHashSet;
 
 public class NaiveAlgorithm implements AbstractMDSAlgorithm {
 	private long runTime = -1L;
 
 	@Override
-	public LinkedHashSet<Integer> mdsAlg(Graph g) {
+	public AbstractMDSResult mdsAlg(Graph g) {
 		ThreadMXBean bean = ManagementFactory.getThreadMXBean();
 		long start = bean.getCurrentThreadCpuTime();
-		LinkedHashSet<Integer> result = gms(new ArrayList<>(g.getVertices()), new LinkedHashSet<Integer>(), g);
+		LinkedHashSet<Integer> linkedResult = gms(new ArrayList<>(g.getVertices()), new LinkedHashSet<Integer>(), g);
 		runTime = bean.getCurrentThreadCpuTime() - start;
+		MDSResultBackedByIntOpenHashSet result = new MDSResultBackedByIntOpenHashSet();
+		IntOpenHashSet resultData = new IntOpenHashSet(linkedResult.size());
+		for (Integer i : linkedResult) {
+			resultData.add(i);
+		}
+		result.setResult(resultData);
 		return result;
 	}
 

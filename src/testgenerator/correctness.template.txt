@@ -1,7 +1,5 @@
 package test;
 
-import java.util.LinkedHashSet;
-
 import main.Utils;
 
 import org.junit.After;
@@ -10,7 +8,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import algorithm.AbstractMDSAlgorithm;
+import algorithm.AbstractMDSResult;
 import algorithm.DummyAlgorithm;
+import algorithm.MDSResultBackedByIntOpenHashSet;
 import datastructure.Dataset;
 import datastructure.graph.CompactUndirectedGraph;
 import datastructure.graph.Graph;
@@ -37,11 +37,11 @@ public class ${algorithmFullName}${datasetFullName}CorrectnessTest {
 	private Dataset usableDataset = new Dataset();
 	private Graph g = new CompactUndirectedGraph(usableDataset);
 	private AbstractMDSAlgorithm algorithm = new DummyAlgorithm();
-	private LinkedHashSet<Integer> result = new LinkedHashSet<>();
-	private String resultFilename = "";
-	private String datasetFilename = "";
-	private LinkedHashSet<Integer> readResult = new LinkedHashSet<>();
-	private Dataset readDataset = new Dataset();
+	private AbstractMDSResult result = new MDSResultBackedByIntOpenHashSet();
+	private String resultFilename;
+	private String datasetFilename;
+	private AbstractMDSResult readResult = new MDSResultBackedByIntOpenHashSet();
+	private Dataset readDataset;
 
 	@Before
 	public void setUp() throws Exception {

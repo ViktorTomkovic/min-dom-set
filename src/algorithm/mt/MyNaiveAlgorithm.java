@@ -4,8 +4,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 
+import com.carrotsearch.hppc.IntOpenHashSet;
+
 import main.Utils;
 import algorithm.AbstractMDSAlgorithm;
+import algorithm.AbstractMDSResult;
+import algorithm.MDSResultBackedByIntOpenHashSet;
 import datastructure.graph.Graph;
 
 public class MyNaiveAlgorithm implements AbstractMDSAlgorithm {
@@ -80,7 +84,7 @@ public class MyNaiveAlgorithm implements AbstractMDSAlgorithm {
 	}
 
 	@Override
-	public LinkedHashSet<Integer> mdsAlg(Graph g) {
+	public AbstractMDSResult mdsAlg(Graph g) {
 		long start = System.currentTimeMillis();
 		ArrayList<Integer> input = new ArrayList<Integer>(g.getVertices());
 		System.out.println(Utils.largeCollectionToString(input));
@@ -97,6 +101,12 @@ public class MyNaiveAlgorithm implements AbstractMDSAlgorithm {
 			e.printStackTrace();
 		}
 		runTime = System.currentTimeMillis() - start;
+		MDSResultBackedByIntOpenHashSet result = new MDSResultBackedByIntOpenHashSet();
+		IntOpenHashSet resultData = new IntOpenHashSet(this.result.size());
+		for (Integer i : this.result) {
+			resultData.add(i);
+		}
+		result.setResult(resultData);
 		return result;
 	}
 

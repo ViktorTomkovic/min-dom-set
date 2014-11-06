@@ -13,6 +13,8 @@ import java.util.LinkedHashSet;
 import java.util.StringTokenizer;
 
 import algorithm.AbstractMDSAlgorithm;
+import algorithm.AbstractMDSResult;
+import algorithm.MDSResultBackedByIntOpenHashSet;
 import algorithm.basic.GreedyAlgorithm;
 import algorithm.basic.GreedyQuickAlgorithm;
 import algorithm.basic.NaiveAlgorithm;
@@ -27,6 +29,10 @@ import algorithm.fomin.AlgorithmFProper;
 import algorithm.mt.MyNaive2Algorithm;
 import algorithm.mt.MyNaive3Algorithm;
 import algorithm.mt.MyNaiveAlgorithm;
+
+import com.carrotsearch.hppc.IntOpenHashSet;
+import com.carrotsearch.hppc.cursors.IntCursor;
+
 import datastructure.Dataset;
 
 public class Utils {
@@ -73,6 +79,28 @@ public class Utils {
 				if (a < TEXT_SPLITTING_CONSTANT
 						|| a > collection.size() - TEXT_SPLITTING_CONSTANT / 3) {
 					sb.append(value);
+					sb.append(", ");
+				} else if (a == TEXT_SPLITTING_CONSTANT) {
+					sb.append("    .    .    .    ");
+				}
+			}
+			sb.append("]");
+		}
+		return sb.toString();
+	}
+
+	public static <T> String largeCollectionToString(IntOpenHashSet collection) {
+		StringBuilder sb = new StringBuilder();
+		if (collection.size() < TEXT_SPLITTING_CONSTANT) {
+			sb.append(collection.toString());
+		} else {
+			sb.append("[");
+			int a = 0;
+			for (IntCursor cursor : collection) {
+				a++;
+				if (a < TEXT_SPLITTING_CONSTANT
+						|| a > collection.size() - TEXT_SPLITTING_CONSTANT / 3) {
+					sb.append(cursor.value);
 					sb.append(", ");
 				} else if (a == TEXT_SPLITTING_CONSTANT) {
 					sb.append("    .    .    .    ");
@@ -136,26 +164,28 @@ public class Utils {
 		return dataset;
 	}
 
-	public static LinkedHashSet<Integer> importResult(String filename) {
-		LinkedHashSet<Integer> result = new LinkedHashSet<Integer>();
+	public static AbstractMDSResult importResult(String filename) {
+		MDSResultBackedByIntOpenHashSet result = new MDSResultBackedByIntOpenHashSet();
+		IntOpenHashSet resultData = new IntOpenHashSet();
 		try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
 			String line = br.readLine();
 			if (line == null) {
 				throw new RuntimeException("Bad format of input file.");
 			}
 			int size = Integer.parseInt(line);
-			result = new LinkedHashSet<Integer>((int) Math.ceil(size / 0.75));
+			resultData = new IntOpenHashSet((int) Math.ceil(size / 0.75));
 			for (int i = 0; i < size; i++) {
 				line = br.readLine();
 				if (line == null) {
 					throw new RuntimeException("Bad format of input file.");
 				}
-				result.add(Integer.valueOf(line));
+				resultData.add(Integer.parseInt(line));
 			}
 			br.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		result.setResult(resultData);
 		return result;
 	}
 
@@ -168,6 +198,23 @@ public class Utils {
 			writer.newLine();
 			for (Integer i : algResult) {
 				writer.write(i.toString());
+				writer.newLine();
+			}
+			writer.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void exportResult(String filename,
+			AbstractMDSResult algResult) {
+		try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
+				new FileOutputStream(filename)))) {
+			int size = algResult.size();
+			writer.write(String.valueOf(size));
+			writer.newLine();
+			for (IntCursor i : algResult.getIterableStructure()) {
+				writer.write(i.value);
 				writer.newLine();
 			}
 			writer.close();

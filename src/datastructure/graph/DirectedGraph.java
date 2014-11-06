@@ -5,7 +5,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 
+import com.carrotsearch.hppc.cursors.IntCursor;
+
 import algorithm.AbstractMDSAlgorithm;
+import algorithm.AbstractMDSResult;
 
 public class DirectedGraph implements Graph {
 	private ArrayList<Edge> edges;
@@ -84,7 +87,7 @@ public class DirectedGraph implements Graph {
 	}
 
 	@Override
-	public LinkedHashSet<Integer> getMDS(AbstractMDSAlgorithm algorithm) {
+	public AbstractMDSResult getMDS(AbstractMDSAlgorithm algorithm) {
 		return null;
 	}
 	
@@ -101,5 +104,14 @@ public class DirectedGraph implements Graph {
 			neighboursOf.put(e.from, a);
 		}
 		this.verticesCount = vertices.size();
+	}
+
+	@Override
+	public boolean isMDS(AbstractMDSResult mds) {
+		HashSet<Integer> set = new HashSet<>();
+		for (IntCursor v : mds.getIterableStructure()) {
+			set.addAll(getN1(v.value));
+		}
+		return set.containsAll(getVertices());
 	}
 }

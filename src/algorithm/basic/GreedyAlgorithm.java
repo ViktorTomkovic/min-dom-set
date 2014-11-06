@@ -6,7 +6,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 
+import com.carrotsearch.hppc.IntOpenHashSet;
+
 import algorithm.AbstractMDSAlgorithm;
+import algorithm.AbstractMDSResult;
+import algorithm.MDSResultBackedByIntOpenHashSet;
 import datastructure.graph.Graph;
 
 public class GreedyAlgorithm implements AbstractMDSAlgorithm {
@@ -51,7 +55,7 @@ public class GreedyAlgorithm implements AbstractMDSAlgorithm {
 	}
 
 	@Override
-	public LinkedHashSet<Integer> mdsAlg(Graph g) {
+	public AbstractMDSResult mdsAlg(Graph g) {
 		ThreadMXBean bean = ManagementFactory.getThreadMXBean();
 		long start = bean.getCurrentThreadCpuTime();
 		ArrayList<Integer> vertices = new ArrayList<>(g.getVertices());
@@ -99,7 +103,13 @@ public class GreedyAlgorithm implements AbstractMDSAlgorithm {
 		runTime = bean.getCurrentThreadCpuTime() - start;
 		System.out.println("Number of iterations: " + iterations);
 		System.out.println("Skipped: " + skipped);
-		return S;
+		MDSResultBackedByIntOpenHashSet result = new MDSResultBackedByIntOpenHashSet();
+		IntOpenHashSet resultData = new IntOpenHashSet(S.size());
+		for (Integer i : S) {
+			resultData.add(i);
+		}
+		result.setResult(resultData);
+		return result;
 	}
 
 	@Override

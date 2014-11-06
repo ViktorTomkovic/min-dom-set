@@ -1,7 +1,5 @@
 package algorithm;
 
-import java.util.LinkedHashSet;
-
 import datastructure.graph.Graph;
 
 public class DummyAlgorithm implements AbstractMDSAlgorithm {
@@ -10,8 +8,8 @@ public class DummyAlgorithm implements AbstractMDSAlgorithm {
 	}
 
 	@Override
-	public LinkedHashSet<Integer> mdsAlg(Graph g) {
-		return new LinkedHashSet<>();
+	public AbstractMDSResult mdsAlg(Graph g) {
+		return new MDSResultBackedByIntOpenHashSet();
 	}
 
 	@Override

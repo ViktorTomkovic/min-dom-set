@@ -2,9 +2,9 @@ package main;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
-import java.util.LinkedHashSet;
 
 import algorithm.AbstractMDSAlgorithm;
+import algorithm.AbstractMDSResult;
 import datastructure.Dataset;
 import datastructure.graph.CompactUndirectedGraph;
 import datastructure.graph.Graph;
@@ -55,7 +55,7 @@ public class MDS_Run {
 		} else {
 			algorithmName = args[1];
 		}
-		LinkedHashSet<Integer> mds; // = new LinkedHashSet<>();
+		AbstractMDSResult mds;
 		AbstractMDSAlgorithm alg;
 		ThreadMXBean bean = ManagementFactory.getThreadMXBean();
 		long start2 = System.nanoTime();
@@ -70,7 +70,7 @@ public class MDS_Run {
 				+ g.getNumberOfVertices() + ", edges: " + g.getEdges().size()
 				+ ".");
 		System.out.println(mds.size() + " "
-				+ Utils.largeCollectionToString(mds));
+				+ mds);
 		System.out.println("The set is " + (g.isMDS(mds) ? "" : "not ")
 				+ "a dominating set.");
 		StringBuilder sb = new StringBuilder();
