@@ -1,0 +1,12 @@
+maly.txt greedy 
+ca1.txt greedy 
+ca2.txt greedy 
+ca3.txt greedy 
+maly.txt greedyq 
+ca1.txt greedyq 
+ca2.txt greedyq 
+ca3.txt greedyq 
+maly.txt floweru 
+ca1.txt floweru 
+ca2.txt floweru 
+ca3.txt floweru 

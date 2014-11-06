@@ -10,14 +10,14 @@ import datastructure.graph.CompactUndirectedGraph;
 import datastructure.graph.Graph;
 
 public class MDS_Run {
-	public static final String MY_ARGS = "maly.txt naive true";
+	public static final String MY_ARGS = "maly.txt ch7alg33 true";
 
 	/**
 	 * @param args
 	 *            filename of processed graph
 	 */
 	public static void main(String[] args) {
-		if (MY_ARGS != null && !MY_ARGS.equals("")) {
+		if (args.length == 0 && MY_ARGS != null && !MY_ARGS.equals("")) {
 			args = MY_ARGS.split(" ");
 		}
 		for (String s : args) {
@@ -87,14 +87,15 @@ public class MDS_Run {
 		sb.append("ms.");
 		System.out.println(sb.toString());
 
+		boolean writeOutput = true;
 		if (args.length >= 3) {
-			boolean writeOutput = Boolean.parseBoolean(args[2]);
-			if (writeOutput) {
-				String outputFilename = Utils.getResultFilename(
-						Utils.RESULTS_DIRECTORY, algorithmName, datasetName);
-				Utils.exportResult(outputFilename, mds);
-				System.out.println("MDS written to: " + outputFilename);
-			}
+			writeOutput = Boolean.parseBoolean(args[2]);
+		}
+		if (writeOutput) {
+			String outputFilename = Utils.getResultFilename(
+					Utils.RESULTS_DIRECTORY, algorithmName, datasetName);
+			Utils.exportResult(outputFilename, mds);
+			System.out.println("MDS written to: " + outputFilename);
 		}
 	}
 }

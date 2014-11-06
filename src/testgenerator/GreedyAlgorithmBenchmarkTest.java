@@ -1,7 +1,7 @@
 /**
  * 
  */
-package test;
+package testgenerator;
 
 import java.util.LinkedHashSet;
 
@@ -27,7 +27,7 @@ import datastructure.graph.Graph;
  * @author viktort
  *
  */
-public class GreedyAlgorithmTest {
+public class GreedyAlgorithmBenchmarkTest {
 	private static Graph g;
 	private static boolean isMDS;
 	private static GreedyAlgorithm greedyAlgorithm;

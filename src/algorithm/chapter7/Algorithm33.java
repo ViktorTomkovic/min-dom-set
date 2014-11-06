@@ -42,10 +42,13 @@ public class Algorithm33 implements AbstractMDSAlgorithm {
 		while (!W.isEmpty()) {
 			Integer pick = maxByN1(W, neig);
 			// W.removeAll(g.getNeighboursOfVertexIncluded(pick));
-			W.removeAll(neig.get(pick));
-			for (Integer v : neig.get(pick)) {
+			LinkedHashSet<Integer> neighs = neig.get(pick);
+			W.removeAll(neighs);
+			for (Integer v : neighs) {
+				if (v.equals(pick)) {continue;}
 				neig.get(v).remove(pick);
 			}
+			neig.get(pick).clear();
 
 			/*
 			 * Integer mv = w(v, g, W); for (Integer v2 : W) { Integer mv2 = w(v2, g, W);

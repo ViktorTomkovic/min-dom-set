@@ -225,6 +225,42 @@ public class Utils {
 		return algorithm;
 	}
 
+	public static String getAlgorithmFullName(String name) {
+		String fullName;
+		if (name.compareTo("naive") == 0) {
+			fullName = "NaiveAlgorithm";
+		} else if (name.compareTo("mynaive") == 0) {
+			fullName = "MyNaiveAlgorithm";
+		} else if (name.compareTo("mynaive2") == 0) {
+			fullName = "MyNaive2Algorithm";
+		} else if (name.compareTo("mynaive3") == 0) {
+			fullName = "MyNaive3Algorithm";
+		} else if (name.compareTo("greedy") == 0) {
+			fullName = "GreedyAlgorithm";
+		} else if (name.compareTo("greedyq") == 0) {
+			fullName = "GreedyQuickAlgorithm";
+		} else if (name.compareTo("ch7alg33") == 0) {
+			fullName = "Algorithm33";
+		} else if (name.compareTo("ch7alg34") == 0) {
+			fullName = "Algorithm34";
+		} else if (name.compareTo("ch7alg34OT") == 0) {
+			fullName = "Algorithm34OneThread";
+		} else if (name.compareTo("ch7alg35") == 0) {
+			fullName = "Algorithm35";
+		} else if (name.compareTo("ch7alg35OT") == 0) {
+			fullName = "Algorithm35OneThread";
+		} else if (name.compareTo("fnaive") == 0) {
+			fullName = "AlgorithmFNaive";
+		} else if (name.compareTo("fproper") == 0) {
+			fullName = "AlgorithmFProper";
+		} else if (name.compareTo("floweru") == 0) {
+			fullName = "FlowerUniqueAlgorithm";
+		} else {
+			throw new IllegalArgumentException("Algorithm has not a full name.");
+		}
+		return fullName;
+	}
+
 	public static String getDatasetFilename(String datasetName) {
 		return getDatasetFilename(DATASET_DIRECTORY, datasetName);
 	}

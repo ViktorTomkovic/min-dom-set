@@ -1,4 +1,4 @@
-package test;
+package testgenerator;
 
 import java.util.LinkedHashSet;
 

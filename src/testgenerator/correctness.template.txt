@@ -31,7 +31,7 @@ import datastructure.graph.Graph;
  * @author Friker
  * 
  */
-public class ${fullAlgorithmName}${fullDatasetName}CorrectnessTest {
+public class ${algorithmFullName}${datasetFullName}CorrectnessTest {
 	private static final String DATASET_NAME = "${datasetName}";
 	private static final String ALGORITHM_NAME = "${algorithmName}";
 	private Dataset usableDataset = new Dataset();
