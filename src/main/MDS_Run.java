@@ -10,7 +10,7 @@ import datastructure.graph.CompactUndirectedGraph;
 import datastructure.graph.Graph;
 
 public class MDS_Run {
-	public static final String MY_ARGS = "maly.txt ch7alg34OT false";
+	public static final String MY_ARGS = "ba1000.txt ch7alg34OT false";
 
 	/**
 	 * @param args
@@ -26,7 +26,7 @@ public class MDS_Run {
 		}
 		System.out.println();
 		Graph g;
-		if (args.length < 1) {
+		if (args.length < 1 || args[0].equals("")) {
 			System.out
 					.println("Please use the first argument as an input filename.");
 			return;

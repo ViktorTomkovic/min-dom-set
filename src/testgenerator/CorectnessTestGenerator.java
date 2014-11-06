@@ -15,8 +15,8 @@ public class CorectnessTestGenerator {
 	private static final String TEMPLATE_FILENAME = "src/testgenerator/correctness.template.txt";
 	private static final String SUITE_TEMPLATE_INPUT_FILENAME = "src/testgenerator/correctness.suiteTemplate.txt";
 	private static final String SUITE_TEMPLATE_OUTPUT_FILENAME = "src/test/AllCorrectnessTests.java";
-	public static ArrayList<ArrayList<String>> tokenMap = new ArrayList<>();
-	public static StringBuilder allClasses = new StringBuilder();
+	private static final ArrayList<ArrayList<String>> tokenMap = new ArrayList<>();
+	private static final StringBuilder allClasses = new StringBuilder();
 
 	private CorectnessTestGenerator() {
 	}
@@ -26,7 +26,7 @@ public class CorectnessTestGenerator {
 	// }
 
 	public static void readTokensFromFile(String filename) {
-		tokenMap = new ArrayList<ArrayList<String>>();
+		tokenMap.clear();
 		try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
 			String line = br.readLine();
 			if (line == null) {
@@ -78,6 +78,8 @@ public class CorectnessTestGenerator {
 		allClasses.append(algorithmFullName);
 		allClasses.append(datasetFullName);
 		allClasses.append("CorrectnessTest.class");
+		
+		Utils.createAndCheckDirectory("src/test");
 		
 		try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
 				new FileOutputStream(outputFilename)));

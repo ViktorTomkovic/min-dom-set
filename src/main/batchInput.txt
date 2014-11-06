@@ -14,12 +14,12 @@ maly.txt naive
 ca1.txt ch7alg33
 maly.txt ch7alg34
 c15.txt ch7alg34
+ba1000.txt ch7alg34OT
 ca1.txt ch7alg34OT
 maly.txt ch7alg35
 c15.txt ch7alg35
-c15.txt ch7alg35OT
+ba1000.txt ch7alg35OT
 maly.txt fnaive
 c15.txt fnaive
 maly.txt fproper
 c15.txt fproper
-	
