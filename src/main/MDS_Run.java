@@ -10,7 +10,7 @@ import datastructure.graph.CompactUndirectedGraph;
 import datastructure.graph.Graph;
 
 public class MDS_Run {
-	public static final String MY_ARGS = "maly.txt ch7alg33 true";
+	public static final String MY_ARGS = "maly.txt ch7alg34OT false";
 
 	/**
 	 * @param args
@@ -87,7 +87,7 @@ public class MDS_Run {
 		sb.append("ms.");
 		System.out.println(sb.toString());
 
-		boolean writeOutput = true;
+		boolean writeOutput = false;
 		if (args.length >= 3) {
 			writeOutput = Boolean.parseBoolean(args[2]);
 		}

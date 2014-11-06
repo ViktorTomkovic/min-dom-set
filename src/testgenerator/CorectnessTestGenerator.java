@@ -33,6 +33,10 @@ public class CorectnessTestGenerator {
 				throw new RuntimeException("Bad format of input file.");
 			}
 			while (line != null) {
+				if (line.equals("")) {
+					line = br.readLine();
+					continue;
+				}
 				ArrayList<String> oneRun = new ArrayList<String>(4);
 				String[] tokens = line.split(" ");
 				if (tokens.length != 2) {

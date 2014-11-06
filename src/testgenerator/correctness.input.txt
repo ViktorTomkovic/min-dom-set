@@ -10,3 +10,15 @@ maly.txt floweru
 ca1.txt floweru 
 ca2.txt floweru 
 ca3.txt floweru 
+maly.txt naive
+ca1.txt ch7alg33
+maly.txt ch7alg34
+c15.txt ch7alg34
+ca1.txt ch7alg34OT
+maly.txt ch7alg35
+c15.txt ch7alg35
+c15.txt ch7alg35OT
+maly.txt fnaive
+c15.txt fnaive
+maly.txt fproper
+c15.txt fproper

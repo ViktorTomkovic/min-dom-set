@@ -13,10 +13,14 @@ public class BatchRun {
 	public static void main(String[] args) {
 		try (BufferedReader br = new BufferedReader(new FileReader(INPUT_FILENAME))) {
 			String line = br.readLine();
-			if (line == null) {
+			if (line == null || line.equals("")) {
 				throw new RuntimeException("Bad format of input file.");
 			}
 			while (line != null) {
+				if (line.equals("")) {
+					line = br.readLine();
+					continue;
+				}
 				MDS_Run.main(line.split(" "));
 				line = br.readLine();
 			}

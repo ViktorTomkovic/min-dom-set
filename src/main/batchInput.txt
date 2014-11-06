@@ -17,7 +17,7 @@ c15.txt ch7alg34
 ca1.txt ch7alg34OT
 maly.txt ch7alg35
 c15.txt ch7alg35
-ca1.txt ch7alg35OT
+c15.txt ch7alg35OT
 maly.txt fnaive
 c15.txt fnaive
 maly.txt fproper
