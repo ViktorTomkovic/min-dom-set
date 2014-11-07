@@ -3,6 +3,8 @@ package algorithm.chapter7;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 
+import com.carrotsearch.hppc.cursors.IntCursor;
+
 import datastructure.graph.Graph;
 
 public class Algorithm35State {
@@ -22,9 +24,16 @@ public class Algorithm35State {
 
 	public Algorithm35State(Integer forV, Graph g) {
 		this.v = forV;
-		this.W = new LinkedHashSet<>(g.getN1(forV));
-		this.N = new LinkedHashSet<>(g.getN1(forV));
-		this.dist2NotSorG = new LinkedHashSet<>(g.getN2(forV));
+		this.W = new LinkedHashSet<>();
+		this.N = new LinkedHashSet<>();
+		for (IntCursor intcur : g.getN1(v)) {
+			this.W.add(intcur.value);
+			this.N.add(intcur.value);
+		}
+		this.dist2NotSorG = new LinkedHashSet<>();
+		for (IntCursor intcur : g.getN2(v)) {
+			this.dist2NotSorG.add(intcur.value);
+		}
 		this.spans = new LinkedHashMap<>();
 	}
 

@@ -66,7 +66,7 @@ public class DummyAlgorithmCorrectnessTest {
 		readDataset = null;
 	}
 
-	@Test
+	@Test(timeout = 30000)
 	public final void testMdsAlg() {
 		result = algorithm.mdsAlg(g);
 		Assert.assertNotNull(result);

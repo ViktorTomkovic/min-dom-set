@@ -5,10 +5,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 
-import com.carrotsearch.hppc.cursors.IntCursor;
-
 import algorithm.AbstractMDSAlgorithm;
 import algorithm.AbstractMDSResult;
+
+import com.carrotsearch.hppc.IntOpenHashSet;
+import com.carrotsearch.hppc.ObjectArrayList;
+import com.carrotsearch.hppc.cursors.IntCursor;
+import com.carrotsearch.hppc.cursors.ObjectCursor;
 
 public class DirectedGraph implements Graph {
 	private ArrayList<Edge> edges;
@@ -20,98 +23,123 @@ public class DirectedGraph implements Graph {
 		this.edges = edges;
 		this.neighboursOf = new HashMap<Integer, LinkedHashSet<Integer>>();
 		HashSet<Integer> vertices = new HashSet<>();
-		for (Edge e : getEdges()) {
-			vertices.add(e.from);
-			vertices.add(e.to);
+		for (ObjectCursor<Edge> e : getEdges()) {
+			vertices.add(e.value.from);
+			vertices.add(e.value.to);
 			LinkedHashSet<Integer> a;
-			a = neighboursOf.get(e.from);
+			a = neighboursOf.get(e.value.from);
 			if (a == null)
 				a = new LinkedHashSet<Integer>();
-			a.add(e.to);
-			neighboursOf.put(e.from, a);
+			a.add(e.value.to);
+			neighboursOf.put(e.value.from, a);
 		}
 		this.vertices = new LinkedHashSet<>(vertices);
 		this.verticesCount = vertices.size();
 	}
-	
+
 	@Override
 	public boolean isDirected() {
 		return true;
 	}
 
 	@Override
-	public ArrayList<Edge> getEdges() {
-		return edges;
+	public ObjectArrayList<Edge> getEdges() {
+		ObjectArrayList<Edge> result = new ObjectArrayList<>(edges.size());
+		for (Edge edge : edges) {
+			result.add(edge);
+		}
+		return result;
 	}
 
 	@Override
-	public LinkedHashSet<Integer> getVertices() {
-		return vertices;
+	public IntOpenHashSet getVertices() {
+		IntOpenHashSet result = new IntOpenHashSet(vertices.size());
+		for (Integer vertex : vertices) {
+			result.add(vertex);
+		}
+		return result;
 	}
 
 	@Override
-	public Integer getNumberOfVertices() {
+	public int getNumberOfVertices() {
 		return verticesCount;
 	}
 
-	public LinkedHashSet<Integer> getNeighboursOf(Integer vertex) {
-		return neighboursOf.get(vertex);
+	public IntOpenHashSet getNeighboursOf(Integer vertex) {
+		LinkedHashSet<Integer> neigh = neighboursOf.get(vertex);
+		IntOpenHashSet result = new IntOpenHashSet(neigh.size());
+		for (Integer vertex2 : neigh) {
+			result.add(vertex2);
+		}
+		return result;
 	}
 
 	@Override
-	public LinkedHashSet<Integer> getN1(Integer vertex) {
-		LinkedHashSet<Integer> result = getNeighboursOf(vertex);
+	public IntOpenHashSet getN1(int vertex) {
+		IntOpenHashSet result = getNeighboursOf(vertex);
 		result.add(vertex);
 		return result;
 	}
 
 	@Override
-	public LinkedHashSet<Integer> getN2(Integer vertex) {
-		LinkedHashSet<Integer> neig = new LinkedHashSet<>();
-		LinkedHashSet<Integer> result = new LinkedHashSet<>();
-		neig.addAll(getN1(vertex));
-		result.addAll(getN1(vertex));
-		for (Integer v : neig) {
-			result.addAll(getNeighboursOf(v));
+	public IntOpenHashSet getN2(int vertex) {
+		IntOpenHashSet neig = getN1(vertex);
+		IntOpenHashSet result = new IntOpenHashSet();
+		for (IntCursor v : neig) {
+			result.addAll(getNeighboursOf(v.value));
 		}
 		return result;
 	}
 
 	@Override
-	public boolean isMDS(LinkedHashSet<Integer> mds) {
-		HashSet<Integer> set = new HashSet<>(mds);
-		for (Integer v : mds) {
-			set.addAll(getN1(v));
+	public boolean isMDS(IntOpenHashSet mds) {
+		IntOpenHashSet set = new IntOpenHashSet(verticesCount);
+		for (IntCursor v : mds) {
+			set.addAll(getN1(v.value));
 		}
-		return set.containsAll(getVertices());
+		boolean isContained = true;
+		for (Integer i : vertices) {
+			if (!set.contains(i)) {
+				isContained = false;
+				break;
+			}
+		}
+		return isContained;
 	}
 
 	@Override
 	public AbstractMDSResult getMDS(AbstractMDSAlgorithm algorithm) {
 		return null;
 	}
-	
+
 	public void addEdges(ArrayList<Edge> edges) {
 		this.edges.addAll(edges);
-		for (Edge e : getEdges()) {
-			this.vertices.add(e.from);
-			this.vertices.add(e.to);
+		for (ObjectCursor<Edge> e : getEdges()) {
+			this.vertices.add(e.value.from);
+			this.vertices.add(e.value.to);
 			LinkedHashSet<Integer> a;
-			a = neighboursOf.get(e.from);
+			a = neighboursOf.get(e.value.from);
 			if (a == null)
 				a = new LinkedHashSet<Integer>();
-			a.add(e.to);
-			neighboursOf.put(e.from, a);
+			a.add(e.value.to);
+			neighboursOf.put(e.value.from, a);
 		}
 		this.verticesCount = vertices.size();
 	}
 
 	@Override
 	public boolean isMDS(AbstractMDSResult mds) {
-		HashSet<Integer> set = new HashSet<>();
+		IntOpenHashSet set = new IntOpenHashSet();
 		for (IntCursor v : mds.getIterableStructure()) {
 			set.addAll(getN1(v.value));
 		}
-		return set.containsAll(getVertices());
+		boolean isContained = true;
+		for (Integer i : vertices) {
+			if (!set.contains(i)) {
+				isContained = false;
+				break;
+			}
+		}
+		return isContained;
 	}
 }

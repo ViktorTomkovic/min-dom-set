@@ -7,11 +7,14 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 
 import com.carrotsearch.hppc.IntOpenHashSet;
+import com.carrotsearch.hppc.cursors.IntCursor;
 
 import datastructure.graph.Graph;
 import algorithm.AbstractMDSAlgorithm;
 import algorithm.AbstractMDSResult;
 import algorithm.MDSResultBackedByIntOpenHashSet;
+
+//TODO prerobit na HPPC
 
 public class Algorithm35OneThread implements AbstractMDSAlgorithm {
 	private long prepTime = -1L;
@@ -108,10 +111,10 @@ public class Algorithm35OneThread implements AbstractMDSAlgorithm {
 	public AbstractMDSResult mdsAlg(Graph g) {
 		ThreadMXBean bean = ManagementFactory.getThreadMXBean();
 		long start = bean.getCurrentThreadCpuTime();
-		for (Integer v : g.getVertices()) {
-			Algorithm35State state = new Algorithm35State(v, g);
+		for (IntCursor v : g.getVertices()) {
+			Algorithm35State state = new Algorithm35State(v.value, g);
 			unfinishedVertices.add(state);
-			allVertices.put(v, state);
+			allVertices.put(v.value, state);
 		}
 		ArrayList<Algorithm35State> deleteThisRound = new ArrayList<>();
 		prepTime = bean.getCurrentThreadCpuTime() - start;

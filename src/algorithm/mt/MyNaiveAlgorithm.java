@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 
 import com.carrotsearch.hppc.IntOpenHashSet;
+import com.carrotsearch.hppc.cursors.IntCursor;
 
 import main.Utils;
 import algorithm.AbstractMDSAlgorithm;
@@ -86,11 +87,14 @@ public class MyNaiveAlgorithm implements AbstractMDSAlgorithm {
 	@Override
 	public AbstractMDSResult mdsAlg(Graph g) {
 		long start = System.currentTimeMillis();
-		ArrayList<Integer> input = new ArrayList<Integer>(g.getVertices());
-		System.out.println(Utils.largeCollectionToString(input));
-		Collections.sort(input, new algorithm.GreaterByN1BComparator(g));
-		System.out.println(Utils.largeCollectionToString(input));
-		MyNaiveRunner r = new MyNaiveRunner(this, input,
+		ArrayList<Integer> vertices = new ArrayList<Integer>();
+		for (IntCursor intcur : g.getVertices()) {
+			vertices.add(intcur.value);
+		}
+		System.out.println(Utils.largeCollectionToString(vertices));
+		Collections.sort(vertices, new algorithm.GreaterByN1BComparator(g));
+		System.out.println(Utils.largeCollectionToString(vertices));
+		MyNaiveRunner r = new MyNaiveRunner(this, vertices,
 				new LinkedHashSet<Integer>(), g);
 		currentCores++;
 		Thread t = new Thread(r);

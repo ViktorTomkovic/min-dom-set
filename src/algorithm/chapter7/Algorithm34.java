@@ -8,11 +8,14 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 
 import com.carrotsearch.hppc.IntOpenHashSet;
+import com.carrotsearch.hppc.cursors.IntCursor;
 
 import datastructure.graph.Graph;
 import algorithm.AbstractMDSAlgorithm;
 import algorithm.AbstractMDSResult;
 import algorithm.MDSResultBackedByIntOpenHashSet;
+
+// TODO prerobit na HPPC
 
 public class Algorithm34 implements AbstractMDSAlgorithm {
 	private long prepTime = -1L;
@@ -31,10 +34,10 @@ public class Algorithm34 implements AbstractMDSAlgorithm {
 		int bla = (int) Math.ceil(g.getNumberOfVertices() * 1.5);
 		allVertices = new LinkedHashMap<>(bla);
 		Integer nv = g.getNumberOfVertices();
-		for (Integer v : g.getVertices()) {
-			Algorithm34State state = new Algorithm34State(v, g);
+		for (IntCursor v : g.getVertices()) {
+			Algorithm34State state = new Algorithm34State(v.value, g);
 			unfinishedVertices.add(state);
-			allVertices.put(v, state);
+			allVertices.put(v.value, state);
 		}
 		times.addLast(bean.getCurrentThreadCpuTime() - start);
 		// Integer nt = Math.min(nv, 1000);

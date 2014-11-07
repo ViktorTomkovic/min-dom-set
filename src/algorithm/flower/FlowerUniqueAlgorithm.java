@@ -8,11 +8,14 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 
 import com.carrotsearch.hppc.IntOpenHashSet;
+import com.carrotsearch.hppc.cursors.IntCursor;
 
 import datastructure.graph.Graph;
 import algorithm.AbstractMDSAlgorithm;
 import algorithm.AbstractMDSResult;
 import algorithm.MDSResultBackedByIntOpenHashSet;
+
+// TODO prerobit na HPPC
 
 public class FlowerUniqueAlgorithm implements AbstractMDSAlgorithm {
 	private long prepTime = -1L;
@@ -51,13 +54,21 @@ public class FlowerUniqueAlgorithm implements AbstractMDSAlgorithm {
 	public AbstractMDSResult mdsAlg(Graph g) {
 		ThreadMXBean bean = ManagementFactory.getThreadMXBean();
 		long start = bean.getCurrentThreadCpuTime();
-		LinkedHashSet<Integer> W = new LinkedHashSet<>(g.getVertices());
-		LinkedHashSet<Integer> G = new LinkedHashSet<>(g.getVertices());
+		LinkedHashSet<Integer> W = new LinkedHashSet<>();
+		LinkedHashSet<Integer> G = new LinkedHashSet<>();
+		for (IntCursor intcur : g.getVertices()) {
+			W.add(intcur.value);
+			W.add(intcur.value);
+		}
 		int initialSize = (int)Math.ceil(g.getNumberOfVertices() * (1/0.65)) + 1;
 
 		HashMap<Integer, LinkedHashSet<Integer>> neigW = new HashMap<>(initialSize, 0.65f);
 		for (Integer v : W) {
-			neigW.put(v, new LinkedHashSet<>(g.getN1(v)));
+			LinkedHashSet<Integer> neighs = new LinkedHashSet<>();
+			for (IntCursor intcur : g.getN1(v)) {
+				neighs.add(intcur.value);
+			}
+			neigW.put(v, neighs);
 		}
 
 		prepTime = bean.getCurrentThreadCpuTime() - start;
@@ -83,8 +94,8 @@ public class FlowerUniqueAlgorithm implements AbstractMDSAlgorithm {
 			W.remove(flower);
 			LinkedHashSet<Integer> greying = new LinkedHashSet<>(neigW.get(flower));
 			G.removeAll(greying);
-			for (Integer v : g.getN2(flower)) {
-				neigW.get(v).removeAll(greying);
+			for (IntCursor v : g.getN2(flower)) {
+				neigW.get(v.value).removeAll(greying);
 			}
 			S.add(flower);
 		}
@@ -98,8 +109,8 @@ public class FlowerUniqueAlgorithm implements AbstractMDSAlgorithm {
 			W.remove(pick);
 			LinkedHashSet<Integer> greying = new LinkedHashSet<>(neigW.get(pick));
 			G.removeAll(greying);
-			for (Integer v : g.getN2(pick)) {
-				neigW.get(v).removeAll(greying);
+			for (IntCursor v : g.getN2(pick)) {
+				neigW.get(v.value).removeAll(greying);
 			}
 			S.add(pick);
 		}

@@ -8,17 +8,24 @@ import java.util.LinkedList;
 import java.util.Map.Entry;
 import java.util.TreeSet;
 
+import com.carrotsearch.hppc.cursors.ObjectCursor;
+
 import datastructure.graph.DirectedGraph;
 import datastructure.graph.Edge;
 
 public class Utils {
 	private Utils() {
 	}
+	
+	// TODO preprobit na HPPC
 
 	public static LinkedHashSet<Edge> fordFulkerson(DirectedGraph graph) {
 		LinkedHashSet<Edge> result = new LinkedHashSet<>();
 
-		LinkedHashSet<Edge> edges = new LinkedHashSet<>(graph.getEdges());
+		LinkedHashSet<Edge> edges = new LinkedHashSet<>();
+		for (ObjectCursor<Edge> edgeCur : graph.getEdges()) {
+			edges.add(edgeCur.value);
+		}
 
 		HashMap<Integer, Integer> match = new HashMap<>();
 

@@ -5,6 +5,8 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+import com.carrotsearch.hppc.cursors.IntCursor;
+
 import datastructure.graph.Graph;
 
 public class Algorithm34Vertex extends Thread {
@@ -31,9 +33,15 @@ public class Algorithm34Vertex extends Thread {
 		this.S = S;
 		this.G = G;
 		this.instances = instances;
-		this.W = new LinkedHashSet<>(g.getN1(v));
+		this.W = new LinkedHashSet<>();
+		for (IntCursor intcur: g.getN1(v)) {
+			this.W.add(intcur.value);
+		}
 		this.spans = new LinkedHashMap<>();
-		this.dist2notSorG = new LinkedHashSet<>(g.getN2(v));
+		this.dist2notSorG = new LinkedHashSet<>();
+		for (IntCursor intcur : g.getN2(v)) {
+			this.dist2notSorG.add(intcur.value);
+		}
 		this.lock = lock;
 		this.w = computeSpan(v);
 	}

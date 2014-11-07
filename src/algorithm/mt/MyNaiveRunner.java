@@ -3,6 +3,8 @@ package algorithm.mt;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 
+import com.carrotsearch.hppc.IntOpenHashSet;
+
 import datastructure.graph.Graph;
 
 public class MyNaiveRunner implements Runnable {
@@ -37,7 +39,12 @@ public class MyNaiveRunner implements Runnable {
 			return;
 
 		if (unchosenVertices.size() == 0) {
-			if (g.isMDS(chosenVertices)) {
+			IntOpenHashSet chosenVertices2 = new IntOpenHashSet(
+					chosenVertices.size());
+			for (Integer i : chosenVertices) {
+				chosenVertices2.add(i);
+			}
+			if (g.isMDS(chosenVertices2)) {
 				alg.tryToSetResult(chosenVertices);
 			}
 		} else {
@@ -58,25 +65,36 @@ public class MyNaiveRunner implements Runnable {
 			if (t1 == null) {
 				gms(unch1, ch1, g);
 			} else {
-//				System.out.println("Starting " + alg.getCurrentCores() + " "
-//						+ unch1.size() + " " + unch1);
+				// System.out.println("Starting " + alg.getCurrentCores() + " "
+				// + unch1.size() + " " + unch1);
 				t1.start();
 			}
 			Thread t2 = alg.tryToCreateNewThread(unch2, ch2, g);
 			if (t2 == null) {
 				gms(unch2, ch2, g);
 			} else {
-//				System.out.println("Starting " + alg.getCurrentCores() + " "
-//						+ unch2.size() + " " + unch2);
+				// System.out.println("Starting " + alg.getCurrentCores() + " "
+				// + unch2.size() + " " + unch2);
 				t2.start();
 			}
-			
-			  if (t2 != null) { try { t2.join(); } catch (InterruptedException
-			  e) { e.printStackTrace(); } } if (t1 != null) { try { t1.join();
-			  } catch (InterruptedException e) { e.printStackTrace(); } }
-			 
-//			System.out.println("Ending " + alg.getCurrentCores() + " "
-//					+ unchosenVertices.size() + " " + unchosenVertices);
+
+			if (t2 != null) {
+				try {
+					t2.join();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+			if (t1 != null) {
+				try {
+					t1.join();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+
+			// System.out.println("Ending " + alg.getCurrentCores() + " "
+			// + unchosenVertices.size() + " " + unchosenVertices);
 		}
 	}
 

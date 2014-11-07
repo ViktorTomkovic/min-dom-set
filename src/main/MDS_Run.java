@@ -87,7 +87,7 @@ public class MDS_Run {
 		sb.append("ms.");
 		System.out.println(sb.toString());
 
-		boolean writeOutput = false;
+		boolean writeOutput = true;
 		if (args.length >= 3) {
 			writeOutput = Boolean.parseBoolean(args[2]);
 		}

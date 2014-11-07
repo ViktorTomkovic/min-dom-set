@@ -6,11 +6,14 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 
 import com.carrotsearch.hppc.IntOpenHashSet;
+import com.carrotsearch.hppc.cursors.IntCursor;
 
 import datastructure.graph.Graph;
 import algorithm.AbstractMDSAlgorithm;
 import algorithm.AbstractMDSResult;
 import algorithm.MDSResultBackedByIntOpenHashSet;
+
+// TODO prerobit na HPPC
 
 public class Algorithm33 implements AbstractMDSAlgorithm {
 	private long prepTime = -1L;
@@ -34,10 +37,17 @@ public class Algorithm33 implements AbstractMDSAlgorithm {
 	public AbstractMDSResult mdsAlg(Graph g) {
 		ThreadMXBean bean = ManagementFactory.getThreadMXBean();
 		long start = bean.getCurrentThreadCpuTime();
-		LinkedHashSet<Integer> W = new LinkedHashSet<>(g.getVertices());
+		LinkedHashSet<Integer> W = new LinkedHashSet<>();
+		for (IntCursor intcur : g.getVertices()) {
+			W.add(intcur.value);
+		}
 		HashMap<Integer, LinkedHashSet<Integer>> neig = new HashMap<>();
 		for (Integer v : W) {
-			neig.put(v, new LinkedHashSet<>(g.getN1(v)));
+			LinkedHashSet<Integer> neighs = new LinkedHashSet<>();
+			for (IntCursor intcur : g.getN1(v)) {
+				neighs.add(intcur.value);
+			}
+			neig.put(v, neighs);
 		}
 
 		prepTime = bean.getCurrentThreadCpuTime() - start;

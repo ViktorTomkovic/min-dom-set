@@ -3,6 +3,8 @@ package algorithm.mt;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 
+import com.carrotsearch.hppc.IntOpenHashSet;
+
 import datastructure.graph.Graph;
 
 public class MyNaive2Runner implements Runnable {
@@ -37,7 +39,11 @@ public class MyNaive2Runner implements Runnable {
 			return;
 
 		if (unchosenVertices.size() == 0) {
-			if (g.isMDS(chosenVertices)) {
+			IntOpenHashSet chosenVertices2 = new IntOpenHashSet(chosenVertices.size());
+			for (Integer i : chosenVertices) {
+				chosenVertices2.add(i);
+			}
+			if (g.isMDS(chosenVertices2)) {
 				alg.tryToSetResult(chosenVertices);
 			}
 		} else {

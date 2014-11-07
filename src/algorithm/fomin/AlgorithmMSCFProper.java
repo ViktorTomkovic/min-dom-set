@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 
+import com.carrotsearch.hppc.IntOpenHashSet;
+
 import datastructure.graph.DirectedGraph;
 import datastructure.graph.Edge;
 import datastructure.graph.Graph;
@@ -82,7 +84,11 @@ public class AlgorithmMSCFProper implements AbstractMSCAlgorithm {
 	private LinkedHashSet<Integer> msc(ArrayList<RepresentedSet> sets,
 			LinkedHashSet<Integer> chosen, Graph g) {
 		if (sets.size() == 0) {
-			return g.isMDS(chosen) ? new LinkedHashSet<>(chosen) : null;
+			IntOpenHashSet chosen2 = new IntOpenHashSet(chosen.size());
+			for (Integer i : chosen) {
+				chosen2.add(i);
+			}
+			return g.isMDS(chosen2) ? new LinkedHashSet<>(chosen) : null;
 		}
 
 		// one include another
@@ -145,7 +151,11 @@ public class AlgorithmMSCFProper implements AbstractMSCAlgorithm {
 		if (maxCardinality == 2L) {
 			LinkedHashSet<Integer> finalChoice = polyMSC(sets);
 			chosen.addAll(finalChoice);
-			return g.isMDS(chosen) ? new LinkedHashSet<>(chosen) : null;
+			IntOpenHashSet chosen2 = new IntOpenHashSet(chosen.size());
+			for (Integer i : chosen) {
+				chosen2.add(i);
+			}
+			return g.isMDS(chosen2) ? new LinkedHashSet<>(chosen) : null;
 		}
 				
 		sets.remove(theRightSet);

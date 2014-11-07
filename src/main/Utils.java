@@ -214,7 +214,7 @@ public class Utils {
 			writer.write(String.valueOf(size));
 			writer.newLine();
 			for (IntCursor i : algResult.getIterableStructure()) {
-				writer.write(i.value);
+				writer.write(String.valueOf(i.value));
 				writer.newLine();
 			}
 			writer.close();

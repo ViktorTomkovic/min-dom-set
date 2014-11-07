@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 
 import com.carrotsearch.hppc.IntOpenHashSet;
+import com.carrotsearch.hppc.cursors.IntCursor;
 
 import datastructure.graph.Graph;
 import algorithm.AbstractMDSAlgorithm;
@@ -18,17 +19,24 @@ public class GreedyQuickAlgorithm implements AbstractMDSAlgorithm {
 	private long prepTime = -1L;
 	private long runTime = -1L;
 
+	// TODO prerobit na HPPC
+
 	@Override
 	public AbstractMDSResult mdsAlg(Graph g) {
 		ThreadMXBean bean = ManagementFactory.getThreadMXBean();
 		long start = bean.getCurrentThreadCpuTime();
-		ArrayList<Integer> W = new ArrayList<>(g.getVertices());
+		ArrayList<Integer> W = new ArrayList<>();
+		for (IntCursor intcur : g.getVertices()) {
+			W.add(intcur.value);
+		}
 		prepTime = bean.getCurrentThreadCpuTime() - start;
-		Collections.sort(W, new  LessByN1AComparator(g));
+		Collections.sort(W, new LessByN1AComparator(g));
 		LinkedHashSet<Integer> S = new LinkedHashSet<>();
 		while (!W.isEmpty()) {
-			Integer pick = W.get(W.size()-1);
-			W.removeAll(g.getN1(pick));
+			Integer pick = W.get(W.size() - 1);
+			for (IntCursor intcur : g.getN1(pick)) {
+				W.remove(Integer.valueOf(intcur.value));
+			}
 			S.add(pick);
 		}
 		runTime = bean.getCurrentThreadCpuTime() - start;

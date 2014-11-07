@@ -2,15 +2,16 @@ package algorithm.basic;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
 
-import com.carrotsearch.hppc.IntOpenHashSet;
-
-import datastructure.graph.Graph;
 import algorithm.AbstractMDSAlgorithm;
 import algorithm.AbstractMDSResult;
 import algorithm.MDSResultBackedByIntOpenHashSet;
+
+import com.carrotsearch.hppc.IntArrayList;
+import com.carrotsearch.hppc.IntOpenHashSet;
+import com.carrotsearch.hppc.cursors.IntCursor;
+
+import datastructure.graph.Graph;
 
 public class NaiveAlgorithm implements AbstractMDSAlgorithm {
 	private long runTime = -1L;
@@ -19,24 +20,20 @@ public class NaiveAlgorithm implements AbstractMDSAlgorithm {
 	public AbstractMDSResult mdsAlg(Graph g) {
 		ThreadMXBean bean = ManagementFactory.getThreadMXBean();
 		long start = bean.getCurrentThreadCpuTime();
-		LinkedHashSet<Integer> linkedResult = gms(new ArrayList<>(g.getVertices()), new LinkedHashSet<Integer>(), g);
+		IntOpenHashSet linkedResult = gms(new IntArrayList(g.getVertices()), new IntOpenHashSet(), g);
 		runTime = bean.getCurrentThreadCpuTime() - start;
 		MDSResultBackedByIntOpenHashSet result = new MDSResultBackedByIntOpenHashSet();
-		IntOpenHashSet resultData = new IntOpenHashSet(linkedResult.size());
-		for (Integer i : linkedResult) {
-			resultData.add(i);
-		}
-		result.setResult(resultData);
+		result.setResult(linkedResult);
 		return result;
 	}
 
-	private LinkedHashSet<Integer> gms(ArrayList<Integer> choiceVertex,
-			LinkedHashSet<Integer> chosenVertices, Graph g) {
+	private IntOpenHashSet gms(IntArrayList choiceVertex,
+			IntOpenHashSet chosenVertices, Graph g) {
 		if (choiceVertex.size() == 0) {
 			// we have made our choice - let's compute it
-			LinkedHashSet<Integer> neighbours = new LinkedHashSet<>();
-			for (Integer vertex : chosenVertices) {
-				neighbours.addAll(g.getN1(vertex));
+			IntOpenHashSet neighbours = new IntOpenHashSet(chosenVertices.size() << 1);
+			for (IntCursor vertex : chosenVertices) {
+				neighbours.addAll(g.getN1(vertex.value));
 			}
 			/*
 			 * for (Integer l : chosenVertices) { System.out.print(l);
@@ -51,17 +48,17 @@ public class NaiveAlgorithm implements AbstractMDSAlgorithm {
 				return null;
 			}
 		} else {
-			Integer v = choiceVertex.get(choiceVertex.size() - 1);
-			ArrayList<Integer> ch = new ArrayList<>(choiceVertex);
+			int v = choiceVertex.get(choiceVertex.size() - 1);
+			IntArrayList ch = new IntArrayList(choiceVertex);
 			ch.remove(choiceVertex.size() - 1);
 
 			// choose vertices
 			// don't choose current
-			LinkedHashSet<Integer> set1 = gms(ch, chosenVertices, g);
+			IntOpenHashSet set1 = gms(ch, chosenVertices, g);
 			// choose current
-			LinkedHashSet<Integer> chV = new LinkedHashSet<>(chosenVertices);
+			IntOpenHashSet chV = new IntOpenHashSet(chosenVertices);
 			chV.add(v);
-			LinkedHashSet<Integer> set2 = gms(ch, chV, g);
+			IntOpenHashSet set2 = gms(ch, chV, g);
 			if (set1 == null)
 				return set2;
 			if ((set2 != null) && (set2.size() <= set1.size()))

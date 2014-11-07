@@ -2,13 +2,15 @@ package datastructure.graph;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
-
-import com.carrotsearch.hppc.cursors.IntCursor;
 
 import algorithm.AbstractMDSAlgorithm;
 import algorithm.AbstractMDSResult;
+
+import com.carrotsearch.hppc.IntOpenHashSet;
+import com.carrotsearch.hppc.ObjectArrayList;
+import com.carrotsearch.hppc.cursors.IntCursor;
+import com.carrotsearch.hppc.cursors.ObjectCursor;
 
 public class UndirectedGraph implements Graph {
 	public ArrayList<Edge> edges;
@@ -27,22 +29,22 @@ public class UndirectedGraph implements Graph {
 		this.edges = edges;
 		this.neig = new HashMap<Integer, LinkedHashSet<Integer>>();
 		this.neig2 = new HashMap<Integer, LinkedHashSet<Integer>>();
-		for (Edge e : getEdges()) {
-			vertices.add(e.from);
-			vertices.add(e.to);
+		for (ObjectCursor<Edge> e : getEdges()) {
+			vertices.add(e.value.from);
+			vertices.add(e.value.to);
 			LinkedHashSet<Integer> a;
 
-			a = neig.get(e.from);
+			a = neig.get(e.value.from);
 			if (a == null)
 				a = new LinkedHashSet<Integer>();
-			a.add(e.to);
-			neig.put(e.from, a);
+			a.add(e.value.to);
+			neig.put(e.value.from, a);
 
-			a = neig.get(e.to);
+			a = neig.get(e.value.to);
 			if (a == null)
 				a = new LinkedHashSet<Integer>();
-			a.add(e.from);
-			neig.put(e.to, a);
+			a.add(e.value.from);
+			neig.put(e.value.to, a);
 		}
 
 		for (Integer v : neig.keySet()) {
@@ -65,8 +67,12 @@ public class UndirectedGraph implements Graph {
 	}
 
 	@Override
-	public ArrayList<Edge> getEdges() {
-		return edges;
+	public ObjectArrayList<Edge> getEdges() {
+		ObjectArrayList<Edge> result = new ObjectArrayList<>(edges.size());
+		for (Edge edge : edges) {
+			result.add(edge);
+		}
+		return result;
 	}
 
 	@Override
@@ -75,7 +81,7 @@ public class UndirectedGraph implements Graph {
 	}
 
 	@Override
-	public Integer getNumberOfVertices() {
+	public int getNumberOfVertices() {
 		return verticesCount;
 	}
 
@@ -85,36 +91,64 @@ public class UndirectedGraph implements Graph {
 	// }
 
 	@Override
-	public LinkedHashSet<Integer> getN1(Integer vertex) {
-		return neig.get(vertex);
-	}
-
-	@Override
-	public LinkedHashSet<Integer> getVertices() {
-		return vertices;
-	}
-
-	@Override
-	public LinkedHashSet<Integer> getN2(Integer vertex) {
-		return neig2.get(vertex);
-	}
-
-	@Override
-	public boolean isMDS(LinkedHashSet<Integer> mds) {
-		HashSet<Integer> set = new HashSet<>();
-		for (Integer v : mds) {
-			set.addAll(getN1(v));
+	public IntOpenHashSet getN1(int vertex) {
+		LinkedHashSet<Integer> neigh = neig.get(vertex);
+		IntOpenHashSet result = new IntOpenHashSet(neigh.size());
+		for (Integer i : neigh) {
+			result.add(i);
 		}
-		return set.containsAll(getVertices());
+		return result;
+	}
+
+	@Override
+	public IntOpenHashSet getVertices() {
+		IntOpenHashSet result = new IntOpenHashSet(verticesCount);
+		for (Integer i : vertices) {
+			result.add(i);
+		}
+		return result;
+	}
+
+	@Override
+	public IntOpenHashSet getN2(int vertex) {
+		LinkedHashSet<Integer> neigh = neig2.get(vertex);
+		IntOpenHashSet result = new IntOpenHashSet(neigh.size());
+		for (Integer i : neigh) {
+			result.add(i);
+		}
+		return result;
+	}
+
+	@Override
+	public boolean isMDS(IntOpenHashSet mds) {
+		IntOpenHashSet set = new IntOpenHashSet(verticesCount);
+		for (IntCursor v : mds) {
+			set.addAll(getN1(v.value));
+		}
+		boolean isContained = true;
+		for (Integer i : vertices) {
+			if (!set.contains(i)) {
+				isContained = false;
+				break;
+			}
+		}
+		return isContained;
 	}
 
 	@Override
 	public boolean isMDS(AbstractMDSResult mds) {
-		HashSet<Integer> set = new HashSet<>();
+		IntOpenHashSet set = new IntOpenHashSet(verticesCount);
 		for (IntCursor v : mds.getIterableStructure()) {
 			set.addAll(getN1(v.value));
 		}
-		return set.containsAll(getVertices());
+		boolean isContained = true;
+		for (Integer i : vertices) {
+			if (!set.contains(i)) {
+				isContained = false;
+				break;
+			}
+		}
+		return isContained;
 	}
 
 }

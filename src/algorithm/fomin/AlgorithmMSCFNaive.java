@@ -4,9 +4,13 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 
+import com.carrotsearch.hppc.IntOpenHashSet;
+
 import datastructure.graph.Graph;
 import algorithm.AbstractMSCAlgorithm;
 import algorithm.RepresentedSet;
+
+// TODO prerobit na HPPC
 
 public class AlgorithmMSCFNaive implements AbstractMSCAlgorithm {
 
@@ -35,7 +39,11 @@ public class AlgorithmMSCFNaive implements AbstractMSCAlgorithm {
 	private LinkedHashSet<Integer> msc(ArrayList<RepresentedSet> sets,
 			LinkedHashSet<Integer> chosen, Graph g) {
 		if (sets.size() == 0) {
-			return g.isMDS(chosen) ? new LinkedHashSet<>(chosen) : null;
+			IntOpenHashSet chosen2 = new IntOpenHashSet(chosen.size());
+			for (Integer i : chosen) {
+				chosen2.add(i);
+			}
+			return g.isMDS(chosen2) ? new LinkedHashSet<>(chosen) : null;
 		}
 
 		// one include another

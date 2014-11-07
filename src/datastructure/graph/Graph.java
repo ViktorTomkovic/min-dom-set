@@ -1,29 +1,27 @@
 package datastructure.graph;
 
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-
 import algorithm.AbstractMDSAlgorithm;
 import algorithm.AbstractMDSResult;
+
+import com.carrotsearch.hppc.IntOpenHashSet;
+import com.carrotsearch.hppc.ObjectArrayList;
 
 public interface Graph {
 	public boolean isDirected();
 
-	public ArrayList<Edge> getEdges();
+	public ObjectArrayList<Edge> getEdges();
 
-	public LinkedHashSet<Integer> getVertices();
+	public IntOpenHashSet getVertices();
 
-	public Integer getNumberOfVertices();
+	public int getNumberOfVertices();
 
-	// public LinkedHashSet<Long> getNeighboursOf(Long vertex);
+	public IntOpenHashSet getN1(int vertex);
 
-	public LinkedHashSet<Integer> getN1(Integer vertex);
-
-	public LinkedHashSet<Integer> getN2(Integer vertex);
+	public IntOpenHashSet getN2(int vertex);
 
 	public AbstractMDSResult getMDS(AbstractMDSAlgorithm algorithm);
 
 	public boolean isMDS(AbstractMDSResult mds);
 
-	public boolean isMDS(LinkedHashSet<Integer> mds);
+	public boolean isMDS(IntOpenHashSet mds);
 }

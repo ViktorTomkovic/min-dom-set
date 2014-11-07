@@ -51,7 +51,7 @@ public class Dataset {
 				currentVertexNumber++;
 			}
 		}
-		maxVertexNumber = currentVertexNumber;
+		maxVertexNumber = currentVertexNumber - 1;
 		this.edgesFrom = new int[edgesCount];
 		this.edgesTo = new int[edgesCount];
 		for (int i = 0; i < edgesCount; i++) {
@@ -122,7 +122,7 @@ public class Dataset {
 				currentVertexNumber++;
 			}
 		}
-		maxVertexNumber = currentVertexNumber;
+		maxVertexNumber = currentVertexNumber - 1;
 		this.edgesFrom = new int[edgesCount];
 		this.edgesTo = new int[edgesCount];
 		// System.out.println(Utils.largeIntArrayToString(edgesFrom));
