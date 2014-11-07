@@ -15,3 +15,5 @@ data/
 *.ear
 /lib/
 /results/
+/results-old/
+/results.backup.zip

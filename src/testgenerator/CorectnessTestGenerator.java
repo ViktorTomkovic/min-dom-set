@@ -2,6 +2,7 @@ package testgenerator;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
@@ -11,6 +12,7 @@ import java.util.ArrayList;
 import main.Utils;
 
 public class CorectnessTestGenerator {
+	private static final String TESTS_PATH = "src/test";
 	private static final String TOKENS_FILENAME = "src/testgenerator/correctness.input.txt";
 	private static final String TEMPLATE_FILENAME = "src/testgenerator/correctness.template.txt";
 	private static final String SUITE_TEMPLATE_INPUT_FILENAME = "src/testgenerator/correctness.suiteTemplate.txt";
@@ -57,6 +59,19 @@ public class CorectnessTestGenerator {
 		}
 	}
 
+	public static void deleteOldTests() {
+		File testDir = new File(TESTS_PATH);
+		if (testDir.isDirectory()) {
+			String[] tests = testDir.list();
+			for (String name : tests) {
+				File file = new File(testDir, name);
+				if (name.contains("CorrectnessTest")) {
+					file.delete();
+				}
+			}
+		}
+	}
+
 	public static void generateTests() {
 		for (ArrayList<String> oneLine : tokenMap) {
 			generateOneTest(oneLine);
@@ -69,7 +84,8 @@ public class CorectnessTestGenerator {
 		String datasetFullName = tokens.get(2);
 		String algorithmFullName = tokens.get(3);
 		StringBuilder out = new StringBuilder();
-		out.append("src/test/");
+		out.append(TESTS_PATH);
+		out.append("/");
 		out.append(algorithmFullName);
 		out.append(datasetFullName);
 		out.append("CorrectnessTest.java");
@@ -78,9 +94,9 @@ public class CorectnessTestGenerator {
 		allClasses.append(algorithmFullName);
 		allClasses.append(datasetFullName);
 		allClasses.append("CorrectnessTest.class");
-		
-		Utils.createAndCheckDirectory("src/test");
-		
+
+		Utils.createAndCheckDirectory(TESTS_PATH);
+
 		try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
 				new FileOutputStream(outputFilename)));
 				BufferedReader reader = new BufferedReader(new FileReader(
@@ -102,7 +118,7 @@ public class CorectnessTestGenerator {
 		}
 
 	}
-	
+
 	public static void generateAllCorrectnessSuite() {
 		try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
 				new FileOutputStream(SUITE_TEMPLATE_OUTPUT_FILENAME)));
@@ -110,7 +126,8 @@ public class CorectnessTestGenerator {
 						SUITE_TEMPLATE_INPUT_FILENAME))) {
 			String line = reader.readLine();
 			while (line != null) {
-				line = line.replace("${allClasses}", allClasses.toString().substring(1));
+				line = line.replace("${allClasses}", allClasses.toString()
+						.substring(1));
 				writer.write(line);
 				writer.newLine();
 				line = reader.readLine();
@@ -123,6 +140,7 @@ public class CorectnessTestGenerator {
 	}
 
 	public static void main(String[] args) {
+		deleteOldTests();
 		readTokensFromFile(TOKENS_FILENAME);
 		generateTests();
 		generateAllCorrectnessSuite();
