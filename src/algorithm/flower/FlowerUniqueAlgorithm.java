@@ -2,11 +2,9 @@ package algorithm.flower;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
 
+import com.carrotsearch.hppc.IntArrayList;
+import com.carrotsearch.hppc.IntObjectOpenHashMap;
 import com.carrotsearch.hppc.IntOpenHashSet;
 import com.carrotsearch.hppc.cursors.IntCursor;
 
@@ -15,32 +13,33 @@ import algorithm.AbstractMDSAlgorithm;
 import algorithm.AbstractMDSResult;
 import algorithm.MDSResultBackedByIntOpenHashSet;
 
-// TODO prerobit na HPPC
-
 public class FlowerUniqueAlgorithm implements AbstractMDSAlgorithm {
 	private long prepTime = -1L;
 	private long runTime = -1L;
 
 	private static class ResultHolder {
-		public Integer result;
-		public Integer iterations;
-		public Integer neighCount;
+		public int result;
+		public int iterations;
+		public int neighCount;
+		public int skipped;
 	}
 
-	private ResultHolder maxByN1(LinkedHashSet<Integer> white,
-			HashMap<Integer, LinkedHashSet<Integer>> neig, Integer oldMax) {
+	private ResultHolder maxByN1(IntOpenHashSet white,
+			IntObjectOpenHashMap<IntOpenHashSet> neig, int oldMax) {
+		ResultHolder rh = new ResultHolder();
 		int max = 0;
 		int maxCount = 0;
-		ResultHolder rh = new ResultHolder();
+		rh.skipped = 0;
 		int iterations = 0;
-		for (Integer current : white) {
+		for (IntCursor current : white) {
 			iterations = iterations + 1;
-			int currentCount = neig.get(current).size();
+			int currentCount = neig.get(current.value).size();
 			if (currentCount > maxCount) {
-				max = current.intValue();
+				max = current.value;
 				maxCount = currentCount;
 			}
-			if (oldMax.equals(currentCount)) {
+			if (oldMax == currentCount) {
+				rh.skipped = 1;
 				break;
 			}
 		}
@@ -54,60 +53,52 @@ public class FlowerUniqueAlgorithm implements AbstractMDSAlgorithm {
 	public AbstractMDSResult mdsAlg(Graph g) {
 		ThreadMXBean bean = ManagementFactory.getThreadMXBean();
 		long start = bean.getCurrentThreadCpuTime();
-		LinkedHashSet<Integer> W = new LinkedHashSet<>();
-		LinkedHashSet<Integer> G = new LinkedHashSet<>();
-		for (IntCursor intcur : g.getVertices()) {
-			W.add(intcur.value);
-			W.add(intcur.value);
-		}
+		IntOpenHashSet W = new IntOpenHashSet(g.getVertices());
+		IntOpenHashSet G = new IntOpenHashSet(g.getVertices());
 		int initialSize = (int)Math.ceil(g.getNumberOfVertices() * (1/0.65)) + 1;
 
-		HashMap<Integer, LinkedHashSet<Integer>> neigW = new HashMap<>(initialSize, 0.65f);
-		for (Integer v : W) {
-			LinkedHashSet<Integer> neighs = new LinkedHashSet<>();
-			for (IntCursor intcur : g.getN1(v)) {
-				neighs.add(intcur.value);
-			}
-			neigW.put(v, neighs);
+		IntObjectOpenHashMap<IntOpenHashSet> neigW = new IntObjectOpenHashMap<>(initialSize);
+		for (IntCursor vcur : W) {
+			neigW.put(vcur.value, g.getN1(vcur.value));
 		}
 
 		prepTime = bean.getCurrentThreadCpuTime() - start;
-		LinkedHashSet<Integer> S = new LinkedHashSet<>(initialSize, 0.65f);
+		IntOpenHashSet S = new IntOpenHashSet(initialSize);
 		int iterations = 0;
-		ArrayList<Integer> uniqueFlowers = new ArrayList<>();
-		for (Integer v : W) {
+		IntArrayList uniqueFlowers = new IntArrayList();
+		for (IntCursor vcur : W) {
 			iterations = iterations + 1;
-			LinkedHashSet<Integer> neighs = new LinkedHashSet<>(neigW.get(v));
+			IntOpenHashSet neighs = neigW.get(vcur.value);
 			if (neighs.size() == 2) {
-				Iterator<Integer> it = neighs.iterator();
-				while (it.hasNext()) {
-					Integer vv = it.next();
-					if (!vv.equals(v)) {
-						uniqueFlowers.add(vv);
+				for (IntCursor vvcur : neighs) {
+					if (vvcur.value != vcur.value) {
+						uniqueFlowers.add(vvcur.value);
 					}
 				}
 			}
 		}
 		System.out.println("Unique flowers: " + uniqueFlowers.size());
-		for (Integer flower : uniqueFlowers) {
+		for (IntCursor flowercur : uniqueFlowers) {
 			iterations = iterations + 1;
-			W.remove(flower);
-			LinkedHashSet<Integer> greying = new LinkedHashSet<>(neigW.get(flower));
+			W.remove(flowercur.value);
+			IntOpenHashSet greying = new IntOpenHashSet(neigW.get(flowercur.value));
 			G.removeAll(greying);
-			for (IntCursor v : g.getN2(flower)) {
+			for (IntCursor v : g.getN2(flowercur.value)) {
 				neigW.get(v.value).removeAll(greying);
 			}
-			S.add(flower);
+			S.add(flowercur.value);
 		}
-		Integer lastMax = -1;
+		int lastMax = -1;
+		int skipped = 0;
 		while (!G.isEmpty()) {
 			iterations = iterations + 1;
 			ResultHolder rh = maxByN1(W, neigW, lastMax);
 			iterations = iterations + rh.iterations;
 			lastMax = rh.neighCount;
-			Integer pick = rh.result;
+			int pick = rh.result;
+			skipped = skipped + rh.skipped;
 			W.remove(pick);
-			LinkedHashSet<Integer> greying = new LinkedHashSet<>(neigW.get(pick));
+			IntOpenHashSet greying = new IntOpenHashSet(neigW.get(pick));
 			G.removeAll(greying);
 			for (IntCursor v : g.getN2(pick)) {
 				neigW.get(v.value).removeAll(greying);
@@ -116,12 +107,9 @@ public class FlowerUniqueAlgorithm implements AbstractMDSAlgorithm {
 		}
 		runTime = bean.getCurrentThreadCpuTime() - start;
 		System.out.println("Number of iterations: " + iterations);
+		System.out.println("Skipped: " + skipped);
 		MDSResultBackedByIntOpenHashSet result = new MDSResultBackedByIntOpenHashSet();
-		IntOpenHashSet resultData = new IntOpenHashSet(S.size());
-		for (Integer i : S) {
-			resultData.add(i);
-		}
-		result.setResult(resultData);
+		result.setResult(S);
 		return result;
 	}
 

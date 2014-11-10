@@ -10,7 +10,7 @@ import datastructure.graph.CompactUndirectedGraph;
 import datastructure.graph.Graph;
 
 public class MDS_Run {
-	public static final String MY_ARGS = "ba10k.txt greedy false";
+	public static final String MY_ARGS = "ca2.txt greedy false";
 
 	/**
 	 * @param args

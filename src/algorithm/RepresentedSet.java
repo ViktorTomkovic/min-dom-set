@@ -1,27 +1,27 @@
 package algorithm;
 
-import java.util.LinkedHashSet;
+import com.carrotsearch.hppc.IntOpenHashSet;
 
 public class RepresentedSet {
-	private Integer representant;
+	private int representant;
 
-	private LinkedHashSet<Integer> set;
+	private IntOpenHashSet set;
 
-	public Integer getRepresentant() {
+	public int getRepresentant() {
 		return representant;
 	}
 
-	public LinkedHashSet<Integer> getSet() {
+	public IntOpenHashSet getSet() {
 		return set;
 	}
 
-	public void removeFromSet(LinkedHashSet<Integer> set) {
+	public void removeFromSet(IntOpenHashSet set) {
 		this.set.removeAll(set);
 	}
 
-	public RepresentedSet(Integer representant, LinkedHashSet<Integer> set) {
+	public RepresentedSet(int representant, IntOpenHashSet set) {
 		this.representant = representant;
-		this.set = new LinkedHashSet<>(set);
+		this.set = new IntOpenHashSet(set);
 	}
 	
 	@Override

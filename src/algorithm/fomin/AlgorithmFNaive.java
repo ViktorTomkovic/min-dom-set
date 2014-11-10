@@ -2,10 +2,9 @@ package algorithm.fomin;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
 
 import com.carrotsearch.hppc.IntOpenHashSet;
+import com.carrotsearch.hppc.ObjectArrayList;
 import com.carrotsearch.hppc.cursors.IntCursor;
 
 import datastructure.graph.Graph;
@@ -25,23 +24,16 @@ public class AlgorithmFNaive implements AbstractMDSAlgorithm {
 		ThreadMXBean bean = ManagementFactory.getThreadMXBean();
 		long start = bean.getCurrentThreadCpuTime();
 		AlgorithmMSCFNaive fn = new AlgorithmMSCFNaive();
-		ArrayList<RepresentedSet> sets = new ArrayList<>();
+		ObjectArrayList<RepresentedSet> sets = new ObjectArrayList<>(g.getNumberOfVertices());
 		for (IntCursor v : g.getVertices()) {
-			LinkedHashSet<Integer> neighs = new LinkedHashSet<>();
-			for (IntCursor intcur : g.getN1(v.value)) {
-				neighs.add(intcur.value);
-			}
+			IntOpenHashSet neighs = new IntOpenHashSet(g.getN1(v.value));
 			sets.add(new RepresentedSet(v.value, neighs));
 		}
 		prepTime = bean.getCurrentThreadCpuTime() - start;
-		LinkedHashSet<Integer> linkedResult = fn.getMSCforMDS(null, sets, g);
+		IntOpenHashSet linkedResult = fn.getMSCforMDS(null, sets, g);
 		runTime = bean.getCurrentThreadCpuTime() - start;
 		MDSResultBackedByIntOpenHashSet result = new MDSResultBackedByIntOpenHashSet();
-		IntOpenHashSet resultData = new IntOpenHashSet(linkedResult.size());
-		for (Integer i : linkedResult) {
-			resultData.add(i);
-		}
-		result.setResult(resultData);
+		result.setResult(linkedResult);
 		return result;
 	}
 

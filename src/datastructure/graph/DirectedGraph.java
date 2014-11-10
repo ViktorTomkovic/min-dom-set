@@ -13,6 +13,8 @@ import com.carrotsearch.hppc.ObjectArrayList;
 import com.carrotsearch.hppc.cursors.IntCursor;
 import com.carrotsearch.hppc.cursors.ObjectCursor;
 
+// TODO prerobit na HPPC
+
 public class DirectedGraph implements Graph {
 	private ArrayList<Edge> edges;
 	private LinkedHashSet<Integer> vertices;
@@ -20,6 +22,29 @@ public class DirectedGraph implements Graph {
 	private int verticesCount;
 
 	public DirectedGraph(ArrayList<Edge> edges) {
+		this.edges = edges;
+		this.neighboursOf = new HashMap<Integer, LinkedHashSet<Integer>>();
+		HashSet<Integer> vertices = new HashSet<>();
+		for (ObjectCursor<Edge> e : getEdges()) {
+			vertices.add(e.value.from);
+			vertices.add(e.value.to);
+			LinkedHashSet<Integer> a;
+			a = neighboursOf.get(e.value.from);
+			if (a == null)
+				a = new LinkedHashSet<Integer>();
+			a.add(e.value.to);
+			neighboursOf.put(e.value.from, a);
+		}
+		this.vertices = new LinkedHashSet<>(vertices);
+		this.verticesCount = vertices.size();
+	}
+
+	public DirectedGraph(ObjectArrayList<Edge> edges2) {
+		ArrayList<Edge> edges = new ArrayList<>(edges2.size());
+		for (ObjectCursor<Edge> edgecur : edges2) {
+			edges.add(edgecur.value);
+		}
+
 		this.edges = edges;
 		this.neighboursOf = new HashMap<Integer, LinkedHashSet<Integer>>();
 		HashSet<Integer> vertices = new HashSet<>();

@@ -66,7 +66,10 @@ public class CorectnessTestGenerator {
 			for (String name : tests) {
 				File file = new File(testDir, name);
 				if (name.contains("CorrectnessTest")) {
-					file.delete();
+					boolean wasDeleted = file.delete();
+					if (!wasDeleted) {
+						System.out.println("No need to delete files.");
+					}
 				}
 			}
 		}

@@ -1,93 +1,94 @@
 package algorithm.fomin;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-
-import com.carrotsearch.hppc.IntOpenHashSet;
-
-import datastructure.graph.Graph;
 import algorithm.AbstractMSCAlgorithm;
 import algorithm.RepresentedSet;
+import algorithm.Utils;
 
-// TODO prerobit na HPPC
+import com.carrotsearch.hppc.IntArrayList;
+import com.carrotsearch.hppc.IntOpenHashSet;
+import com.carrotsearch.hppc.ObjectArrayList;
+import com.carrotsearch.hppc.cursors.IntCursor;
+import com.carrotsearch.hppc.cursors.ObjectCursor;
+
+import datastructure.graph.Graph;
 
 public class AlgorithmMSCFNaive implements AbstractMSCAlgorithm {
 
-	private ArrayList<Integer> getUniversum(ArrayList<RepresentedSet> sets) {
-		HashSet<Integer> result = new HashSet<>();
-		for (RepresentedSet s : sets) {
-			result.addAll(s.getSet());
+	private IntArrayList getUniversum(ObjectArrayList<RepresentedSet> sets) {
+		IntArrayList result = new IntArrayList(sets.size());
+		for (ObjectCursor<RepresentedSet> scur : sets) {
+			result.addAll(scur.value.getSet());
 		}
-		return new ArrayList<>(result);
+		return result;
 	}
 
-	private ArrayList<RepresentedSet> getDel(RepresentedSet set,
-			ArrayList<RepresentedSet> sets) {
-		ArrayList<RepresentedSet> result = new ArrayList<>();
-		for (RepresentedSet rs : sets) {
-			LinkedHashSet<Integer> ss = new LinkedHashSet<>(rs.getSet());
+	private ObjectArrayList<RepresentedSet> getDel(RepresentedSet set,
+			ObjectArrayList<RepresentedSet> sets) {
+		ObjectArrayList<RepresentedSet> result = new ObjectArrayList<>();
+		for (ObjectCursor<RepresentedSet> rscur : sets) {
+			IntOpenHashSet ss = new IntOpenHashSet(rscur.value.getSet());
 			ss.removeAll(set.getSet());
 			if (ss.size() > 0) {
-				RepresentedSet ns = new RepresentedSet(rs.getRepresentant(), ss);
+				RepresentedSet ns = new RepresentedSet(
+						rscur.value.getRepresentant(), ss);
 				result.add(ns);
 			}
 		}
 		return result;
 	}
 
-	private LinkedHashSet<Integer> msc(ArrayList<RepresentedSet> sets,
-			LinkedHashSet<Integer> chosen, Graph g) {
+	private IntOpenHashSet msc(ObjectArrayList<RepresentedSet> sets,
+			IntOpenHashSet chosen, Graph g) {
 		if (sets.size() == 0) {
-			IntOpenHashSet chosen2 = new IntOpenHashSet(chosen.size());
-			for (Integer i : chosen) {
-				chosen2.add(i);
-			}
-			return g.isMDS(chosen2) ? new LinkedHashSet<>(chosen) : null;
+			IntOpenHashSet chosenDeepCopy = new IntOpenHashSet(chosen);
+			return g.isMDS(chosenDeepCopy) ? chosenDeepCopy : null;
 		}
 
 		// one include another
 		RepresentedSet included = null;
 		boolean found = false;
 		// RepresentedSet including = null;
-		for (RepresentedSet r : sets) {
+		for (ObjectCursor<RepresentedSet> rcur : sets) {
 			if (found)
 				break;
-			for (RepresentedSet s : sets) {
-				if (r.getSet().containsAll(s.getSet()) && r != s) {
-					included = s;
+			for (ObjectCursor<RepresentedSet> scur : sets) {
+				if (Utils.containsAll(rcur.value.getSet(), scur.value.getSet())
+						&& !rcur.value.equals(scur.value)) {
+					included = scur.value;
 					found = true;
 					break;
 				}
-				if (s.getSet().containsAll(r.getSet()) && s != r) {
-					included = r;
+				if (Utils.containsAll(scur.value.getSet(), rcur.value.getSet())
+						&& !scur.value.equals(rcur.value)) {
+					included = rcur.value;
 					found = true;
 					break;
 				}
 			}
 		}
 		if (included != null) {
-			sets.remove(included);
-			LinkedHashSet<Integer> result = msc(sets, chosen, g);
+			sets.removeLastOccurrence(included);
+			IntOpenHashSet result = msc(sets, chosen, g);
 			sets.add(included);
 			return result;
 		}
 
 		// is unique
-		ArrayList<Integer> universum = getUniversum(sets);
-		for (Integer l : universum) {
-			Integer counter = 0;
+		IntArrayList universum = getUniversum(sets);
+		for (IntCursor lcur : universum) {
+			int counter = 0;
 			RepresentedSet theRightSet = null;
-			for (RepresentedSet s : sets) {
-				if (s.getSet().contains(l)) {
+			for (ObjectCursor<RepresentedSet> scur : sets) {
+				if (scur.value.getSet().contains(lcur.value)) {
 					counter++;
-					theRightSet = s;
+					theRightSet = scur.value;
 				}
 			}
 			if (counter == 1L) {
-				ArrayList<RepresentedSet> newSets = getDel(theRightSet, sets);
+				ObjectArrayList<RepresentedSet> newSets = getDel(theRightSet,
+						sets);
 				chosen.add(theRightSet.getRepresentant());
-				LinkedHashSet<Integer> result = msc(newSets, chosen, g);
+				IntOpenHashSet result = msc(newSets, chosen, g);
 				chosen.remove(theRightSet.getRepresentant());
 				return result;
 			}
@@ -96,18 +97,18 @@ public class AlgorithmMSCFNaive implements AbstractMSCAlgorithm {
 		// max cardinality
 		int maxCardinality = 0;
 		RepresentedSet theRightSet = null;
-		for (RepresentedSet s : sets) {
-			if (s.getSet().size() > maxCardinality) {
-				maxCardinality = s.getSet().size();
-				theRightSet = s;
+		for (ObjectCursor<RepresentedSet> scur : sets) {
+			if (scur.value.getSet().size() > maxCardinality) {
+				maxCardinality = scur.value.getSet().size();
+				theRightSet = scur.value;
 			}
 		}
-		
-		sets.remove(theRightSet);
-		LinkedHashSet<Integer> result1 = msc(sets, chosen, g);
+
+		sets.removeLastOccurrence(theRightSet);
+		IntOpenHashSet result1 = msc(sets, chosen, g);
 
 		chosen.add(theRightSet.getRepresentant());
-		LinkedHashSet<Integer> result2 = msc(getDel(theRightSet, sets), chosen, g);
+		IntOpenHashSet result2 = msc(getDel(theRightSet, sets), chosen, g);
 		chosen.remove(theRightSet.getRepresentant());
 
 		sets.add(theRightSet);
@@ -120,9 +121,9 @@ public class AlgorithmMSCFNaive implements AbstractMSCAlgorithm {
 	}
 
 	@Override
-	public LinkedHashSet<Integer> getMSCforMDS(LinkedHashSet<Integer> universum,
-			ArrayList<RepresentedSet> sets, Graph g) {
-		return msc(sets, new LinkedHashSet<Integer>(), g);
+	public IntOpenHashSet getMSCforMDS(IntOpenHashSet universum,
+			ObjectArrayList<RepresentedSet> sets, Graph g) {
+		return msc(sets, IntOpenHashSet.newInstance(), g);
 	}
 
 }

@@ -1,11 +1,11 @@
 package algorithm;
 
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
+import com.carrotsearch.hppc.IntOpenHashSet;
+import com.carrotsearch.hppc.ObjectArrayList;
 
 import datastructure.graph.Graph;
 
 public interface AbstractMSCAlgorithm {
-	public LinkedHashSet<Integer> getMSCforMDS(LinkedHashSet<Integer> universum,
-			ArrayList<RepresentedSet> sets, Graph g);
+	public IntOpenHashSet getMSCforMDS(IntOpenHashSet universum,
+			ObjectArrayList<RepresentedSet> sets, Graph g);
 }

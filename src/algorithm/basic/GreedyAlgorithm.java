@@ -33,7 +33,7 @@ public class GreedyAlgorithm implements AbstractMDSAlgorithm {
 		int maxCount = 0;
 		rh.skipped = 0;
 		int iterations = 0;
-		myloop: for (IntCursor current : white) {
+		for (IntCursor current : white) {
 			iterations = iterations + 1;
 			int currentCount = neig.get(current.value).size();
 			if (currentCount > maxCount) {
@@ -42,7 +42,7 @@ public class GreedyAlgorithm implements AbstractMDSAlgorithm {
 			}
 			if (oldMaxCount == currentCount) {
 				rh.skipped = 1;
-				break myloop;
+				break;
 			}
 		}
 		rh.result = max;
@@ -76,7 +76,7 @@ public class GreedyAlgorithm implements AbstractMDSAlgorithm {
 		int initialSize = (int) Math.ceil(g.getNumberOfVertices() * (1 / 0.65)) + 1;
 		IntOpenHashSet S = new IntOpenHashSet(initialSize, 0.65f);
 		int iterations = 0;
-		Integer lastMaxCount = -1;
+		int lastMaxCount = -1;
 		int skipped = 0;
 		// for (int i = 0; i < 30; i++) {
 		// System.out.print("("+G.get(i)+","+g.getN1(G.get(i)).size()+")");
@@ -95,7 +95,7 @@ public class GreedyAlgorithm implements AbstractMDSAlgorithm {
 			ResultHolder rh = maxByN1(W, neigW, lastMaxCount);
 			iterations = iterations + rh.iterations;
 			lastMaxCount = rh.neighCount;
-			Integer pick = rh.result;
+			int pick = rh.result;
 			// System.out.println(pick + " " + G.size() + " " + W.size());
 			skipped = skipped + rh.skipped;
 			W.remove(pick);

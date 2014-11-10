@@ -70,4 +70,28 @@ public class Algorithm35State {
 		}
 		return;
 	}
+	
+	public Object getWLock() {
+		return wLock;
+	}
+
+	public Object getCLock() {
+		return cLock;
+	}
+
+	public Object getIsCandidateLock() {
+		return isCandidateLock;
+	}
+
+	public Integer getW() {
+		return w;
+	}
+
+	public Integer getC() {
+		return c;
+	}
+
+	public Boolean getIsCandidate() {
+		return isCandidate;
+	}
 }

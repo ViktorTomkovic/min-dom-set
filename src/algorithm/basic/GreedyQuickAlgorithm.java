@@ -2,50 +2,45 @@ package algorithm.basic;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashSet;
+import java.util.Arrays;
 
-import com.carrotsearch.hppc.IntOpenHashSet;
-import com.carrotsearch.hppc.cursors.IntCursor;
-
-import datastructure.graph.Graph;
 import algorithm.AbstractMDSAlgorithm;
 import algorithm.AbstractMDSResult;
 import algorithm.LessByN1AComparator;
 import algorithm.MDSResultBackedByIntOpenHashSet;
 
+import com.carrotsearch.hppc.IntArrayList;
+import com.carrotsearch.hppc.IntOpenHashSet;
+
+import datastructure.graph.Graph;
+
 public class GreedyQuickAlgorithm implements AbstractMDSAlgorithm {
 	private long prepTime = -1L;
 	private long runTime = -1L;
-
-	// TODO prerobit na HPPC
 
 	@Override
 	public AbstractMDSResult mdsAlg(Graph g) {
 		ThreadMXBean bean = ManagementFactory.getThreadMXBean();
 		long start = bean.getCurrentThreadCpuTime();
-		ArrayList<Integer> W = new ArrayList<>();
-		for (IntCursor intcur : g.getVertices()) {
-			W.add(intcur.value);
-		}
+		IntArrayList W = new IntArrayList(g.getVertices());
 		prepTime = bean.getCurrentThreadCpuTime() - start;
-		Collections.sort(W, new LessByN1AComparator(g));
-		LinkedHashSet<Integer> S = new LinkedHashSet<>();
+		Integer[] sorted = new Integer[W.size()];
+		for (int i = 0; i < W.size(); i++) {
+			sorted[i] = Integer.valueOf(W.buffer[i]);
+		}
+		Arrays.sort(sorted, new LessByN1AComparator(g));
+		for (int i = 0; i < W.size(); i++) {
+			W.buffer[i] = sorted[i].intValue();
+		}
+		IntOpenHashSet S = new IntOpenHashSet(W.size() / 10);
 		while (!W.isEmpty()) {
-			Integer pick = W.get(W.size() - 1);
-			for (IntCursor intcur : g.getN1(pick)) {
-				W.remove(Integer.valueOf(intcur.value));
-			}
+			int pick = W.get(W.size() - 1);
+			W.removeAll(g.getN1(pick));
 			S.add(pick);
 		}
 		runTime = bean.getCurrentThreadCpuTime() - start;
 		MDSResultBackedByIntOpenHashSet result = new MDSResultBackedByIntOpenHashSet();
-		IntOpenHashSet resultData = new IntOpenHashSet(S.size());
-		for (Integer i : S) {
-			resultData.add(i);
-		}
-		result.setResult(resultData);
+		result.setResult(S);
 		return result;
 	}
 
