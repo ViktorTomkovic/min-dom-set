@@ -99,6 +99,7 @@ public class Utils {
 							break;
 						}
 					}
+					unfinishedWhite.remove(picked);
 
 					ObjectOpenHashSet<RepresentedSet> toDelete = new ObjectOpenHashSet<>();
 					for (ObjectCursor<RepresentedSet> rscur : twoSets) {
@@ -131,6 +132,8 @@ public class Utils {
 							break;
 						}
 					}
+					unfinishedBlack.remove(picked);
+					
 					ObjectOpenHashSet<RepresentedSet> toDelete = new ObjectOpenHashSet<>();
 					for (ObjectCursor<RepresentedSet> rscur : twoSets) {
 						if (rscur.value.getSet().contains(picked)) {

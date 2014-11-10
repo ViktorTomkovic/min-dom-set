@@ -157,7 +157,7 @@ public class AlgorithmMSCFProper implements AbstractMSCAlgorithm {
 			IntOpenHashSet chosenDeepCopy = new IntOpenHashSet(chosen);
 			return g.isMDS(chosenDeepCopy) ? chosenDeepCopy : null;
 		}
-
+		
 		sets.removeLastOccurrence(theRightSet);
 		IntOpenHashSet result1 = msc(sets, chosen, g);
 

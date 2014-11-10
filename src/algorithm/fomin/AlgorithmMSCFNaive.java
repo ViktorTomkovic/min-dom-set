@@ -49,8 +49,9 @@ public class AlgorithmMSCFNaive implements AbstractMSCAlgorithm {
 		boolean found = false;
 		// RepresentedSet including = null;
 		for (ObjectCursor<RepresentedSet> rcur : sets) {
-			if (found)
+			if (found) {
 				break;
+			}
 			for (ObjectCursor<RepresentedSet> scur : sets) {
 				if (Utils.containsAll(rcur.value.getSet(), scur.value.getSet())
 						&& !rcur.value.equals(scur.value)) {
@@ -84,7 +85,7 @@ public class AlgorithmMSCFNaive implements AbstractMSCAlgorithm {
 					theRightSet = scur.value;
 				}
 			}
-			if (counter == 1L) {
+			if (counter == 1) {
 				ObjectArrayList<RepresentedSet> newSets = getDel(theRightSet,
 						sets);
 				chosen.add(theRightSet.getRepresentant());

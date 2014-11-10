@@ -28,8 +28,8 @@ public class AlgorithmFProper implements AbstractMDSAlgorithm {
 			sets.add(new RepresentedSet(v.value, neighs));
 		}
 		prepTime = bean.getCurrentThreadCpuTime() - start;
-		IntOpenHashSet linkedResult = new IntOpenHashSet(fn.getMSCforMDS(null,
-				sets, g));
+		IntOpenHashSet linkedResult = fn.getMSCforMDS(null,
+				sets, g);
 		runTime = bean.getCurrentThreadCpuTime() - start;
 		MDSResultBackedByIntOpenHashSet result = new MDSResultBackedByIntOpenHashSet();
 		result.setResult(linkedResult);

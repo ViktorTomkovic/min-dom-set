@@ -13,8 +13,6 @@ import algorithm.AbstractMDSResult;
 import algorithm.MDSResultBackedByIntOpenHashSet;
 import algorithm.RepresentedSet;
 
-// TODO prerobit na HPPC
-
 public class AlgorithmFNaive implements AbstractMDSAlgorithm {
 	private long prepTime = -1L;
 	private long runTime = -1L;

@@ -1,64 +1,53 @@
 package datastructure.graph;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
 
 import algorithm.AbstractMDSAlgorithm;
 import algorithm.AbstractMDSResult;
 
+import com.carrotsearch.hppc.IntObjectOpenHashMap;
 import com.carrotsearch.hppc.IntOpenHashSet;
 import com.carrotsearch.hppc.ObjectArrayList;
 import com.carrotsearch.hppc.cursors.IntCursor;
 import com.carrotsearch.hppc.cursors.ObjectCursor;
 
-// TODO prerobit na HPPC
-
 public class DirectedGraph implements Graph {
-	private ArrayList<Edge> edges;
-	private LinkedHashSet<Integer> vertices;
-	private HashMap<Integer, LinkedHashSet<Integer>> neighboursOf;
+	private ObjectArrayList<Edge> edges;
+	private IntOpenHashSet vertices;
+	private IntObjectOpenHashMap<IntOpenHashSet> neighboursOf;
 	private int verticesCount;
 
 	public DirectedGraph(ArrayList<Edge> edges) {
-		this.edges = edges;
-		this.neighboursOf = new HashMap<Integer, LinkedHashSet<Integer>>();
-		HashSet<Integer> vertices = new HashSet<>();
-		for (ObjectCursor<Edge> e : getEdges()) {
-			vertices.add(e.value.from);
-			vertices.add(e.value.to);
-			LinkedHashSet<Integer> a;
-			a = neighboursOf.get(e.value.from);
-			if (a == null)
-				a = new LinkedHashSet<Integer>();
-			a.add(e.value.to);
-			neighboursOf.put(e.value.from, a);
+		ObjectArrayList<Edge> gedges = new ObjectArrayList<>(edges.size());
+		for (Edge edge : edges) {
+			gedges.add(edge);
 		}
-		this.vertices = new LinkedHashSet<>(vertices);
+		this.edges = gedges;
+		this.neighboursOf = new IntObjectOpenHashMap<>(edges.size());
+		IntOpenHashSet vertices = new IntOpenHashSet();
+		for (ObjectCursor<Edge> ecur : getEdges()) {
+			vertices.add(ecur.value.from);
+			vertices.add(ecur.value.to);
+			IntOpenHashSet a = neighboursOf.getOrDefault(ecur.value.from, IntOpenHashSet.newInstance());
+			a.add(ecur.value.to);
+			neighboursOf.put(ecur.value.from, a);
+		}
+		this.vertices = vertices;
 		this.verticesCount = vertices.size();
 	}
 
 	public DirectedGraph(ObjectArrayList<Edge> edges2) {
-		ArrayList<Edge> edges = new ArrayList<>(edges2.size());
-		for (ObjectCursor<Edge> edgecur : edges2) {
-			edges.add(edgecur.value);
+		this.edges = new ObjectArrayList<>(edges2);
+		this.neighboursOf = new IntObjectOpenHashMap<>(edges2.size());
+		IntOpenHashSet vertices = new IntOpenHashSet();
+		for (ObjectCursor<Edge> ecur : getEdges()) {
+			vertices.add(ecur.value.from);
+			vertices.add(ecur.value.to);
+			IntOpenHashSet a = neighboursOf.getOrDefault(ecur.value.from, IntOpenHashSet.newInstance());
+			a.add(ecur.value.to);
+			neighboursOf.put(ecur.value.from, a);
 		}
-
-		this.edges = edges;
-		this.neighboursOf = new HashMap<Integer, LinkedHashSet<Integer>>();
-		HashSet<Integer> vertices = new HashSet<>();
-		for (ObjectCursor<Edge> e : getEdges()) {
-			vertices.add(e.value.from);
-			vertices.add(e.value.to);
-			LinkedHashSet<Integer> a;
-			a = neighboursOf.get(e.value.from);
-			if (a == null)
-				a = new LinkedHashSet<Integer>();
-			a.add(e.value.to);
-			neighboursOf.put(e.value.from, a);
-		}
-		this.vertices = new LinkedHashSet<>(vertices);
+		this.vertices = vertices;
 		this.verticesCount = vertices.size();
 	}
 
@@ -69,20 +58,12 @@ public class DirectedGraph implements Graph {
 
 	@Override
 	public ObjectArrayList<Edge> getEdges() {
-		ObjectArrayList<Edge> result = new ObjectArrayList<>(edges.size());
-		for (Edge edge : edges) {
-			result.add(edge);
-		}
-		return result;
+		return edges;
 	}
 
 	@Override
 	public IntOpenHashSet getVertices() {
-		IntOpenHashSet result = new IntOpenHashSet(vertices.size());
-		for (Integer vertex : vertices) {
-			result.add(vertex);
-		}
-		return result;
+		return vertices;
 	}
 
 	@Override
@@ -90,13 +71,8 @@ public class DirectedGraph implements Graph {
 		return verticesCount;
 	}
 
-	public IntOpenHashSet getNeighboursOf(Integer vertex) {
-		LinkedHashSet<Integer> neigh = neighboursOf.get(vertex);
-		IntOpenHashSet result = new IntOpenHashSet(neigh.size());
-		for (Integer vertex2 : neigh) {
-			result.add(vertex2);
-		}
-		return result;
+	public IntOpenHashSet getNeighboursOf(int vertex) {
+		return neighboursOf.get(vertex);
 	}
 
 	@Override
@@ -123,8 +99,8 @@ public class DirectedGraph implements Graph {
 			set.addAll(getN1(v.value));
 		}
 		boolean isContained = true;
-		for (Integer i : vertices) {
-			if (!set.contains(i)) {
+		for (IntCursor icur : vertices) {
+			if (!set.contains(icur.value)) {
 				isContained = false;
 				break;
 			}
@@ -137,15 +113,12 @@ public class DirectedGraph implements Graph {
 		return null;
 	}
 
-	public void addEdges(ArrayList<Edge> edges) {
+	public void addEdges(ObjectArrayList<Edge> edges) {
 		this.edges.addAll(edges);
 		for (ObjectCursor<Edge> e : getEdges()) {
 			this.vertices.add(e.value.from);
 			this.vertices.add(e.value.to);
-			LinkedHashSet<Integer> a;
-			a = neighboursOf.get(e.value.from);
-			if (a == null)
-				a = new LinkedHashSet<Integer>();
+			IntOpenHashSet a = neighboursOf.getOrDefault(e.value.from, null);
 			a.add(e.value.to);
 			neighboursOf.put(e.value.from, a);
 		}
@@ -159,8 +132,8 @@ public class DirectedGraph implements Graph {
 			set.addAll(getN1(v.value));
 		}
 		boolean isContained = true;
-		for (Integer i : vertices) {
-			if (!set.contains(i)) {
+		for (IntCursor icur : vertices) {
+			if (!set.contains(icur.value)) {
 				isContained = false;
 				break;
 			}
