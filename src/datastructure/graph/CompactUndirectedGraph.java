@@ -71,7 +71,7 @@ public class CompactUndirectedGraph implements Graph {
 		}
 		boolean isContained = true;
 		for (int i = 1; i <= maxVertexNumber; i++) {
-			if (!isContained) {
+			if (!set.contains(i)) {
 				isContained = false;
 				break;
 			}
@@ -87,7 +87,7 @@ public class CompactUndirectedGraph implements Graph {
 		}
 		boolean isContained = true;
 		for (int i = 1; i <= maxVertexNumber; i++) {
-			if (!isContained) {
+			if (!set.contains(i)) {
 				isContained = false;
 				break;
 			}
