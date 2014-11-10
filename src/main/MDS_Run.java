@@ -10,7 +10,7 @@ import datastructure.graph.CompactUndirectedGraph;
 import datastructure.graph.Graph;
 
 public class MDS_Run {
-	public static final String MY_ARGS = "ba200.txt fproper false";
+	public static final String MY_ARGS = "ca1.txt greedy false";
 
 	/**
 	 * @param args
@@ -39,6 +39,7 @@ public class MDS_Run {
 		System.out.println("Read time: "
 				+ (System.currentTimeMillis() - startReading) + "ms.");
 		g = new CompactUndirectedGraph(dataset);
+		Graph gg = new CompactUndirectedGraph(dataset);
 		// g = new UndirectedGraph(new LinkedHashSet<Integer>(), edgeList);
 		System.out.println("Graph loaded - vertices: "
 				+ g.getNumberOfVertices() + ", edges: " + g.getEdges().size()
@@ -71,7 +72,7 @@ public class MDS_Run {
 				+ ".");
 		System.out.println(mds.size() + " "
 				+ mds);
-		System.out.println("The set is " + (g.isMDS(mds) ? "" : "not ")
+		System.out.println("The set is " + (gg.isMDS(mds) ? "" : "not ")
 				+ "a dominating set.");
 		StringBuilder sb = new StringBuilder();
 		sb.append("Time elapsed: ");

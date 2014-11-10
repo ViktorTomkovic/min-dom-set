@@ -14,7 +14,6 @@ import com.carrotsearch.hppc.cursors.IntCursor;
 
 import datastructure.graph.Graph;
 
-// TODO prerobit na HPPC
 public class GreedyAlgorithm implements AbstractMDSAlgorithm {
 	private long prepTime = -1L;
 	private long runTime = -1L;
@@ -48,13 +47,6 @@ public class GreedyAlgorithm implements AbstractMDSAlgorithm {
 		rh.result = max;
 		rh.neighCount = maxCount;
 		rh.iterations = iterations;
-		// if (white.size() - iterations > 10) {
-		// System.out.println("("+iterations+","+(white.size()-iterations)+")");
-		// }
-		// System.out.print("("+oldMaxCount+","+rh.neighCount);
-		if (rh.result == 0) {
-			System.out.println("Zle je.");
-		}
 		return rh;
 	}
 
@@ -68,7 +60,6 @@ public class GreedyAlgorithm implements AbstractMDSAlgorithm {
 		for (IntCursor v : vertices) {
 			neigW.put(v.value, new IntOpenHashSet(g.getN1(v.value)));
 		}
-		// Collections.sort(vertices, new LessByN1NComparator(neigW));
 		IntOpenHashSet W = new IntOpenHashSet(vertices);
 		IntOpenHashSet G = new IntOpenHashSet(vertices);
 
@@ -78,25 +69,12 @@ public class GreedyAlgorithm implements AbstractMDSAlgorithm {
 		int iterations = 0;
 		int lastMaxCount = -1;
 		int skipped = 0;
-		// for (int i = 0; i < 30; i++) {
-		// System.out.print("("+G.get(i)+","+g.getN1(G.get(i)).size()+")");
-		// }
-		// System.out.println();
-		// Collections.sort(G, new LessByN1BComparator(g));
-		// for (int i = 0; i < 30; i++) {
-		// System.out.print("("+G.get(i)+","+g.getN1(G.get(i)).size()+")");
-		// }
-		// System.out.println();
-		// return new LinkedHashSet<>();
-		// ResultHolder rh = new ResultHolder();
 		while (!G.isEmpty()) {
 			iterations = iterations + 1;
-			// Collections.sort(W, new LessByN1NComparator(neigW));
 			ResultHolder rh = maxByN1(W, neigW, lastMaxCount);
 			iterations = iterations + rh.iterations;
 			lastMaxCount = rh.neighCount;
 			int pick = rh.result;
-			// System.out.println(pick + " " + G.size() + " " + W.size());
 			skipped = skipped + rh.skipped;
 			W.remove(pick);
 			IntOpenHashSet greying = new IntOpenHashSet(neigW.get(pick));

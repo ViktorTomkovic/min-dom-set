@@ -3,15 +3,15 @@ package algorithm.flower;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
 
-import com.carrotsearch.hppc.IntArrayList;
+import algorithm.AbstractMDSAlgorithm;
+import algorithm.AbstractMDSResult;
+import algorithm.MDSResultBackedByIntOpenHashSet;
+
 import com.carrotsearch.hppc.IntObjectOpenHashMap;
 import com.carrotsearch.hppc.IntOpenHashSet;
 import com.carrotsearch.hppc.cursors.IntCursor;
 
 import datastructure.graph.Graph;
-import algorithm.AbstractMDSAlgorithm;
-import algorithm.AbstractMDSResult;
-import algorithm.MDSResultBackedByIntOpenHashSet;
 
 public class FlowerUniqueAlgorithm implements AbstractMDSAlgorithm {
 	private long prepTime = -1L;
@@ -55,25 +55,27 @@ public class FlowerUniqueAlgorithm implements AbstractMDSAlgorithm {
 		long start = bean.getCurrentThreadCpuTime();
 		IntOpenHashSet W = new IntOpenHashSet(g.getVertices());
 		IntOpenHashSet G = new IntOpenHashSet(g.getVertices());
-		int initialSize = (int)Math.ceil(g.getNumberOfVertices() * (1/0.65)) + 1;
+		int initialSize = (int) Math.ceil(g.getNumberOfVertices() * (1 / 0.65)) + 1;
 
-		IntObjectOpenHashMap<IntOpenHashSet> neigW = new IntObjectOpenHashMap<>(initialSize);
+		IntObjectOpenHashMap<IntOpenHashSet> neigW = new IntObjectOpenHashMap<>(
+				initialSize);
 		for (IntCursor vcur : W) {
-			neigW.put(vcur.value, g.getN1(vcur.value));
+			neigW.put(vcur.value, new IntOpenHashSet(g.getN1(vcur.value)));
 		}
 
 		prepTime = bean.getCurrentThreadCpuTime() - start;
 		IntOpenHashSet S = new IntOpenHashSet(initialSize);
 		int iterations = 0;
-		IntArrayList uniqueFlowers = new IntArrayList();
+		IntOpenHashSet uniqueFlowers = new IntOpenHashSet();
 		for (IntCursor vcur : W) {
 			iterations = iterations + 1;
 			IntOpenHashSet neighs = neigW.get(vcur.value);
 			if (neighs.size() == 2) {
-				for (IntCursor vvcur : neighs) {
-					if (vvcur.value != vcur.value) {
-						uniqueFlowers.add(vvcur.value);
-					}
+				int[] vv = neighs.toArray();
+				if (vcur.value == vv[0]) {
+					uniqueFlowers.add(vv[1]);
+				} else {
+					uniqueFlowers.add(vv[0]);
 				}
 			}
 		}
@@ -81,10 +83,11 @@ public class FlowerUniqueAlgorithm implements AbstractMDSAlgorithm {
 		for (IntCursor flowercur : uniqueFlowers) {
 			iterations = iterations + 1;
 			W.remove(flowercur.value);
-			IntOpenHashSet greying = new IntOpenHashSet(neigW.get(flowercur.value));
+			IntOpenHashSet greying = new IntOpenHashSet(
+					neigW.get(flowercur.value));
 			G.removeAll(greying);
-			for (IntCursor v : g.getN2(flowercur.value)) {
-				neigW.get(v.value).removeAll(greying);
+			for (IntCursor vcur : g.getN2(flowercur.value)) {
+				neigW.get(vcur.value).removeAll(greying);
 			}
 			S.add(flowercur.value);
 		}
