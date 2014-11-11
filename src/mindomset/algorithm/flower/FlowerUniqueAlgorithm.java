@@ -76,6 +76,8 @@ public class FlowerUniqueAlgorithm implements AbstractMDSAlgorithm {
 				} else {
 					uniqueFlowers.add(vv[0]);
 				}
+			} else if (neighs.size() == 1) {
+				uniqueFlowers.add(neighs.toArray()[0]);
 			}
 		}
 		System.out.println("Unique flowers: " + uniqueFlowers.size());

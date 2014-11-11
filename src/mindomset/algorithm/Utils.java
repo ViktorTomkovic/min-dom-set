@@ -168,6 +168,9 @@ public class Utils {
 	/** Is small set contained in big set? */
 	public static boolean containsAll(IntOpenHashSet bigSet,
 			IntOpenHashSet smallSet) {
+		if (smallSet.size() > bigSet.size()) {
+			return false;
+		}
 		boolean isContained = true;
 		for (IntCursor smallcur : smallSet) {
 			if (!bigSet.contains(smallcur.value)) {
