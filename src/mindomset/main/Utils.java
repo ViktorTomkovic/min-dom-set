@@ -27,6 +27,7 @@ import mindomset.algorithm.flower.FlowerFullAlgorithm;
 import mindomset.algorithm.flower.FlowerUniqueAlgorithm;
 import mindomset.algorithm.fomin.AlgorithmFNaive;
 import mindomset.algorithm.fomin.AlgorithmFProper;
+import mindomset.algorithm.greedy.GreedySproutAlgorithm;
 import mindomset.algorithm.mt.MyNaive2Algorithm;
 import mindomset.algorithm.mt.MyNaive3Algorithm;
 import mindomset.algorithm.mt.MyNaiveAlgorithm;
@@ -268,6 +269,8 @@ public class Utils {
 			algorithm = new FlowerUniqueAlgorithm();
 		} else if (name.compareTo("flower") == 0) {
 			algorithm = new FlowerFullAlgorithm();
+		} else if (name.compareTo("sprout") == 0) {
+			algorithm = new GreedySproutAlgorithm();
 		} else {
 			throw new IllegalArgumentException("Algorithm is not implemented.");
 		}
@@ -306,6 +309,8 @@ public class Utils {
 			fullName = "FlowerUniqueAlgorithm";
 		} else if (name.compareTo("flower") == 0) {
 			fullName = "FlowerFullAlgorithm";
+		} else if (name.compareTo("sprout") == 0) {
+			fullName = "GreedySproutAlgorithm";
 		} else {
 			throw new IllegalArgumentException("Algorithm has not a full name.");
 		}

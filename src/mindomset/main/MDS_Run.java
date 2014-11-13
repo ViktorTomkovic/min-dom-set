@@ -10,7 +10,7 @@ import mindomset.datastructure.graph.CompactUndirectedGraph;
 import mindomset.datastructure.graph.Graph;
 
 public class MDS_Run {
-	public static final String MY_ARGS = "ca1.txt flower false";
+	public static final String MY_ARGS = "ca2.txt sprout false";
 
 	/**
 	 * @param args
