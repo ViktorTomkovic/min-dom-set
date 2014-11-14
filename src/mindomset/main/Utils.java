@@ -28,6 +28,7 @@ import mindomset.algorithm.flower.FlowerUniqueAlgorithm;
 import mindomset.algorithm.fomin.AlgorithmFNaive;
 import mindomset.algorithm.fomin.AlgorithmFProper;
 import mindomset.algorithm.greedy.GreedySproutAlgorithm;
+import mindomset.algorithm.greedy.GreedySweepAlgorithm;
 import mindomset.algorithm.mt.MyNaive2Algorithm;
 import mindomset.algorithm.mt.MyNaive3Algorithm;
 import mindomset.algorithm.mt.MyNaiveAlgorithm;
@@ -269,8 +270,10 @@ public class Utils {
 			algorithm = new FlowerUniqueAlgorithm();
 		} else if (name.compareTo("flower") == 0) {
 			algorithm = new FlowerFullAlgorithm();
-		} else if (name.compareTo("sprout") == 0) {
+		} else if (name.compareTo("greedysr") == 0) {
 			algorithm = new GreedySproutAlgorithm();
+		} else if (name.compareTo("greedysw") == 0) {
+			algorithm = new GreedySweepAlgorithm();
 		} else {
 			throw new IllegalArgumentException("Algorithm is not implemented.");
 		}
@@ -309,8 +312,10 @@ public class Utils {
 			fullName = "FlowerUniqueAlgorithm";
 		} else if (name.compareTo("flower") == 0) {
 			fullName = "FlowerFullAlgorithm";
-		} else if (name.compareTo("sprout") == 0) {
+		} else if (name.compareTo("greedysr") == 0) {
 			fullName = "GreedySproutAlgorithm";
+		} else if (name.compareTo("greedysw") == 0) {
+			fullName = "GreedySweepAlgorithm";
 		} else {
 			throw new IllegalArgumentException("Algorithm has not a full name.");
 		}
