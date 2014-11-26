@@ -24,9 +24,6 @@ public class GreedySweepAlgorithm implements AbstractMDSAlgorithm {
 	private IntObjectOpenHashMap<IntOpenHashSet> neig3 = new IntObjectOpenHashMap<IntOpenHashSet>();
 	private IntObjectOpenHashMap<IntOpenHashSet> neigNonG = new IntObjectOpenHashMap<IntOpenHashSet>();
 	private IntObjectOpenHashMap<IntOpenHashSet> neigN2 = new IntObjectOpenHashMap<IntOpenHashSet>();
-	private IntIntOpenHashMap howManyWhiteCanKeySee = new IntIntOpenHashMap();
-	private IntObjectOpenHashMap<IntOpenHashSet> keyGrantsFlowerToValues = new IntObjectOpenHashMap<IntOpenHashSet>();
-	private IntObjectOpenHashMap<IntOpenHashSet> keyHasGrantedFlowerByValues = new IntObjectOpenHashMap<IntOpenHashSet>();
 	private IntIntOpenHashMap sweepCardinality = new IntIntOpenHashMap();
 	private int iterations = 0;
 	private int skipped = 0;
@@ -133,17 +130,11 @@ public class GreedySweepAlgorithm implements AbstractMDSAlgorithm {
 		neig = new IntObjectOpenHashMap<IntOpenHashSet>(initialSize);
 		neigNonG = new IntObjectOpenHashMap<>(initialSize);
 		neigN2 = new IntObjectOpenHashMap<>(initialSize);
-		howManyWhiteCanKeySee = new IntIntOpenHashMap(initialSize);
-		keyGrantsFlowerToValues = new IntObjectOpenHashMap<>(initialSize);
-		keyHasGrantedFlowerByValues = new IntObjectOpenHashMap<>(initialSize);
 		for (IntCursor vcur : W) {
 			IntOpenHashSet n1 = g.getN1(vcur.value);
 			neig.put(vcur.value, new IntOpenHashSet(n1));
 			neigNonG.put(vcur.value, new IntOpenHashSet(n1));
 			neigN2.put(vcur.value, new IntOpenHashSet(g.getN2(vcur.value)));
-			howManyWhiteCanKeySee.put(vcur.value, n1.size());
-			keyGrantsFlowerToValues.put(vcur.value, new IntOpenHashSet());
-			keyHasGrantedFlowerByValues.put(vcur.value, new IntOpenHashSet());
 		}
 		for (IntCursor wcur : W) {
 			IntOpenHashSet neig3set = new IntOpenHashSet();

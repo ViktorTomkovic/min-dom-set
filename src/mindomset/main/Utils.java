@@ -24,6 +24,7 @@ import mindomset.algorithm.chapter7.Algorithm34OneThread;
 import mindomset.algorithm.chapter7.Algorithm35;
 import mindomset.algorithm.chapter7.Algorithm35OneThread;
 import mindomset.algorithm.flower.FlowerFullAlgorithm;
+import mindomset.algorithm.flower.FlowerMacoAlgorithm;
 import mindomset.algorithm.flower.FlowerUniqueAlgorithm;
 import mindomset.algorithm.fomin.AlgorithmFNaive;
 import mindomset.algorithm.fomin.AlgorithmFProper;
@@ -270,6 +271,8 @@ public class Utils {
 			algorithm = new FlowerUniqueAlgorithm();
 		} else if (name.compareTo("flower") == 0) {
 			algorithm = new FlowerFullAlgorithm();
+		} else if (name.compareTo("flowerma") == 0) {
+			algorithm = new FlowerMacoAlgorithm();
 		} else if (name.compareTo("greedysr") == 0) {
 			algorithm = new GreedySproutAlgorithm();
 		} else if (name.compareTo("greedysw") == 0) {
@@ -312,6 +315,8 @@ public class Utils {
 			fullName = "FlowerUniqueAlgorithm";
 		} else if (name.compareTo("flower") == 0) {
 			fullName = "FlowerFullAlgorithm";
+		} else if (name.compareTo("flowerma") == 0) {
+			fullName = "FlowerMacoAlgorithm";
 		} else if (name.compareTo("greedysr") == 0) {
 			fullName = "GreedySproutAlgorithm";
 		} else if (name.compareTo("greedysw") == 0) {

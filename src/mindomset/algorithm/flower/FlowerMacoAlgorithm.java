@@ -17,7 +17,7 @@ import com.carrotsearch.hppc.IntObjectOpenHashMap;
 import com.carrotsearch.hppc.IntOpenHashSet;
 import com.carrotsearch.hppc.cursors.IntCursor;
 
-public class FlowerFullAlgorithm implements AbstractMDSAlgorithm {
+public class FlowerMacoAlgorithm implements AbstractMDSAlgorithm {
 	private long prepTime = -1L;
 	private long runTime = -1L;
 	private IntOpenHashSet S = new IntOpenHashSet(); // chosen
@@ -26,14 +26,12 @@ public class FlowerFullAlgorithm implements AbstractMDSAlgorithm {
 	private IntObjectOpenHashMap<IntOpenHashSet> neig = new IntObjectOpenHashMap<IntOpenHashSet>();
 	private IntObjectOpenHashMap<IntOpenHashSet> neigNonG = new IntObjectOpenHashMap<IntOpenHashSet>();
 	private IntObjectOpenHashMap<IntOpenHashSet> neigN2 = new IntObjectOpenHashMap<IntOpenHashSet>();
-	private IntObjectOpenHashMap<IntOpenHashSet> neigN3 = new IntObjectOpenHashMap<IntOpenHashSet>();
 	private IntOpenHashSet definiteFlowers = new IntOpenHashSet();
 	private IntOpenHashSet potentialFlowers = new IntOpenHashSet();
 	private IntOpenHashSet others = new IntOpenHashSet();
 	private IntIntOpenHashMap howManyWhiteCanKeySee = new IntIntOpenHashMap();
 	private IntObjectOpenHashMap<IntOpenHashSet> keyGrantsFlowerToValues = new IntObjectOpenHashMap<IntOpenHashSet>();
 	private IntObjectOpenHashMap<IntOpenHashSet> keyHasGrantedFlowerByValues = new IntObjectOpenHashMap<IntOpenHashSet>();
-	private IntIntOpenHashMap sweepCardinality = new IntIntOpenHashMap();
 	private int iterations = 0;
 	private int skipped = 0;
 	private int initialSize = 0;
@@ -55,17 +53,16 @@ public class FlowerFullAlgorithm implements AbstractMDSAlgorithm {
 		for (IntCursor current : W) {
 			iterations = iterations + 1;
 			int currentCount = neigNonG.get(current.value).size();
+			IntOpenHashSet nn = neigNonG.get(current.value);
 			int sweepCardinality = 0;
-//			IntOpenHashSet nn = neigNonG.get(current.value);
-//			for (IntCursor nncur : nn) {
-//				IntOpenHashSet nnn = neigNonG.get(nncur.value);
-//				if (nnn.size() == 1 && nnn.contains(current.value)) {
-//					sweepCardinality = sweepCardinality + 1;
-//				} else if (nnn.size() == 2 && nnn.contains(nncur.value) && nnn.contains(current.value)) {
-//					sweepCardinality = sweepCardinality + 1;
-//				}
-//			}
-			sweepCardinality = this.sweepCardinality.get(current.value);
+			for (IntCursor nncur : nn) {
+				IntOpenHashSet nnn = neigNonG.get(nncur.value);
+				if (nnn.size() == 1 && nnn.contains(current.value)) {
+					sweepCardinality = sweepCardinality + 1;
+				} else if (nnn.size() == 2 && nnn.contains(nncur.value) && nnn.contains(current.value)) {
+					sweepCardinality = sweepCardinality + 1;
+				}
+			}
 			if ((currentCount > maxCount)
 					|| (currentCount == maxCount && sweepCardinality > maxSweep)) {
 				max = current.value;
@@ -96,19 +93,18 @@ public class FlowerFullAlgorithm implements AbstractMDSAlgorithm {
 			IntOpenHashSet nn = neigNonG.get(potcur.value);
 			int vertexCardinality = nn.size();
 			int sweepCardinality = 0;
-//			for (IntCursor nncur : nn) {
-//				IntOpenHashSet nnn = neigNonG.get(nncur.value);
-//				if (nnn.size() == 1 && nnn.contains(nncur.value)) {
-//					sweepCardinality = sweepCardinality + 1;
-//				} else if (nnn.size() == 2 && nnn.contains(nncur.value) && nnn.contains(potcur.value)) {
-//					sweepCardinality = sweepCardinality + 1;
-//				}
-//			}
-			sweepCardinality = this.sweepCardinality.get(potcur.value);
+			for (IntCursor nncur : nn) {
+				IntOpenHashSet nnn = neigNonG.get(nncur.value);
+				if (nnn.size() == 1 && nnn.contains(nncur.value)) {
+					sweepCardinality = sweepCardinality + 1;
+				} else if (nnn.size() == 2 && nnn.contains(nncur.value) && nnn.contains(potcur.value)) {
+					sweepCardinality = sweepCardinality + 1;
+				}
+			}
 			if ((flowerCardinality > maxCount)
 					|| ((flowerCardinality == maxCount) && (sweepCardinality > maxSweep))
 					|| ((flowerCardinality == maxCount)
-							&& (sweepCardinality == maxSweep) && (vertexCardinality > maxCar))) {
+							&& (sweepCardinality == maxSweep) && (vertexCardinality < maxCar))) {
 				max = potcur.value;
 				maxCount = flowerCardinality;
 				maxCar = vertexCardinality;
@@ -123,20 +119,6 @@ public class FlowerFullAlgorithm implements AbstractMDSAlgorithm {
 		rh.neighCount = maxCount;
 		rh.iterations = iterations;
 		return rh;
-	}
-
-	private void recomputeSweepCardinalityFor(IntOpenHashSet vertices) {
-		for (IntCursor vercur : vertices) {
-			sweepCardinality.put(vercur.value, 0);
-		}
-		for (IntCursor vercur : vertices) {
-			IntOpenHashSet neigNG = neigNonG.get(vercur.value);
-			for (IntCursor ncur : neigNG) {
-				if (Utils.containsAll(neigNG, neigNonG.get(ncur.value))) {
-					sweepCardinality.addTo(vercur.value, 1);
-				}
-			}
-		}
 	}
 
 	private void markFlowers() {
@@ -248,7 +230,6 @@ public class FlowerFullAlgorithm implements AbstractMDSAlgorithm {
 			G.removeAll(greying);
 			//G.remove(flower);
 			W.remove(flower);
-			recomputeSweepCardinalityFor(neigN3.get(flower));
 		}
 		//G.removeAll(others);
 		clearEmptyFlowers();
@@ -287,7 +268,6 @@ public class FlowerFullAlgorithm implements AbstractMDSAlgorithm {
 				keyHasGrantedFlowerByValues.get(vcur.value).removeAll(greying);
 			}
 			clearEmptyFlowers();
-			recomputeSweepCardinalityFor(neigN3.get(pick));
 		}
 		System.out.println("Chosen Potetntial Flowers: " + countChosenPotFlowers);
 	}
@@ -312,7 +292,6 @@ public class FlowerFullAlgorithm implements AbstractMDSAlgorithm {
 			}
 			S.add(pick);
 			G.removeAll(greying);
-			recomputeSweepCardinalityFor(neigN3.get(pick));
 		}
 	}
 
@@ -338,30 +317,6 @@ public class FlowerFullAlgorithm implements AbstractMDSAlgorithm {
 			keyGrantsFlowerToValues.put(vcur.value, new IntOpenHashSet());
 			keyHasGrantedFlowerByValues.put(vcur.value, new IntOpenHashSet());
 		}
-		for (IntCursor wcur : W) {
-			IntOpenHashSet neig3set = new IntOpenHashSet();
-			for (IntCursor n1cur : neig.get(wcur.value)) {
-				 if (neig3set.contains(n1cur.value)) {
-				 continue;
-				 }
-				neig3set.add(n1cur.value);
-				for (IntCursor n2cur : neig.get(n1cur.value)) {
-					 if (neig3set.contains(n2cur.value)) {
-					 continue;
-					 }
-					neig3set.add(n2cur.value);
-					for (IntCursor n3cur : neig.get(n2cur.value)) {
-						neig3set.add(n3cur.value);
-						// for (IntCursor n4cur : neig.get(n3cur.value)) {
-						// verticesToRecompute.add(n4cur.value);
-						// }
-					}
-				}
-			}
-			neigN3.put(wcur.value, neig3set);
-		}
-		sweepCardinality = new IntIntOpenHashMap(initialSize);
-		recomputeSweepCardinalityFor(W);
 		S = new IntOpenHashSet(initialSize);
 		iterations = 0;
 		prepTime = bean.getCurrentThreadCpuTime() - start;
