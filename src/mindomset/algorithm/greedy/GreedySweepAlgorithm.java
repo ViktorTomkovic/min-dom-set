@@ -2,11 +2,9 @@ package mindomset.algorithm.greedy;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
-import java.util.Arrays;
 
 import mindomset.algorithm.AbstractMDSAlgorithm;
 import mindomset.algorithm.AbstractMDSResult;
-import mindomset.algorithm.LessByN1HComparator;
 import mindomset.algorithm.MDSResultBackedByIntOpenHashSet;
 import mindomset.algorithm.Utils;
 import mindomset.datastructure.graph.Graph;
@@ -33,7 +31,6 @@ public class GreedySweepAlgorithm implements AbstractMDSAlgorithm {
 	private int iterations = 0;
 	private int skipped = 0;
 	private int initialSize = 0;
-	private IntOpenHashSet definiteFlowers = new IntOpenHashSet();
 
 	private static class ResultHolder {
 		public int result;
@@ -81,58 +78,6 @@ public class GreedySweepAlgorithm implements AbstractMDSAlgorithm {
 		rh.neighCount = maxCount;
 		rh.iterations = iterations;
 		return rh;
-	}
-
-	private void markFlowers() {
-		Integer[] sortedByDegree = new Integer[W.size()];
-		int j = 0;
-		for (int i = 0; i < W.allocated.length; i++) {
-			if (W.allocated[i]) {
-				sortedByDegree[j] = W.keys[i];
-				j = j + 1;
-			}
-		}
-		Arrays.sort(sortedByDegree, new LessByN1HComparator(neig));
-
-		definiteFlowers = new IntOpenHashSet();
-		int indexInSorted = 0;
-		// vertices that create component on their own are flowers
-		while ((indexInSorted < sortedByDegree.length)
-				&& (neig.get(sortedByDegree[indexInSorted]).size() == 1)) {
-			definiteFlowers.add(sortedByDegree[indexInSorted]);
-			indexInSorted = indexInSorted + 1;
-		}
-		// vertices with degree 2 can grants definite flower status
-		IntOpenHashSet skaredaPremenna;
-		while ((indexInSorted < sortedByDegree.length)
-				&& ((skaredaPremenna = neig.get(sortedByDegree[indexInSorted]))
-						.size() == 2)) {
-			int[] vertices = skaredaPremenna.toArray();
-			if (sortedByDegree[indexInSorted] == vertices[0]) {
-				definiteFlowers.add(vertices[1]);
-			} else {
-				definiteFlowers.add(vertices[0]);
-			}
-			indexInSorted = indexInSorted + 1;
-		}
-
-		System.out.println("Definite flowers: " + definiteFlowers.size() + " "
-				+ definiteFlowers);
-	}
-
-
-	private void cleanDefiniteFlowers() {
-		for (IntCursor flowercur : definiteFlowers) {
-			iterations = iterations + 1;
-			IntOpenHashSet greying = new IntOpenHashSet(
-					neigNonG.get(flowercur.value));
-			for (IntCursor vcur : neigN2.get(flowercur.value)) {
-				neigNonG.get(vcur.value).removeAll(greying);
-			}
-			S.add(flowercur.value);
-			G.removeAll(greying);
-			W.remove(flowercur.value);
-		}
 	}
 
 	private void cleanNonFlowers() {
