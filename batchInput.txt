@@ -1,0 +1,4 @@
+ca1.txt greedysr true	
+ca1.txt greedysw true	
+ca1.txt floweru true	
+ca1.txt flower true	

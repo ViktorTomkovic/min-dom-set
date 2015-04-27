@@ -1,5 +1,7 @@
 package mindomset.main;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
 
@@ -10,7 +12,7 @@ import mindomset.datastructure.graph.CompactUndirectedGraph;
 import mindomset.datastructure.graph.Graph;
 
 public class MDS_Run {
-	public static final String MY_ARGS = "ba10k.txt flower false";
+	public static final String MY_ARGS = "ba10k.txt greedy false";
 
 	/**
 	 * @param args
@@ -98,5 +100,26 @@ public class MDS_Run {
 			Utils.exportResult(outputFilename, mds);
 			System.out.println("MDS written to: " + outputFilename);
 		}
+		
+		try
+		{
+		    String appendFile = "lastRuns.txt";
+		    FileWriter fw = new FileWriter(appendFile, true); //the true will append the new data
+		    StringBuilder sb2 = new StringBuilder();
+		    for (String arg : args) {
+		    	sb2.append(arg);
+		    	sb2.append("\t");
+		    }
+		    sb2.append(mds.size());
+		    sb2.append("\t");
+		    sb2.append(elapsed2);
+		    sb2.append("\n");
+		    fw.write(sb2.toString()); //appends the string to the file
+		    fw.close();
+		}
+		catch(IOException ioe)
+		{
+		    System.err.println("IOException: " + ioe.getMessage());
+		}		
 	}
 }

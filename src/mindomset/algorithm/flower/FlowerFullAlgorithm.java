@@ -160,7 +160,7 @@ public class FlowerFullAlgorithm implements AbstractMDSAlgorithm {
 			markedAsFlower.set(sortedByDegree[indexInSorted]);
 			indexInSorted = indexInSorted + 1;
 		}
-		// vertices with degree 2 can grants definite flower status
+		// vertices with degree 2 can grant definite flower status
 		IntOpenHashSet skaredaPremenna;
 		System.out.print(indexInSorted + "\t");
 		while ((indexInSorted < sortedByDegree.length)
